@@ -2,8 +2,21 @@
 #Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #this is CMakeLists for ctest.
+project(ctest)
 
-compileAsC99()
+option(skip_unittests "set skip_unittests to ON to skip unittests (default is OFF)[if possible, they are always build]" OFF)
+
+cmake_minimum_required(VERSION 2.8.11)
+
+if (CMAKE_VERSION VERSION_LESS "3.1")
+  if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
+    set (CMAKE_C_FLAGS "--std=c99 ${CMAKE_C_FLAGS}")
+    set (CMAKE_CXX_FLAGS "--std=c++11 ${CMAKE_CXX_FLAGS}")
+  endif()
+else()
+  set (CMAKE_C_STANDARD 99)
+  set (CMAKE_CXX_STANDARD 11)
+endif()
 
 set(ctest_c_files
 ./src/ctest.c
@@ -12,9 +25,6 @@ set(ctest_c_files
 set(ctest_h_files
 ./inc/ctest.h
 ./inc/ctest_macros.h)
-
-string(REPLACE "./inc/" ";./testtools/ctest/inc/" FILES_TO_INSTALL ${ctest_h_files})
-add_files_to_install("${FILES_TO_INSTALL}")
 
 #these are the include folders
 #the following "set" statetement exports across the project a global variable called CTEST_INC_FOLDER that expands to whatever needs to included when using ctest library
