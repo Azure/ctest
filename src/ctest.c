@@ -202,6 +202,11 @@ void double_ToString(char* string, size_t bufferSize, double val)
     (void)snprintf(string, bufferSize, "%.02f", val);
 }
 
+void long_double_ToString(char* string, size_t bufferSize, long_double val)
+{
+    (void)snprintf(string, bufferSize, "%.02lf", val);
+}
+
 void char_ptr_ToString(char* string, size_t bufferSize, const char* val)
 {
     (void)snprintf(string, bufferSize, "%s", val);
@@ -253,6 +258,11 @@ int float_Compare(float left, float right)
 }
 
 int double_Compare(double left, double right)
+{
+    return left != right;
+}
+
+int long_double_Compare(long double left, long double right)
 {
     return left != right;
 }

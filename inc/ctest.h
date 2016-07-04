@@ -137,6 +137,7 @@ IF(DIV2(COUNT_ARG(__VA_ARGS__)),FOR_EACH_1_COUNTED(PRINT_SECOND_ARG, __VA_ARGS__
 
 typedef const char* char_ptr;
 typedef void* void_ptr;
+typedef long double long_double;
 
 extern C_LINKAGE void int_ToString(char* string, size_t bufferSize, int val);
 extern C_LINKAGE void char_ToString(char* string, size_t bufferSize, char val);
@@ -145,6 +146,7 @@ extern C_LINKAGE void long_ToString(char* string, size_t bufferSize, long val);
 extern C_LINKAGE void size_t_ToString(char* string, size_t bufferSize, size_t val);
 extern C_LINKAGE void float_ToString(char* string, size_t bufferSize, float val);
 extern C_LINKAGE void double_ToString(char* string, size_t bufferSize, double val);
+extern C_LINKAGE void long_double_ToString(char* string, size_t bufferSize, long double val);
 extern C_LINKAGE void char_ptr_ToString(char* string, size_t bufferSize, const char* val);
 extern C_LINKAGE void void_ptr_ToString(char* string, size_t bufferSize, const void* val);
 extern C_LINKAGE void unsigned_long_ToString(char* string, size_t bufferSize, unsigned long val);
@@ -155,6 +157,7 @@ extern C_LINKAGE int long_Compare(long left, long right);
 extern C_LINKAGE int size_t_Compare(size_t left, size_t right);
 extern C_LINKAGE int float_Compare(float left, float right);
 extern C_LINKAGE int double_Compare(double left, double right);
+extern C_LINKAGE int long_double_Compare(long double left, long double right);
 extern C_LINKAGE int char_ptr_Compare(const char* left, const char* right);
 extern C_LINKAGE int void_ptr_Compare(const void * left, const void* right);
 extern C_LINKAGE int unsigned_long_Compare(unsigned long left, unsigned long right);
