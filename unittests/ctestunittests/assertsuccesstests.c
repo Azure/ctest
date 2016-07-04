@@ -367,14 +367,16 @@ CTEST_FUNCTION(Assert_Are_Not_Equal_With_Msg_2_Structures_Succeeds)
 
 CTEST_FUNCTION(Assert_Is_NULL_Succeeds)
 {
-    CTEST_ASSERT_IS_NULL(NULL);
+    void* test_value = NULL;
+    CTEST_ASSERT_IS_NULL(test_value);
 }
 
 /* CTEST_ASSERT_IS_NULL_WITH_MSG */
 
 CTEST_FUNCTION(Assert_Is_NULL_With_Msg_Succeeds)
 {
-    CTEST_ASSERT_IS_NULL(NULL, "Test message");
+    void* test_value = NULL;
+    CTEST_ASSERT_IS_NULL(test_value, "Test message");
 }
 
 /* CTEST_ASSERT_IS_NOT_NULL */

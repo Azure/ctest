@@ -389,14 +389,16 @@ CTEST_FUNCTION(Assert_Is_NULL_With_Msg_Fails)
 
 CTEST_FUNCTION(Assert_Is_Not_NULL_Fails)
 {
-    CTEST_ASSERT_IS_NOT_NULL(NULL);
+    void* test_value = NULL;
+    CTEST_ASSERT_IS_NOT_NULL(test_value);
 }
 
 /* CTEST_ASSERT_IS_NOT_NULL_WITH_MSG */
 
 CTEST_FUNCTION(Assert_Is_Not_NULL_With_Msg_Fails)
 {
-    CTEST_ASSERT_IS_NOT_NULL(NULL, "Test message");
+    void* test_value = NULL;
+    CTEST_ASSERT_IS_NOT_NULL(test_value, "Test message");
 }
 
 /* CTEST_ASSERT_IS_TRUE */

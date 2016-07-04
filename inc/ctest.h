@@ -80,7 +80,7 @@ extern const TEST_FUNCTION_DATA* g_CurrentTestFunction;
 extern jmp_buf g_ExceptionJump;
 
 #define CTEST_BEGIN_TEST_SUITE(testSuiteName) \
-    C_LINKAGE_PREFIX const TEST_FUNCTION_DATA TestListHead_##testSuiteName; \
+    C_LINKAGE_PREFIX const int TestListHead_Begin_##testSuiteName = 0; \
     static const TEST_FUNCTION_DATA STR_CONCAT(TestFunctionData, EXPAND_1(__COUNTER__)) = { NULL, NULL, NULL, NULL, CTEST_BEGIN_SUITE }; \
 
 #define CTEST_FUNCTION(funcName)	\
@@ -116,7 +116,8 @@ extern jmp_buf g_ExceptionJump;
 
 #define CTEST_END_TEST_SUITE(testSuiteName) \
     static const TEST_FUNCTION_DATA STR_CONCAT(TestFunctionData, EXPAND_1(CTEST_INC(__COUNTER__))) = { NULL, NULL, NULL, NULL, CTEST_TEST_FUNCTION }; \
-    const TEST_FUNCTION_DATA TestListHead_##testSuiteName = { NULL, NULL, &STR_CONCAT(TestFunctionData, EXPAND_1(CTEST_DEC(CTEST_DEC(__COUNTER__)))), NULL, CTEST_END_SUITE }; \
+    C_LINKAGE_PREFIX const TEST_FUNCTION_DATA TestListHead_##testSuiteName = { NULL, NULL, &STR_CONCAT(TestFunctionData, EXPAND_1(CTEST_DEC(CTEST_DEC(__COUNTER__)))), NULL, CTEST_END_SUITE }; \
+    C_LINKAGE_PREFIX const int* TestListHead_End_##testSuiteName = &TestListHead_Begin_##testSuiteName;
 
 #define PRINT_MY_ARG_2(A)
 
