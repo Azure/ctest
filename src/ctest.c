@@ -204,7 +204,7 @@ void double_ToString(char* string, size_t bufferSize, double val)
 
 void long_double_ToString(char* string, size_t bufferSize, long_double val)
 {
-    (void)snprintf(string, bufferSize, "%.02lf", val);
+    (void)snprintf(string, bufferSize, "%.02Lf", val);
 }
 
 void char_ptr_ToString(char* string, size_t bufferSize, const char* val)
