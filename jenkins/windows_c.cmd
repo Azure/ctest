@@ -12,14 +12,17 @@ cd %build-root%
 
 mkdir %build-root%\cmake
 pushd %build-root%\cmake
-if errorlevel 1 goto :eof
+if not ERRORLEVEL==0 exit /b ERRORLEVEL
 
 cmake ..
-if errorlevel 1 goto :eof
+if not ERRORLEVEL==0 exit /b ERRORLEVEL
 
 msbuild /m ctest.sln /p:Configuration=Release
-if errorlevel 1 goto :eof
+if not ERRORLEVEL==0 exit /b ERRORLEVEL
 msbuild /m ctest.sln /p:Configuration=Debug
-if errorlevel 1 goto :eof
+if not ERRORLEVEL==0 exit /b ERRORLEVEL
+
+ctest -C "debug" -V
+if not ERRORLEVEL==0 exit /b ERRORLEVEL
 
 popd
