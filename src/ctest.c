@@ -278,7 +278,7 @@ int char_ptr_Compare(const char* left, const char* right)
     {
         return -1;
     }
-    else if (left == NULL)
+    else if (right == NULL)
     {
         return 1;
     }
