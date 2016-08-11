@@ -8,6 +8,8 @@ option(skip_unittests "set skip_unittests to ON to skip unittests (default is OF
 
 cmake_minimum_required(VERSION 2.8.11)
 
+include (CTest)
+
 if (CMAKE_VERSION VERSION_LESS "3.1")
   if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
     set (CMAKE_C_FLAGS "--std=c99 ${CMAKE_C_FLAGS}")
@@ -46,7 +48,7 @@ set_target_properties(ctest
                FOLDER "test_tools")
 
 if (NOT ${skip_unittests})
-     add_subdirectory(unittests)
+     add_subdirectory(tests)
 endif()
 
 if(WIN32)
