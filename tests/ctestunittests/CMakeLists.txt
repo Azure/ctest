@@ -38,7 +38,7 @@ ctest_unittests ${ctest_unittests_c_files} ${ctest_unittests_cpp_files} ${ctest_
 
 set_target_properties(ctest_unittests
 			   PROPERTIES
-			   FOLDER "ctest_unit_tests")
+			   FOLDER "tests/ctest_unit_tests")
 			   
 target_link_libraries(ctest_unittests ctest)
 
