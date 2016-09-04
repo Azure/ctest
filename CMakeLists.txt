@@ -1,12 +1,17 @@
 #Copyright (c) Microsoft. All rights reserved.
 #Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-#this is CMakeLists for ctest.
+cmake_minimum_required(VERSION 2.8.11)
+
+if (DEFINED AZURE_CTEST_BUILT)
+    RETURN()
+else()
+    SET(AZURE_CTEST_BUILT ON)
+endif()
+
 project(ctest)
 
 option(skip_unittests "set skip_unittests to ON to skip unittests (default is OFF)[if possible, they are always build]" OFF)
-
-cmake_minimum_required(VERSION 2.8.11)
 
 include (CTest)
 
