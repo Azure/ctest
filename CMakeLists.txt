@@ -18,11 +18,29 @@ include (CTest)
 if (CMAKE_VERSION VERSION_LESS "3.1")
   if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
     set (CMAKE_C_FLAGS "--std=c99 ${CMAKE_C_FLAGS}")
-    set (CMAKE_CXX_FLAGS "--std=c++11 ${CMAKE_CXX_FLAGS}")
   endif()
 else()
   set (CMAKE_C_STANDARD 99)
-  set (CMAKE_CXX_STANDARD 11)
+endif()
+
+if(MSVC)
+    if (WINCE) # Be lax with WEC 2013 compiler
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W3")
+        # WEC 2013 uses older VS compiler. Build some files as C++ files to resolve C99 related compile issues
+        SET_SOURCE_FILES_PROPERTIES(src/consolelogger.c src/xlogging.c src/map.c adapters/uniqueid_win32.c adapters/httpapi_wince.c src/tlsio_schannel.c src/x509_schannel.c PROPERTIES LANGUAGE CXX)
+        add_definitions(-DWIN32) #WEC 2013 
+    ELSE()
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /WX")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /WX")
+  
+    endif()
+elseif(LINUX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror")
+    if(NOT IN_OPENWRT)
+        set (CMAKE_C_FLAGS "-D_POSIX_C_SOURCE=200112L ${CMAKE_C_FLAGS}")
+    endif()
 endif()
 
 set(ctest_c_files

@@ -188,7 +188,6 @@ extern C_LINKAGE int int64_t_Compare(int64_t left, int64_t right);
     static int toStringType##_Compare(toStringType left, toStringType right)
 
 #define CTEST_TO_STRING(toStringType, cType, string, bufferSize, value) \
-typedef cType toStringType; \
 static void toStringType##_ToString(char* string, size_t bufferSize, cType value)
 
 
