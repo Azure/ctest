@@ -3,10 +3,8 @@
 
 cmake_minimum_required(VERSION 2.8.11)
 
-if (DEFINED AZURE_CTEST_BUILT)
+if(TARGET ctest)
     RETURN()
-else()
-    SET(AZURE_CTEST_BUILT ON CACHE INTERNAL "This is the ctest built flag" FORCE)
 endif()
 
 project(ctest)
