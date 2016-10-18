@@ -133,7 +133,7 @@ extern jmp_buf g_ExceptionJump;
 #endif
 
 #define CTEST_RUN_TEST_SUITE(...) \
-extern C_LINKAGE TEST_FUNCTION_DATA C2(TestListHead_,FIRST_ARG(__VA_ARGS__)); \
+extern C_LINKAGE const TEST_FUNCTION_DATA C2(TestListHead_,FIRST_ARG(__VA_ARGS__)); \
 IF(DIV2(COUNT_ARG(__VA_ARGS__)),FOR_EACH_1_COUNTED(PRINT_SECOND_ARG, __VA_ARGS__),) RunTests(&C2(TestListHead_, FIRST_ARG(__VA_ARGS__)), TOSTRING(FIRST_ARG(__VA_ARGS__)))
 
 typedef const char* char_ptr;
