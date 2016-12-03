@@ -12,7 +12,7 @@ project(ctest)
 # Build with -fPIC always
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
-option(skip_unittests "set skip_unittests to ON to skip unittests (default is OFF)[if possible, they are always build]" OFF)
+option(run_unittests "set run_unittests to ON to run unittests (default is OFF)" OFF)
 
 include (CTest)
 
@@ -71,7 +71,7 @@ set_target_properties(ctest
                PROPERTIES
                FOLDER "test_tools")
 
-if (NOT ${skip_unittests})
+if (${run_unittests})
      add_subdirectory(tests)
 endif()
 
