@@ -14,7 +14,7 @@ build_folder=$build_root"/cmake"
 rm -r -f $build_folder
 mkdir -p $build_folder
 pushd $build_folder
-cmake .. -Drun_valgrind:BOOL=ON
+cmake .. -Drun_valgrind:BOOL=ON -Drun_unittests:bool=ON
 make --jobs=$(nproc)
 if [[ $make_install == 1 ]] ;
 then

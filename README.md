@@ -6,13 +6,25 @@ azure-ctest is a simple portable C test runner.
 
 ## Setup
 
-1. Clone **azure-ctest**
+1. Clone **azure-ctest** by:
+
+```
+git clone https://github.com/Azure/azure-ctest
+```
 
 2. Create a folder called *cmake* (or any name of your choice).
 
 3. Switch to the *cmake* folder and run
 ```
 cmake ..
+```
+
+### Build
+
+Switch to the *cmake* folder and run:
+
+```
+cmake --build .
 ```
 
 ### Installation and Use
@@ -39,6 +51,14 @@ Optionally, you may choose to install azure-ctest on your machine:
     find_package(ctest REQUIRED CONFIG)
     target_link_library(yourlib ctest)
     ```
+
+### Building the tests
+
+In order to build the tests use the *run_unittests* cmake option:
+
+```
+cmake .. -Drun_unittests:bool=ON
+```
 
 ## Example
 
