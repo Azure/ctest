@@ -14,7 +14,7 @@ mkdir %build-root%\cmake
 pushd %build-root%\cmake
 if not ERRORLEVEL==0 exit /b ERRORLEVEL
 
-cmake ..
+cmake .. -Drun_unittests:bool=ON
 if not ERRORLEVEL==0 exit /b ERRORLEVEL
 
 msbuild /m ctest.sln /p:Configuration=Release

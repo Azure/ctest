@@ -42,6 +42,6 @@ set_target_properties(ctest_unittests
 			   
 target_link_libraries(ctest_unittests ctest)
 
-if(NOT ${skip_unittests})
+if(${run_unittests})
 	add_test(NAME ctest_unittests COMMAND ctest_unittests)
 endif()

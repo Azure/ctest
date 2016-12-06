@@ -9,7 +9,10 @@ endif()
 
 project(ctest)
 
-option(skip_unittests "set skip_unittests to ON to skip unittests (default is OFF)[if possible, they are always build]" OFF)
+# Build with -fPIC always
+set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+
+option(run_unittests "set run_unittests to ON to run unittests (default is OFF)" OFF)
 
 include (CTest)
 
@@ -68,11 +71,44 @@ set_target_properties(ctest
                PROPERTIES
                FOLDER "test_tools")
 
-if (NOT ${skip_unittests})
+if (${run_unittests})
      add_subdirectory(tests)
 endif()
 
-if(WIN32)
-else()
-    install (TARGETS ctest DESTINATION lib)
-endif (WIN32)
+# Set CMAKE_INSTALL_* if not defined
+include(GNUInstallDirs)
+
+if(NOT DEFINED CMAKE_INSTALL_LIBDIR)
+    set(CMAKE_INSTALL_LIBDIR "lib")
+endif()
+
+# Install Azure CTest
+set(package_location "cmake")
+
+install (TARGETS ctest EXPORT ctestTargets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}/../bin
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+install (FILES ${ctest_h_files} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+include(CMakePackageConfigHelpers)
+
+configure_file("configs/${PROJECT_NAME}Config.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/${PROJECT_NAME}Config.cmake"
+    COPYONLY
+)
+
+install(EXPORT ctestTargets
+    FILE
+        "${PROJECT_NAME}Targets.cmake"
+    DESTINATION
+        ${package_location}
+)
+install(
+    FILES
+        "configs/${PROJECT_NAME}Config.cmake"
+    DESTINATION
+        ${package_location}
+)
