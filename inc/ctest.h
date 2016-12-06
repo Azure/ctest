@@ -230,7 +230,7 @@ if (!type##_Compare((A), (B))) \
 { \
     char actualString[1024]; \
     type##_ToString(actualString, sizeof(actualString), (A)); \
-    printf("  Assert failed: Inequality expected. Got equality, value:%s. %s\n", actualString, (message)); \
+    printf("  Assert failed in line %d: Inequality expected. Got equality, value:%s. %s\n", __LINE__, actualString, (message)); \
     if(g_CurrentTestFunction!=NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
     longjmp(g_ExceptionJump, 0xca1e4); \
 ; \
@@ -248,7 +248,7 @@ if (!type##_Compare((A), (B))) \
 #define CTEST_ASSERT_IS_NULL_WITH_MSG(value, message) \
 if ((value) != NULL) \
 { \
-    printf("  Assert failed: NULL expected, actual: 0x%p. %s\n", (void*)(value), (message)); \
+    printf("  Assert failed in line %d: NULL expected, actual: 0x%p. %s\n", __LINE__, (void*)(value), (message)); \
     if(g_CurrentTestFunction!=NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
     longjmp(g_ExceptionJump, 0xca1e4); \
  \
@@ -266,7 +266,7 @@ if ((value) != NULL) \
 #define CTEST_ASSERT_IS_NOT_NULL_WITH_MSG(value, message) \
 if ((value) == NULL) \
 { \
-    printf("  Assert failed: non-NULL expected. %s\n", (message)); \
+    printf("  Assert failed in line %d: non-NULL expected. %s\n", __LINE__, (message)); \
     if(g_CurrentTestFunction!=NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
     longjmp(g_ExceptionJump, 0xca1e4); \
 }
@@ -283,7 +283,7 @@ if ((value) == NULL) \
 #define CTEST_ASSERT_IS_TRUE_WITH_MSG(expression, message) \
 if (!(expression)) \
 { \
-    printf("  Assert failed: Expression should be true: %s. %s\n", #expression, (message)); \
+    printf("  Assert failed in line %d: Expression should be true: %s. %s\n", __LINE__, #expression, (message)); \
     if(g_CurrentTestFunction!=NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
     longjmp(g_ExceptionJump, 0xca1e4); \
 }
@@ -300,7 +300,7 @@ if (!(expression)) \
 #define CTEST_ASSERT_IS_FALSE_WITH_MSG(expression, message) \
 if (expression) \
 { \
-    printf("  Assert failed: Expression should be false: %s. %s\n", #expression, (message)); \
+    printf("  Assert failed in line %d: Expression should be false: %s. %s\n", __LINE__, #expression, (message)); \
     if(g_CurrentTestFunction!=NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
     longjmp(g_ExceptionJump, 0xca1e4); \
 }
@@ -308,7 +308,7 @@ if (expression) \
 #define CTEST_ASSERT_IS_FALSE_WITHOUT_MSG(expression) CTEST_ASSERT_IS_FALSE_WITH_MSG(expression, "")
 
 #define CTEST_ASSERT_FAIL(message) \
-    printf("  Assert failed: %s\n", (message)); \
+    printf("  Assert failed in line %d: %s\n", __LINE__, (message)); \
     if(g_CurrentTestFunction!=NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
     longjmp(g_ExceptionJump, 0xca1e4); \
 
