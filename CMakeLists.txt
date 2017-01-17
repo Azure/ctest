@@ -9,6 +9,8 @@ endif()
 
 project(ctest)
 
+set(CTEST_VERSION 1.1.0)
+
 # Build with -fPIC always
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
@@ -95,6 +97,12 @@ install (FILES ${ctest_h_files} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 include(CMakePackageConfigHelpers)
 
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/${PROJECT_NAME}ConfigVersion.cmake"
+    VERSION ${CTEST_VERSION}
+    COMPATIBILITY AnyNewerVersion
+)
+
 configure_file("configs/${PROJECT_NAME}Config.cmake"
     "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/${PROJECT_NAME}Config.cmake"
     COPYONLY
@@ -109,6 +117,7 @@ install(EXPORT ctestTargets
 install(
     FILES
         "configs/${PROJECT_NAME}Config.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/${PROJECT_NAME}ConfigVersion.cmake"
     DESTINATION
         ${package_location}
 )
