@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+#include <stdio.h>
 #include "ctest.h"
-#include "stdio.h"
 
 const TEST_FUNCTION_DATA* g_CurrentTestFunction;
 jmp_buf g_ExceptionJump;
