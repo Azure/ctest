@@ -11,6 +11,9 @@ project(ctest)
 
 set(CTEST_VERSION 1.1.0)
 
+#Use solution folders.
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 # Build with -fPIC always
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 

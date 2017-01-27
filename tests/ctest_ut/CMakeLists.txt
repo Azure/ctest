@@ -1,10 +1,9 @@
 #Copyright (c) Microsoft. All rights reserved.
 #Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-#this is unittests for ctest
 cmake_minimum_required(VERSION 2.8.11)
 
-set(ctest_unittests_c_files
+set(ctest_ut_c_files
 assertfailurestests.c
 assertsuccesstests.c
 ctestunittests.c
@@ -18,11 +17,11 @@ whentestfunctioninitializefailstests.c
 testfunctioncleanupfailstests.c
 )
 
-set(ctest_unittests_cpp_files
+set(ctest_ut_cpp_files
 simpletestsuiteonetestcpp.cpp
 )
 
-set(ctest_unittests_h_files
+set(ctest_ut_h_files
 )
 
 include_directories(${CTEST_INC_FOLDER})
@@ -33,15 +32,15 @@ IF(WIN32)
 ENDIF(WIN32)
 
 add_executable(
-ctest_unittests ${ctest_unittests_c_files} ${ctest_unittests_cpp_files} ${ctest_unittests_h_files}
+ctest_ut ${ctest_ut_c_files} ${ctest_ut_cpp_files} ${ctest_ut_h_files}
 )
 
-set_target_properties(ctest_unittests
+set_target_properties(ctest_ut
 			   PROPERTIES
-			   FOLDER "tests/ctest_unit_tests")
+			   FOLDER "tests/ctest_ut")
 			   
-target_link_libraries(ctest_unittests ctest)
+target_link_libraries(ctest_ut ctest)
 
 if(${run_unittests})
-	add_test(NAME ctest_unittests COMMAND ctest_unittests)
+	add_test(NAME ctest_ut COMMAND ctest_ut)
 endif()
