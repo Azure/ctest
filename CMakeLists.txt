@@ -20,6 +20,14 @@ set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 option(run_unittests "set run_unittests to ON to run unittests (default is OFF)" OFF)
 
 include (CTest)
+include (CheckIncludeFiles)
+
+CHECK_INCLUDE_FILES(stdint.h HAVE_STDINT_H)
+CHECK_INCLUDE_FILES(stdbool.h HAVE_STDBOOL_H)
+
+if (NOT (${HAVE_STDINT_H} OR ${HAVE_STDBOOL_H}))
+    include_directories(${SHARED_UTIL_INC_FOLDER}/azure_c_shared_utility/windowsce)
+endif()
 
 if (CMAKE_VERSION VERSION_LESS "3.1")
   if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
