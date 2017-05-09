@@ -67,7 +67,7 @@ include_directories(${CTEST_INC_FOLDER})
 CHECK_INCLUDE_FILES(stdint.h HAVE_STDINT_H)
 CHECK_INCLUDE_FILES(stdbool.h HAVE_STDBOOL_H)
 
-if (NOT (${HAVE_STDINT_H} OR ${HAVE_STDBOOL_H}))
+if ((NOT HAVE_STDINT_H) OR (NOT HAVE_STDBOOL_H))
     include_directories(${CTEST_INC_FOLDER}/aux_inc)
 endif()
 
