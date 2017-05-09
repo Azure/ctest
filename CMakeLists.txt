@@ -22,13 +22,6 @@ option(run_unittests "set run_unittests to ON to run unittests (default is OFF)"
 include (CTest)
 include (CheckIncludeFiles)
 
-CHECK_INCLUDE_FILES(stdint.h HAVE_STDINT_H)
-CHECK_INCLUDE_FILES(stdbool.h HAVE_STDBOOL_H)
-
-if (NOT (${HAVE_STDINT_H} OR ${HAVE_STDBOOL_H}))
-    include_directories(${SHARED_UTIL_INC_FOLDER}/azure_c_shared_utility/windowsce)
-endif()
-
 if (CMAKE_VERSION VERSION_LESS "3.1")
   if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
     set (CMAKE_C_FLAGS "--std=c99 ${CMAKE_C_FLAGS}")
@@ -70,6 +63,13 @@ set(ctest_h_files
 set(CTEST_INC_FOLDER ${CMAKE_CURRENT_LIST_DIR}/inc CACHE INTERNAL "this is what needs to be included if using ctest lib" FORCE)
 
 include_directories(${CTEST_INC_FOLDER})
+
+CHECK_INCLUDE_FILES(stdint.h HAVE_STDINT_H)
+CHECK_INCLUDE_FILES(stdbool.h HAVE_STDBOOL_H)
+
+if (NOT (${HAVE_STDINT_H} OR ${HAVE_STDBOOL_H}))
+    include_directories(${CTEST_INC_FOLDER}/aux_inc)
+endif()
 
 IF(WIN32)
     #windows needs this define
