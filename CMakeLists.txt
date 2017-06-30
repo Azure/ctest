@@ -9,7 +9,7 @@ endif()
 
 project(ctest)
 
-set(CTEST_VERSION 1.1.9)
+set(CTEST_VERSION 1.1.12)
 
 #Use solution folders.
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
