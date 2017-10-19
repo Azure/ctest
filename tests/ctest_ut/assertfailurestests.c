@@ -405,28 +405,32 @@ CTEST_FUNCTION(Assert_Is_Not_NULL_With_Msg_Fails)
 
 CTEST_FUNCTION(Assert_Is_True_Fails)
 {
-    CTEST_ASSERT_IS_TRUE(0);
+	int tested_value = 0;
+    CTEST_ASSERT_IS_TRUE(tested_value);
 }
 
 /* CTEST_ASSERT_IS_TRUE_WITH_MSG */
 
 CTEST_FUNCTION(Assert_Is_True_With_Msg_Fails)
 {
-    CTEST_ASSERT_IS_TRUE(0, "Test message");
+	int tested_value = 0;
+    CTEST_ASSERT_IS_TRUE(tested_value, "Test message");
 }
 
 /* CTEST_ASSERT_IS_FALSE */
 
 CTEST_FUNCTION(Assert_Is_False_Fails)
 {
-    CTEST_ASSERT_IS_FALSE(1);
+	int tested_value = 1;
+    CTEST_ASSERT_IS_FALSE(tested_value);
 }
 
 /* CTEST_ASSERT_IS_FALSE_WITH_MSG */
 
 CTEST_FUNCTION(Assert_Is_False_With_Msg_Fails)
 {
-    CTEST_ASSERT_IS_FALSE(1, "Test message");
+	int tested_value = 1;
+    CTEST_ASSERT_IS_FALSE(tested_value, "Test message");
 }
 
 CTEST_END_TEST_SUITE(AssertFailureTests)

@@ -9,7 +9,7 @@ endif()
 
 project(ctest)
 
-set(CTEST_VERSION 1.1.8)
+set(CTEST_VERSION 1.1.19)
 
 #Use solution folders.
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -20,6 +20,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 option(run_unittests "set run_unittests to ON to run unittests (default is OFF)" OFF)
 
 include (CTest)
+include (CheckIncludeFiles)
 
 if (CMAKE_VERSION VERSION_LESS "3.1")
   if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
@@ -62,6 +63,13 @@ set(ctest_h_files
 set(CTEST_INC_FOLDER ${CMAKE_CURRENT_LIST_DIR}/inc CACHE INTERNAL "this is what needs to be included if using ctest lib" FORCE)
 
 include_directories(${CTEST_INC_FOLDER})
+
+CHECK_INCLUDE_FILES(stdint.h HAVE_STDINT_H)
+CHECK_INCLUDE_FILES(stdbool.h HAVE_STDBOOL_H)
+
+if ((NOT HAVE_STDINT_H) OR (NOT HAVE_STDBOOL_H))
+    include_directories(${CTEST_INC_FOLDER}/aux_inc)
+endif()
 
 IF(WIN32)
     #windows needs this define

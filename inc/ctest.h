@@ -69,6 +69,7 @@ typedef struct TEST_FUNCTION_DATA_TAG
     const void* const NextTestFunctionData;
     TEST_RESULT* const TestResult;
     const CTEST_FUNCTION_TYPE FunctionType;
+#pragma warning(suppress: 4510 4512 4610) /* MSC 1500 (VS2008) incorrectly fires this */
 } TEST_FUNCTION_DATA;
 
 #define STR_CONCAT2(x,y) x##y
@@ -133,8 +134,11 @@ extern jmp_buf g_ExceptionJump;
 #endif
 
 #define CTEST_RUN_TEST_SUITE(...) \
-extern C_LINKAGE const TEST_FUNCTION_DATA C2(TestListHead_,FIRST_ARG(__VA_ARGS__)); \
-IF(DIV2(COUNT_ARG(__VA_ARGS__)),FOR_EACH_1_COUNTED(PRINT_SECOND_ARG, __VA_ARGS__),) RunTests(&C2(TestListHead_, FIRST_ARG(__VA_ARGS__)), TOSTRING(FIRST_ARG(__VA_ARGS__)))
+do \
+{ \
+	extern C_LINKAGE const TEST_FUNCTION_DATA C2(TestListHead_,FIRST_ARG(__VA_ARGS__)); \
+	IF(DIV2(COUNT_ARG(__VA_ARGS__)),FOR_EACH_1_COUNTED(PRINT_SECOND_ARG, __VA_ARGS__),) RunTests(&C2(TestListHead_, FIRST_ARG(__VA_ARGS__)), TOSTRING(FIRST_ARG(__VA_ARGS__))); \
+} while ((void)0,0)
 
 typedef const char* char_ptr;
 typedef void* void_ptr;

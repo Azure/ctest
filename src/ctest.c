@@ -15,9 +15,9 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
     const TEST_FUNCTION_DATA* testSuiteCleanup = NULL;
     const TEST_FUNCTION_DATA* testFunctionInitialize = NULL;
     const TEST_FUNCTION_DATA* testFunctionCleanup = NULL;
+    int testSuiteInitializeFailed = 0;
 
     g_CurrentTestFunction = NULL;
-    int testSuiteInitializeFailed = 0;
 
     (void)printf(" === Executing test suite %s ===\n", testSuiteName);
 
