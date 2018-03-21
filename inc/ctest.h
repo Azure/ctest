@@ -206,6 +206,14 @@ static void toStringType##_ToString(char* string, size_t bufferSize, cType value
 #define CTEST_ASSERT_ARE_EQUAL(...) EAT_4 (__VA_ARGS__, CTEST_ASSERT_ARE_EQUAL_WITH_MSG, CTEST_ASSERT_ARE_EQUAL_WITHOUT_MSG)(__VA_ARGS__)
 #endif
 
+static void do_jump(jmp_buf *exceptionJump, const char* expected, const char* actual)
+{
+    /*setting a breakpoint here allows catching the jump before it happens*/
+    (void)expected;
+    (void)actual;
+    longjmp(*exceptionJump, 0xca1e4);
+}
+
 #define CTEST_ASSERT_ARE_EQUAL_WITH_MSG(type, A, B, message) \
 if (type##_Compare((A), (B))) \
 { \
@@ -215,9 +223,10 @@ if (type##_Compare((A), (B))) \
     type##_ToString(actualString, sizeof(actualString), (B)); \
     printf("  Assert failed: %s Expected: %s, Actual: %s\n", message, expectedString, actualString); \
     if(g_CurrentTestFunction!=NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
-    longjmp(g_ExceptionJump, 0xca1e4); \
+    do_jump(&g_ExceptionJump, expectedString, actualString); \
     ; \
 }
+
 
 
 #define CTEST_ASSERT_ARE_EQUAL_WITHOUT_MSG(type, A, B) CTEST_ASSERT_ARE_EQUAL_WITH_MSG(type, (A), (B), "")
