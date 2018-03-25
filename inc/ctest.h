@@ -263,7 +263,7 @@ if ((value) != NULL) \
 { \
     printf("  Assert failed in line %d: NULL expected, actual: 0x%p. %s\n", __LINE__, (void*)(value), (message)); \
     if(g_CurrentTestFunction!=NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
-    do_jump(&g_ExceptionJump, "expected it to be NULL (actual is the value)", value); \
+    do_jump(&g_ExceptionJump, "expected it to be NULL (actual is the value)", (const char*)value); \
  \
 }
 
