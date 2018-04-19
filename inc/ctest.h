@@ -69,7 +69,9 @@ typedef struct TEST_FUNCTION_DATA_TAG
     const void* const NextTestFunctionData;
     TEST_RESULT* const TestResult;
     const CTEST_FUNCTION_TYPE FunctionType;
+#if defined _MSC_VER
 #pragma warning(suppress: 4510 4512 4610) /* MSC 1500 (VS2008) incorrectly fires this */
+#endif
 } TEST_FUNCTION_DATA;
 
 #define STR_CONCAT2(x,y) x##y
