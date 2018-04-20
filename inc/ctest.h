@@ -208,13 +208,7 @@ static void toStringType##_ToString(char* string, size_t bufferSize, cType value
 #define CTEST_ASSERT_ARE_EQUAL(...) EAT_4 (__VA_ARGS__, CTEST_ASSERT_ARE_EQUAL_WITH_MSG, CTEST_ASSERT_ARE_EQUAL_WITHOUT_MSG)(__VA_ARGS__)
 #endif
 
-static void do_jump(jmp_buf *exceptionJump, const char* expected, const char* actual)
-{
-    /*setting a breakpoint here allows catching the jump before it happens*/
-    (void)expected;
-    (void)actual;
-    longjmp(*exceptionJump, 0xca1e4);
-}
+void do_jump(jmp_buf *exceptionJump, void* expected, void* actual);
 
 #define CTEST_ASSERT_ARE_EQUAL_WITH_MSG(type, A, B, message) \
 if (type##_Compare((A), (B))) \
@@ -228,8 +222,6 @@ if (type##_Compare((A), (B))) \
     do_jump(&g_ExceptionJump, expectedString, actualString); \
     ; \
 }
-
-
 
 #define CTEST_ASSERT_ARE_EQUAL_WITHOUT_MSG(type, A, B) CTEST_ASSERT_ARE_EQUAL_WITH_MSG(type, (A), (B), "")
 
@@ -265,7 +257,7 @@ if ((value) != NULL) \
 { \
     printf("  Assert failed in line %d: NULL expected, actual: 0x%p. %s\n", __LINE__, (void*)(value), (message)); \
     if(g_CurrentTestFunction!=NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
-    do_jump(&g_ExceptionJump, "expected it to be NULL (actual is the value)", (const char*)value); \
+    do_jump(&g_ExceptionJump, "expected it to be NULL (actual is the value)", (void*)value); \
  \
 }
 
@@ -283,7 +275,7 @@ if ((value) == NULL) \
 { \
     printf("  Assert failed in line %d: non-NULL expected. %s\n", __LINE__, (message)); \
     if(g_CurrentTestFunction!=NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
-    do_jump(&g_ExceptionJump, "expected it not to be NULL (actual is value)", (const char*)value); \
+    do_jump(&g_ExceptionJump, "expected it not to be NULL (actual is value)", (void*)value); \
 }
 
 #define CTEST_ASSERT_IS_NOT_NULL_WITHOUT_MSG(value) CTEST_ASSERT_IS_NOT_NULL_WITH_MSG((value), "")
