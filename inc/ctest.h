@@ -38,6 +38,10 @@ C_LINKAGE_PREFIX int snprintf(char * s, size_t n, const char * format, ...);
 #endif
 #endif
 
+#if _MSC_VER <= 1500
+#pragma warning(disable: 4510 4512 4610) /* MSC 1500 (VS2008) incorrectly fires this */
+#endif
+
 #if defined CTEST_USE_STDINT
 #include <stdint.h>
 #endif
@@ -69,9 +73,6 @@ typedef struct TEST_FUNCTION_DATA_TAG
     const void* const NextTestFunctionData;
     TEST_RESULT* const TestResult;
     const CTEST_FUNCTION_TYPE FunctionType;
-#if defined _MSC_VER
-#pragma warning(suppress: 4510 4512 4610) /* MSC 1500 (VS2008) incorrectly fires this */
-#endif
 } TEST_FUNCTION_DATA;
 
 #define STR_CONCAT2(x,y) x##y
@@ -257,7 +258,7 @@ if ((value) != NULL) \
 { \
     printf("  Assert failed in line %d: NULL expected, actual: 0x%p. %s\n", __LINE__, (void*)(value), (message)); \
     if(g_CurrentTestFunction!=NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
-    do_jump(&g_ExceptionJump, "expected it to be NULL (actual is the value)", (void*)value); \
+    do_jump(&g_ExceptionJump, "expected it to be NULL (actual is the value)", (void*)(value)); \
  \
 }
 
@@ -275,7 +276,7 @@ if ((value) == NULL) \
 { \
     printf("  Assert failed in line %d: non-NULL expected. %s\n", __LINE__, (message)); \
     if(g_CurrentTestFunction!=NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
-    do_jump(&g_ExceptionJump, "expected it not to be NULL (actual is value)", (void*)value); \
+    do_jump(&g_ExceptionJump, "expected it not to be NULL (actual is NULL)", NULL); \
 }
 
 #define CTEST_ASSERT_IS_NOT_NULL_WITHOUT_MSG(value) CTEST_ASSERT_IS_NOT_NULL_WITH_MSG((value), "")
