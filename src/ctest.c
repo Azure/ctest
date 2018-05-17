@@ -316,12 +316,12 @@ void int16_t_ToString(char* string, size_t bufferSize, int16_t val)
 
 void uint32_t_ToString(char* string, size_t bufferSize, uint32_t val)
 {
-    (void)snprintf(string, bufferSize, "%llu", (unsigned long long)val);
+    (void)snprintf(string, bufferSize, "%lu", (unsigned long)val);
 }
 
 void int32_t_ToString(char* string, size_t bufferSize, int32_t val)
 {
-    (void)snprintf(string, bufferSize, "%lld", (long long)val);
+    (void)snprintf(string, bufferSize, "%ld", (long)val);
 }
 
 void uint64_t_ToString(char* string, size_t bufferSize, uint64_t val)
