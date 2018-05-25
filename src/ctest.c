@@ -394,3 +394,11 @@ int snprintf(char * s, size_t n, const char * format, ...)
 
 #endif
 #endif
+
+void do_jump(jmp_buf *exceptionJump, const volatile void* expected, const volatile void* actual)
+{
+    /*setting a breakpoint here allows catching the jump before it happens*/
+    (void)expected;
+    (void)actual;
+    longjmp(*exceptionJump, 0xca1e4);
+}
