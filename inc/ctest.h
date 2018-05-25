@@ -214,18 +214,19 @@ static void do_jump(jmp_buf *exceptionJump, const char* expected, const char* ac
     longjmp(*exceptionJump, 0xca1e4);
 }
 
-#define CTEST_ASSERT_ARE_EQUAL_WITH_MSG(type, A, B, message) \
-if (type##_Compare((A), (B))) \
-{ \
-    char expectedString[1024]; \
-    char actualString[1024]; \
-    type##_ToString(expectedString, sizeof(expectedString), (A)); \
-    type##_ToString(actualString, sizeof(actualString), (B)); \
-    printf("  Assert failed: %s Expected: %s, Actual: %s\n", message, expectedString, actualString); \
-    if(g_CurrentTestFunction!=NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
-    do_jump(&g_ExceptionJump, expectedString, actualString); \
-    ; \
-}
+#define CTEST_ASSERT_ARE_EQUAL_WITH_MSG(type, A, B, message)                                                            \
+do {                                                                                                                    \
+    char expectedString[1024];                                                                                          \
+    char actualString[1024];                                                                                            \
+    type##_ToString(expectedString, sizeof(expectedString), (A)); /*one evaluation per argument*/                       \
+    type##_ToString(actualString, sizeof(actualString), (B));/*one evaluation per argument*/                            \
+    if (strcmp(expectedString, actualString) != 0)                                                                      \
+    {                                                                                                                   \
+        printf("  Assert failed: %s Expected: %s, Actual: %s\n", message, expectedString, actualString);                \
+        if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED;                            \
+        do_jump(&g_ExceptionJump, expectedString, actualString);                                                        \
+    }                                                                                                                   \
+} while (0)
 
 
 
@@ -239,15 +240,18 @@ if (type##_Compare((A), (B))) \
 #endif
 
 #define CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG(type, A, B, message) \
-if (!type##_Compare((A), (B))) \
-{ \
-    char actualString[1024]; \
-    type##_ToString(actualString, sizeof(actualString), (A)); \
-    printf("  Assert failed in line %d: Inequality expected. Got equality, value:%s. %s\n", __LINE__, actualString, (message)); \
-    if(g_CurrentTestFunction!=NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
-    do_jump(&g_ExceptionJump, "some expected string", actualString); \
-; \
-}
+do {                                                                                                                    \
+    char expectedString[1024];                                                                                          \
+    char actualString[1024];                                                                                            \
+    type##_ToString(expectedString, sizeof(expectedString), (A));                                                       \
+    type##_ToString(actualString, sizeof(actualString), (B));                                                           \
+    if (strcmp(expectedString, actualString) == 0)                                                                      \
+    {                                                                                                                   \
+        printf("  Assert failed: %s Expected: %s, Actual: %s\n", message, expectedString, actualString);                \
+        if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED;                            \
+        do_jump(&g_ExceptionJump, expectedString, actualString);                                                        \
+    }                                                                                                                   \
+} while (0)
 
 #define CTEST_ASSERT_ARE_NOT_EQUAL_WITHOUT_MSG(type, A, B) CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG(type, (A), (B), "")
 
@@ -258,14 +262,18 @@ if (!type##_Compare((A), (B))) \
 #define CTEST_ASSERT_IS_NULL(...) EAT_2 (__VA_ARGS__, CTEST_ASSERT_IS_NULL_WITH_MSG, CTEST_ASSERT_IS_NULL_WITHOUT_MSG)(__VA_ARGS__)
 #endif
 
-#define CTEST_ASSERT_IS_NULL_WITH_MSG(value, message) \
-if ((value) != NULL) \
-{ \
-    printf("  Assert failed in line %d: NULL expected, actual: 0x%p. %s\n", __LINE__, (void*)(value), (message)); \
-    if(g_CurrentTestFunction!=NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
-    do_jump(&g_ExceptionJump, "expected it to be NULL (actual is the value)", (const char*)value); \
- \
-}
+#define CTEST_ASSERT_IS_NULL_WITH_MSG(value, message)                                                                               \
+do                                                                                                                                  \
+{                                                                                                                                   \
+    const void* copy_of_value = (value);/*one evaluation per argument*/                                                             \
+    if ((copy_of_value) != NULL)                                                                                                    \
+    {                                                                                                                               \
+        printf("  Assert failed in line %d: NULL expected, actual: 0x%p. %s\n", __LINE__, (void*)(copy_of_value), (message));       \
+        if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED;                                        \
+        do_jump(&g_ExceptionJump, "expected it to be NULL (actual is the value)", (const char*)copy_of_value);                      \
+    }                                                                                                                               \
+}                                                                                                                                   \
+while(0)
 
 #define CTEST_ASSERT_IS_NULL_WITHOUT_MSG(value) CTEST_ASSERT_IS_NULL_WITH_MSG((value), "")
 
@@ -276,13 +284,19 @@ if ((value) != NULL) \
 #define CTEST_ASSERT_IS_NOT_NULL(...) EAT_2 (__VA_ARGS__, CTEST_ASSERT_IS_NOT_NULL_WITH_MSG, CTEST_ASSERT_IS_NOT_NULL_WITHOUT_MSG)(__VA_ARGS__)
 #endif
 
-#define CTEST_ASSERT_IS_NOT_NULL_WITH_MSG(value, message) \
-if ((value) == NULL) \
-{ \
-    printf("  Assert failed in line %d: non-NULL expected. %s\n", __LINE__, (message)); \
-    if(g_CurrentTestFunction!=NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
-    do_jump(&g_ExceptionJump, "expected it not to be NULL (actual is value)", (const char*)value); \
-}
+#define CTEST_ASSERT_IS_NOT_NULL_WITH_MSG(value, message)                                                                              \
+do                                                                                                                                     \
+{                                                                                                                                      \
+    const void* copy_of_value = (value);/*one evaluation per argument*/                                                                \
+    if (copy_of_value == NULL)                                                                                                         \
+    {                                                                                                                                  \
+        printf("  Assert failed in line %d: non-NULL expected. %s\n", __LINE__, (message));                                            \
+        if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED;                                           \
+        do_jump(&g_ExceptionJump, "expected it not to be NULL (actual is value)", (const char*)copy_of_value);                         \
+    }                                                                                                                                  \
+}while(0)
+
+
 
 #define CTEST_ASSERT_IS_NOT_NULL_WITHOUT_MSG(value) CTEST_ASSERT_IS_NOT_NULL_WITH_MSG((value), "")
 
@@ -293,13 +307,16 @@ if ((value) == NULL) \
 #define CTEST_ASSERT_IS_TRUE(...) EAT_2 (__VA_ARGS__, CTEST_ASSERT_IS_TRUE_WITH_MSG, CTEST_ASSERT_IS_TRUE_WITHOUT_MSG)(__VA_ARGS__)
 #endif
 
-#define CTEST_ASSERT_IS_TRUE_WITH_MSG(expression, message) \
-if (!(expression)) \
-{ \
-    printf("  Assert failed in line %d: Expression should be true: %s. %s\n", __LINE__, #expression, (message)); \
-    if(g_CurrentTestFunction!=NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
-    do_jump(&g_ExceptionJump, "expected it to be true", "but it wasn't"); \
-}
+#define CTEST_ASSERT_IS_TRUE_WITH_MSG(expression, message)                                                                               \
+do {                                                                                                                                     \
+    int expression_is_false = ((expression)==0);/*one evaluation per argument*/                                                          \
+    if (expression_is_false)                                                                                                             \
+    {                                                                                                                                    \
+        printf("  Assert failed in line %d: Expression should be true: %s. %s\n", __LINE__, #expression, (message));                     \
+        if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED;                                             \
+        do_jump(&g_ExceptionJump, "expected it to be true", "but it wasn't");                                                            \
+    }                                                                                                                                    \
+}while(0)
 
 #define CTEST_ASSERT_IS_TRUE_WITHOUT_MSG(expression) CTEST_ASSERT_IS_TRUE_WITH_MSG(expression, "")
 
@@ -311,19 +328,26 @@ if (!(expression)) \
 #endif
 
 #define CTEST_ASSERT_IS_FALSE_WITH_MSG(expression, message) \
-if (expression) \
-{ \
-    printf("  Assert failed in line %d: Expression should be false: %s. %s\n", __LINE__, #expression, (message)); \
-    if(g_CurrentTestFunction!=NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
-    do_jump(&g_ExceptionJump, "expected it to be false", "but it was true"); \
-}
+do {                                                                                                                                     \
+    int expression_is_true = ((expression)!=0);/*one evaluation per argument*/                                                           \
+    if (expression_is_true)                                                                                                              \
+    {                                                                                                                                    \
+        printf("  Assert failed in line %d: Expression should be true: %s. %s\n", __LINE__, #expression, (message));                     \
+        if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED;                                             \
+        do_jump(&g_ExceptionJump, "expected it to be true", "but it wasn't");                                                            \
+    }                                                                                                                                    \
+}while(0)
 
 #define CTEST_ASSERT_IS_FALSE_WITHOUT_MSG(expression) CTEST_ASSERT_IS_FALSE_WITH_MSG(expression, "")
 
-#define CTEST_ASSERT_FAIL(message) \
-    printf("  Assert failed in line %d: %s\n", __LINE__, (message)); \
-    if(g_CurrentTestFunction!=NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
-    do_jump(&g_ExceptionJump, "nothing expected, 100% fail", "nothing actual, 100% fail"); \
+#define CTEST_ASSERT_FAIL(message)                                                                                                        \
+do                                                                                                                                        \
+{                                                                                                                                         \
+    printf("  Assert failed in line %d: %s\n", __LINE__, (message));                                                                      \
+    if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED;                                                  \
+    do_jump(&g_ExceptionJump, "nothing expected, 100% fail", "nothing actual, 100% fail");                                                \
+}                                                                                                                                         \
+while(0)
 
 extern C_LINKAGE size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName);
 
