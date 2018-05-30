@@ -384,7 +384,8 @@ CTEST_FUNCTION(Assert_Is_NULL_With_Msg_Succeeds)
 CTEST_FUNCTION(Assert_Is_Not_NULL_Succeeds)
 {
     int a;
-    CTEST_ASSERT_IS_NOT_NULL(&a);
+    int *ptr = &a;
+    CTEST_ASSERT_IS_NOT_NULL(ptr);
 }
 
 /* CTEST_ASSERT_IS_NOT_NULL_WITH_MSG */
@@ -392,7 +393,8 @@ CTEST_FUNCTION(Assert_Is_Not_NULL_Succeeds)
 CTEST_FUNCTION(Assert_Is_Not_NULL_With_Msg_Succeeds)
 {
     int a;
-    CTEST_ASSERT_IS_NOT_NULL(&a, "Test message");
+    int *ptr = &a;
+    CTEST_ASSERT_IS_NOT_NULL(ptr, "Test message");
 }
 
 /* CTEST_ASSERT_IS_TRUE */

@@ -374,7 +374,8 @@ CTEST_FUNCTION(Assert_Are_Not_Equal_With_Msg_2_Structures_Fails)
 CTEST_FUNCTION(Assert_Is_NULL_Fails)
 {
     int a;
-    CTEST_ASSERT_IS_NULL(&a);
+    int *ptr = &a;
+    CTEST_ASSERT_IS_NULL(ptr);
 }
 
 /* CTEST_ASSERT_IS_NULL_WITH_MSG */
@@ -382,7 +383,8 @@ CTEST_FUNCTION(Assert_Is_NULL_Fails)
 CTEST_FUNCTION(Assert_Is_NULL_With_Msg_Fails)
 {
     int a;
-    CTEST_ASSERT_IS_NULL(&a, "Test message");
+    int *ptr = &a;
+    CTEST_ASSERT_IS_NULL(ptr, "Test message");
 }
 
 /* CTEST_ASSERT_IS_NOT_NULL */
