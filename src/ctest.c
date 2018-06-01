@@ -115,7 +115,7 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
                         }
                         g_CurrentTestFunction = NULL;/*g_CurrentTestFunction is limited to actually executing a TEST_FUNCTION, otherwise it should be NULL*/
 
-                                                     /*in the case when the cleanup can assert... have to prepare the long jump*/
+                        /*in the case when the cleanup can assert... have to prepare the long jump*/
                         if (setjmp(g_ExceptionJump) == 0)
                         {
                             if (testFunctionCleanup != NULL)
