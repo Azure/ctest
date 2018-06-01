@@ -38,7 +38,7 @@ C_LINKAGE_PREFIX int snprintf(char * s, size_t n, const char * format, ...);
 #endif
 #endif
 
-#if defined _MSC_VER && _MSC_VER <= 1500
+#if defined _MSC_VER && _MSC_VER <= 1700
 #pragma warning(disable: 4054 4127 4510 4512 4610) /* MSC 1500 (VS2008) incorrectly fires this */
 #endif
 
