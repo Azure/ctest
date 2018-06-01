@@ -268,8 +268,8 @@ do \
     char ptr_value[32]; \
     char NULL_ptr_value[32]; \
     /* printing the pointer to avoid evaluating it twice */ \
-    (void)sprintf(ptr_value, "%p", (value)); \
-    (void)sprintf(NULL_ptr_value, "%p", NULL); \
+    (void)sprintf(ptr_value, "%p", (void*)(value)); \
+    (void)sprintf(NULL_ptr_value, "%p", (void*)NULL); \
     if (strcmp(ptr_value, NULL_ptr_value) != 0) \
     { \
         (void)printf("  Assert failed in line %d: NULL expected, actual: 0x%s. %s\n", __LINE__, ptr_value, (message)); \
@@ -294,8 +294,8 @@ do \
     char ptr_value[32]; \
     char NULL_ptr_value[32]; \
     /* printing the pointer to avoid evaluating it twice */ \
-    (void)sprintf(ptr_value, "%p", (value)); \
-    (void)sprintf(NULL_ptr_value, "%p", NULL); \
+    (void)sprintf(ptr_value, "%p", (void*)(value)); \
+    (void)sprintf(NULL_ptr_value, "%p", (void*)NULL); \
     if (strcmp(ptr_value, NULL_ptr_value) == 0) \
     { \
         (void)printf("  Assert failed in line %d: non-NULL expected. %s\n", __LINE__, (message)); \
