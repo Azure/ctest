@@ -265,16 +265,12 @@ do { \
 #define CTEST_ASSERT_IS_NULL_WITH_MSG(value, message) \
 do \
 { \
-    char ptr_value[32]; \
-    char NULL_ptr_value[32]; \
-    /* printing the pointer to avoid evaluating it twice */ \
-    (void)sprintf(ptr_value, "%p", (void*)(value)); \
-    (void)sprintf(NULL_ptr_value, "%p", (void*)NULL); \
-    if (strcmp(ptr_value, NULL_ptr_value) != 0) \
+    const void* copy_of_value = (void*)(value); \
+    if (copy_of_value != NULL) \
     { \
-        (void)printf("  Assert failed in line %d: NULL expected, actual: 0x%s. %s\n", __LINE__, ptr_value, (message)); \
+        (void)printf("  Assert failed in line %d: NULL expected, actual: 0x%p. %s\n", __LINE__, copy_of_value, (message)); \
         if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
-        do_jump(&g_ExceptionJump, "expected it to be NULL (actual is the value)", ptr_value); \
+        do_jump(&g_ExceptionJump, "expected it to be NULL (actual is the value)", copy_of_value); \
     } \
 } \
 while(0)
@@ -291,20 +287,14 @@ while(0)
 #define CTEST_ASSERT_IS_NOT_NULL_WITH_MSG(value, message) \
 do \
 { \
-    char ptr_value[32]; \
-    char NULL_ptr_value[32]; \
-    /* printing the pointer to avoid evaluating it twice */ \
-    (void)sprintf(ptr_value, "%p", (void*)(value)); \
-    (void)sprintf(NULL_ptr_value, "%p", (void*)NULL); \
-    if (strcmp(ptr_value, NULL_ptr_value) == 0) \
+    const void* copy_of_value = (void*)(value); \
+    if (copy_of_value == NULL) \
     { \
         (void)printf("  Assert failed in line %d: non-NULL expected. %s\n", __LINE__, (message)); \
         if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
-        do_jump(&g_ExceptionJump, "expected it not to be NULL (actual is value)", ptr_value); \
+        do_jump(&g_ExceptionJump, "expected it not to be NULL (actual is value)", copy_of_value); \
     } \
 }while(0)
-
-
 
 #define CTEST_ASSERT_IS_NOT_NULL_WITHOUT_MSG(value) CTEST_ASSERT_IS_NOT_NULL_WITH_MSG((value), "")
 
