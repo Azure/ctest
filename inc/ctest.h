@@ -39,7 +39,7 @@ C_LINKAGE_PREFIX int snprintf(char * s, size_t n, const char * format, ...);
 #endif
 
 #if defined _MSC_VER && _MSC_VER <= 1500
-#pragma warning(disable: 4127 4510 4512 4610) /* MSC 1500 (VS2008) incorrectly fires this */
+#pragma warning(disable: 4510 4512 4610) /* MSC 1500 (VS2008) incorrectly fires this */
 #endif
 
 #if defined CTEST_USE_STDINT
@@ -265,12 +265,16 @@ do { \
 #define CTEST_ASSERT_IS_NULL_WITH_MSG(value, message) \
 do \
 { \
-    void* copy_of_value = (void*)(value);/*one evaluation per argument*/ \
-    if ((copy_of_value) != NULL) \
+    char ptr_value[32]; \
+    char NULL_ptr_value[32]; \
+    /* printing the pointer to avoid evaluating it twice */ \
+    (void)sprintf(ptr_value, "%p", (value)); \
+    (void)sprintf(NULL_ptr_value, "%p", NULL); \
+    if (strcmp(ptr_value, NULL_ptr_value) != 0) \
     { \
-        (void)printf("  Assert failed in line %d: NULL expected, actual: 0x%p. %s\n", __LINE__, copy_of_value, (message)); \
+        (void)printf("  Assert failed in line %d: NULL expected, actual: 0x%s. %s\n", __LINE__, ptr_value, (message)); \
         if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
-        do_jump(&g_ExceptionJump, "expected it to be NULL (actual is the value)", value); \
+        do_jump(&g_ExceptionJump, "expected it to be NULL (actual is the value)", ptr_value); \
     } \
 } \
 while(0)
@@ -287,12 +291,16 @@ while(0)
 #define CTEST_ASSERT_IS_NOT_NULL_WITH_MSG(value, message) \
 do \
 { \
-    void* copy_of_value = (void*)(value);/*one evaluation per argument*/ \
-    if (copy_of_value == NULL) \
+    char ptr_value[32]; \
+    char NULL_ptr_value[32]; \
+    /* printing the pointer to avoid evaluating it twice */ \
+    (void)sprintf(ptr_value, "%p", (value)); \
+    (void)sprintf(NULL_ptr_value, "%p", NULL); \
+    if (strcmp(ptr_value, NULL_ptr_value) == 0) \
     { \
         (void)printf("  Assert failed in line %d: non-NULL expected. %s\n", __LINE__, (message)); \
         if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
-        do_jump(&g_ExceptionJump, "expected it not to be NULL (actual is value)", copy_of_value); \
+        do_jump(&g_ExceptionJump, "expected it not to be NULL (actual is value)", ptr_value); \
     } \
 }while(0)
 
