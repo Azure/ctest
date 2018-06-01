@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #include <stdio.h>
+#include <inttypes.h>
 #include "ctest.h"
 
 const TEST_FUNCTION_DATA* g_CurrentTestFunction;
@@ -114,7 +115,7 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
                         }
                         g_CurrentTestFunction = NULL;/*g_CurrentTestFunction is limited to actually executing a TEST_FUNCTION, otherwise it should be NULL*/
 
-                        /*in the case when the cleanup can assert... have to prepare the long jump*/
+                                                     /*in the case when the cleanup can assert... have to prepare the long jump*/
                         if (setjmp(g_ExceptionJump) == 0)
                         {
                             if (testFunctionCleanup != NULL)
@@ -296,42 +297,42 @@ int void_ptr_Compare(const void* left, const void* right)
 #if defined CTEST_USE_STDINT
 void uint8_t_ToString(char* string, size_t bufferSize, uint8_t val)
 {
-    (void)snprintf(string, bufferSize, "%d", (int)val);
+    (void)snprintf(string, bufferSize, "%"PRIu8, val);
 }
 
 void int8_t_ToString(char* string, size_t bufferSize, int8_t val)
 {
-    (void)snprintf(string, bufferSize, "%d", (int)val);
+    (void)snprintf(string, bufferSize, "%"PRId8, val);
 }
 
 void uint16_t_ToString(char* string, size_t bufferSize, uint16_t val)
 {
-    (void)snprintf(string, bufferSize, "%d", (int)val);
+    (void)snprintf(string, bufferSize, "%"PRIu16, val);
 }
 
 void int16_t_ToString(char* string, size_t bufferSize, int16_t val)
 {
-    (void)snprintf(string, bufferSize, "%d", (int)val);
+    (void)snprintf(string, bufferSize, "%"PRId16, val);
 }
 
 void uint32_t_ToString(char* string, size_t bufferSize, uint32_t val)
 {
-    (void)snprintf(string, bufferSize, "%lu", (unsigned long)val);
+    (void)snprintf(string, bufferSize, "%"PRIu32, val);
 }
 
 void int32_t_ToString(char* string, size_t bufferSize, int32_t val)
 {
-    (void)snprintf(string, bufferSize, "%ld", (long)val);
+    (void)snprintf(string, bufferSize, "%"PRId32, val);
 }
 
 void uint64_t_ToString(char* string, size_t bufferSize, uint64_t val)
 {
-    (void)snprintf(string, bufferSize, "%llu", (unsigned long long)val);
+    (void)snprintf(string, bufferSize, "%"PRIu64, val);
 }
 
 void int64_t_ToString(char* string, size_t bufferSize, int64_t val)
 {
-    (void)snprintf(string, bufferSize, "%lld", (long long)val);
+    (void)snprintf(string, bufferSize, "%"PRId64, val);
 }
 
 int uint8_t_Compare(uint8_t left, uint8_t right)
