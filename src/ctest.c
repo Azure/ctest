@@ -148,7 +148,7 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
                 }
                 else
                 {
-                    (void)printf("Suceeded.\n");
+                    (void)printf("Succeeded.\n");
                 }
                 totalTestCount++;
             }
