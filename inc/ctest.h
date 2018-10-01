@@ -188,8 +188,10 @@ extern C_LINKAGE int uint32_t_Compare(uint32_t left, uint32_t right);
 extern C_LINKAGE int int32_t_Compare(int32_t left, int32_t right);
 extern C_LINKAGE int uint64_t_Compare(uint64_t left, uint64_t right);
 extern C_LINKAGE int int64_t_Compare(int64_t left, int64_t right);
-
 #endif
+
+extern C_LINKAGE char* ctest_sprintf_char(const char* format, ...);
+extern C_LINKAGE void ctest_sprintf_free(char* string);
 
 #define CTEST_COMPARE(toStringType, cType) \
     typedef cType toStringType; \
@@ -198,21 +200,23 @@ extern C_LINKAGE int int64_t_Compare(int64_t left, int64_t right);
 #define CTEST_TO_STRING(toStringType, cType, string, bufferSize, value) \
 static void toStringType##_ToString(char* string, size_t bufferSize, cType value)
 
+// these are generic macros for formatting the optional message
+// they can be used in all the ASSERT macros without repeating the code over and over again
+#define GET_MESSAGE_FORMATTED(format, ...) \
+    IF(COUNT_ARG(__VA_ARGS__), ctest_sprintf_char(format, __VA_ARGS__), ctest_sprintf_char(format));
 
-#define EAT_2(X1,X2, NAME,...) NAME
-#define EAT_3(X1,X2,X3, NAME,...) NAME
-#define EAT_4(X1,X2,X3,X4, NAME,...) NAME
+#define GET_MESSAGE_FORMATTED_EMPTY(...) \
+    NULL
 
-#ifdef _MSC_VER
-#define LPAREN (
-#define CTEST_ASSERT_ARE_EQUAL(...) EAT_4 LPAREN __VA_ARGS__, CTEST_ASSERT_ARE_EQUAL_WITH_MSG, CTEST_ASSERT_ARE_EQUAL_WITHOUT_MSG)(__VA_ARGS__)
-#else
-#define CTEST_ASSERT_ARE_EQUAL(...) EAT_4 (__VA_ARGS__, CTEST_ASSERT_ARE_EQUAL_WITH_MSG, CTEST_ASSERT_ARE_EQUAL_WITHOUT_MSG)(__VA_ARGS__)
-#endif
+#define GET_MESSAGE(...) \
+    IF(COUNT_ARG(__VA_ARGS__), GET_MESSAGE_FORMATTED, GET_MESSAGE_FORMATTED_EMPTY)(__VA_ARGS__)
 
 void do_jump(jmp_buf *exceptionJump, const volatile void* expected, const volatile void* actual);
 
-#define CTEST_ASSERT_ARE_EQUAL_WITH_MSG(type, A, B, message) \
+#define CTEST_ASSERT_ARE_EQUAL_WITH_MSG(type, A, B, ...) \
+    CTEST_ASSERT_ARE_EQUAL(type, A, B, __VA_ARGS__)
+
+#define CTEST_ASSERT_ARE_EQUAL(type, A, B, ...) \
 do { \
     const type A_value = (const type)(A); \
     const type B_value = (const type)(B); \
@@ -222,22 +226,18 @@ do { \
     type##_ToString(actualString, sizeof(actualString), B_value);/*one evaluation per argument*/ \
     if (type##_Compare(A_value, B_value)) \
     { \
-        (void)printf("  Assert failed: %s Expected: %s, Actual: %s\n", message, expectedString, actualString); \
+        char* message = GET_MESSAGE(__VA_ARGS__); \
+        (void)printf("  Assert failed: %s Expected: %s, Actual: %s\n", (message == NULL) ? "" : message, expectedString, actualString); \
+        ctest_sprintf_free(message); \
         if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
         do_jump(&g_ExceptionJump, expectedString, actualString); \
     } \
 } while (0)
 
-#define CTEST_ASSERT_ARE_EQUAL_WITHOUT_MSG(type, A, B) CTEST_ASSERT_ARE_EQUAL_WITH_MSG(type, (A), (B), "")
+#define CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG(type, A, B, ...) \
+    CTEST_ASSERT_ARE_NOT_EQUAL(type, A, B, __VA_ARGS__)
 
-#ifdef _MSC_VER
-#define LPAREN (
-#define CTEST_ASSERT_ARE_NOT_EQUAL(...) EAT_4 LPAREN __VA_ARGS__, CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG, CTEST_ASSERT_ARE_NOT_EQUAL_WITHOUT_MSG)(__VA_ARGS__)
-#else
-#define CTEST_ASSERT_ARE_NOT_EQUAL(...) EAT_4 (__VA_ARGS__, CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG, CTEST_ASSERT_ARE_NOT_EQUAL_WITHOUT_MSG)(__VA_ARGS__)
-#endif
-
-#define CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG(type, A, B, message) \
+#define CTEST_ASSERT_ARE_NOT_EQUAL(type, A, B, ...) \
 do { \
     const type A_value = (const type)(A); \
     const type B_value = (const type)(B); \
@@ -247,103 +247,90 @@ do { \
     type##_ToString(actualString, sizeof(actualString), B_value);/*one evaluation per argument*/ \
     if (!type##_Compare(A_value, B_value)) \
     { \
-        (void)printf("  Assert failed: %s Expected: %s, Actual: %s\n", message, expectedString, actualString); \
+        char* message = GET_MESSAGE(__VA_ARGS__); \
+        (void)printf("  Assert failed: %s Expected: %s, Actual: %s\n", (message == NULL) ? "" : message, expectedString, actualString); \
+        ctest_sprintf_free(message); \
         if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
         do_jump(&g_ExceptionJump, "some expected string", actualString); \
     } \
 } while (0)
 
-#define CTEST_ASSERT_ARE_NOT_EQUAL_WITHOUT_MSG(type, A, B) CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG(type, (A), (B), "")
+#define CTEST_ASSERT_IS_NULL_WITH_MSG(value, ...) \
+    CTEST_ASSERT_IS_NULL(value, __VA_ARGS__)
 
-#ifdef _MSC_VER
-#define LPAREN (
-#define CTEST_ASSERT_IS_NULL(...) EAT_2 LPAREN __VA_ARGS__, CTEST_ASSERT_IS_NULL_WITH_MSG, CTEST_ASSERT_IS_NULL_WITHOUT_MSG)(__VA_ARGS__)
-#else
-#define CTEST_ASSERT_IS_NULL(...) EAT_2 (__VA_ARGS__, CTEST_ASSERT_IS_NULL_WITH_MSG, CTEST_ASSERT_IS_NULL_WITHOUT_MSG)(__VA_ARGS__)
-#endif
-
-#define CTEST_ASSERT_IS_NULL_WITH_MSG(value, message) \
+#define CTEST_ASSERT_IS_NULL(value, ...) \
 do \
 { \
     const void* copy_of_value = (void*)(value); \
     if (copy_of_value != NULL) \
     { \
-        (void)printf("  Assert failed in line %d: NULL expected, actual: 0x%p. %s\n", __LINE__, copy_of_value, (message)); \
+        char* message = GET_MESSAGE(__VA_ARGS__); \
+        (void)printf("  Assert failed in line %d: NULL expected, actual: 0x%p. %s\n", __LINE__, copy_of_value, (message == NULL) ? "" : message); \
+        ctest_sprintf_free(message); \
         if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
         do_jump(&g_ExceptionJump, "expected it to be NULL (actual is the value)", copy_of_value); \
     } \
 } \
 while(0)
 
-#define CTEST_ASSERT_IS_NULL_WITHOUT_MSG(value) CTEST_ASSERT_IS_NULL_WITH_MSG((value), "")
+#define CTEST_ASSERT_IS_NOT_NULL_WITH_MSG(value, ...) \
+    CTEST_ASSERT_IS_NOT_NULL(value, __VA_ARGS__)
 
-#ifdef _MSC_VER
-#define LPAREN (
-#define CTEST_ASSERT_IS_NOT_NULL(...) EAT_2 LPAREN __VA_ARGS__, CTEST_ASSERT_IS_NOT_NULL_WITH_MSG, CTEST_ASSERT_IS_NOT_NULL_WITHOUT_MSG)(__VA_ARGS__)
-#else
-#define CTEST_ASSERT_IS_NOT_NULL(...) EAT_2 (__VA_ARGS__, CTEST_ASSERT_IS_NOT_NULL_WITH_MSG, CTEST_ASSERT_IS_NOT_NULL_WITHOUT_MSG)(__VA_ARGS__)
-#endif
-
-#define CTEST_ASSERT_IS_NOT_NULL_WITH_MSG(value, message) \
+#define CTEST_ASSERT_IS_NOT_NULL(value, ...) \
 do \
 { \
     const void* copy_of_value = (void*)(value); \
     if (copy_of_value == NULL) \
     { \
-        (void)printf("  Assert failed in line %d: non-NULL expected. %s\n", __LINE__, (message)); \
+        char* message = GET_MESSAGE(__VA_ARGS__); \
+        (void)printf("  Assert failed in line %d: non-NULL expected. %s\n", __LINE__, (message == NULL) ? "" : message); \
+        ctest_sprintf_free(message); \
         if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
         do_jump(&g_ExceptionJump, "expected it not to be NULL (actual is value)", copy_of_value); \
     } \
 }while(0)
 
-#define CTEST_ASSERT_IS_NOT_NULL_WITHOUT_MSG(value) CTEST_ASSERT_IS_NOT_NULL_WITH_MSG((value), "")
+#define CTEST_ASSERT_IS_TRUE_WITH_MSG(value, ...) \
+    CTEST_ASSERT_IS_TRUE(value, __VA_ARGS__)
 
-#ifdef _MSC_VER
-#define LPAREN (
-#define CTEST_ASSERT_IS_TRUE(...) EAT_2 LPAREN __VA_ARGS__, CTEST_ASSERT_IS_TRUE_WITH_MSG, CTEST_ASSERT_IS_TRUE_WITHOUT_MSG)(__VA_ARGS__)
-#else
-#define CTEST_ASSERT_IS_TRUE(...) EAT_2 (__VA_ARGS__, CTEST_ASSERT_IS_TRUE_WITH_MSG, CTEST_ASSERT_IS_TRUE_WITHOUT_MSG)(__VA_ARGS__)
-#endif
-
-#define CTEST_ASSERT_IS_TRUE_WITH_MSG(expression, message) \
+#define CTEST_ASSERT_IS_TRUE(expression, ...) \
 do { \
     int expression_is_false = ((expression)==0);/*one evaluation per argument*/ \
     if (expression_is_false) \
     { \
-        (void)printf("  Assert failed in line %d: Expression should be true: %s. %s\n", __LINE__, #expression, (message)); \
+        char* message = GET_MESSAGE(__VA_ARGS__); \
+        (void)printf("  Assert failed in line %d: Expression should be true: %s. %s\n", __LINE__, #expression, (message == NULL) ? "" : message); \
+        ctest_sprintf_free(message); \
         if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
         do_jump(&g_ExceptionJump, "expected it to be true", "but it wasn't"); \
     } \
 }while(0)
 
-#define CTEST_ASSERT_IS_TRUE_WITHOUT_MSG(expression) CTEST_ASSERT_IS_TRUE_WITH_MSG(expression, "")
+#define CTEST_ASSERT_IS_FALSE_WITH_MSG(value, ...) \
+    CTEST_ASSERT_IS_FALSE(value, __VA_ARGS__)
 
-#ifdef _MSC_VER
-#define LPAREN (
-#define CTEST_ASSERT_IS_FALSE(...) EAT_2 LPAREN __VA_ARGS__, CTEST_ASSERT_IS_FALSE_WITH_MSG, CTEST_ASSERT_IS_FALSE_WITHOUT_MSG)(__VA_ARGS__)
-#else
-#define CTEST_ASSERT_IS_FALSE(...) EAT_2 (__VA_ARGS__, CTEST_ASSERT_IS_FALSE_WITH_MSG, CTEST_ASSERT_IS_FALSE_WITHOUT_MSG)(__VA_ARGS__)
-#endif
-
-#define CTEST_ASSERT_IS_FALSE_WITH_MSG(expression, message) \
+#define CTEST_ASSERT_IS_FALSE(expression, ...) \
 do { \
     int expression_is_true = ((expression)!=0);/*one evaluation per argument*/ \
     if (expression_is_true) \
     { \
-        (void)printf("  Assert failed in line %d: Expression should be true: %s. %s\n", __LINE__, #expression, (message)); \
+        char* message = GET_MESSAGE(__VA_ARGS__); \
+        (void)printf("  Assert failed in line %d: Expression should be true: %s. %s\n", __LINE__, #expression, (message == NULL) ? "" : message); \
+        ctest_sprintf_free(message); \
         if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
         do_jump(&g_ExceptionJump, "expected it to be false", "but it was true"); \
     } \
 }while(0)
 
-#define CTEST_ASSERT_IS_FALSE_WITHOUT_MSG(expression) CTEST_ASSERT_IS_FALSE_WITH_MSG(expression, "")
-
-#define CTEST_ASSERT_FAIL(message) \
+#define CTEST_ASSERT_FAIL(...) \
 do \
 { \
-    (void)printf("  Assert failed in line %d: %s\n", __LINE__, (message)); \
+    char* message = GET_MESSAGE(__VA_ARGS__); \
+    (void)printf("  Assert failed in line %d: %s \n" , __LINE__, (message == NULL) ? "" : message); \
+    ctest_sprintf_free(message); \
     if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
     do_jump(&g_ExceptionJump, (void*)"nothing expected, 100% fail", (void*)"nothing actual, 100% fail"); \
+    ctest_sprintf_free(message); \
 } \
 while(0)
 
