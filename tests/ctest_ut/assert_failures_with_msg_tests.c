@@ -108,87 +108,6 @@ CTEST_FUNCTION(Assert_Are_Equal_2_Structures_Fails)
     CTEST_ASSERT_ARE_EQUAL(mystruct_ptr, &a, &b, "Test message:%d", 42);
 }
 
-/* CTEST_ASSERT_ARE_EQUAL_WITH_MSG */
-
-CTEST_FUNCTION(Assert_Are_Equal_With_Msg_2_Ints_Fails)
-{
-    CTEST_ASSERT_ARE_EQUAL_WITH_MSG(int, 0, 1, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Equal_With_Msg_2_Chars_Fails)
-{
-    CTEST_ASSERT_ARE_EQUAL_WITH_MSG(char, (char)0, (char)1, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Equal_With_Msg_2_Shorts_Fails)
-{
-    CTEST_ASSERT_ARE_EQUAL_WITH_MSG(short, (short)0, (short)1, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Equal_With_Msg_2_Longs_Fails)
-{
-    CTEST_ASSERT_ARE_EQUAL_WITH_MSG(long, (long)0, (long)1, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Equal_With_Msg_2_uint8_t_Fails)
-{
-    CTEST_ASSERT_ARE_EQUAL_WITH_MSG(uint8_t, (uint8_t)0, (uint8_t)1, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Equal_With_Msg_2_int8_t_Fails)
-{
-    CTEST_ASSERT_ARE_EQUAL_WITH_MSG(int8_t, (int8_t)0, (int8_t)1, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Equal_With_Msg_2_uint16_t_Fails)
-{
-    CTEST_ASSERT_ARE_EQUAL_WITH_MSG(uint16_t, (uint16_t)0, (uint16_t)1, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Equal_With_Msg_2_int16_t_Fails)
-{
-    CTEST_ASSERT_ARE_EQUAL_WITH_MSG(int16_t, (int16_t)0, (int16_t)1, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Equal_With_Msg_2_uint32_t_Fails)
-{
-    CTEST_ASSERT_ARE_EQUAL_WITH_MSG(uint32_t, (uint32_t)0, (uint32_t)1, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Equal_With_Msg_2_int32_t_Fails)
-{
-    CTEST_ASSERT_ARE_EQUAL_WITH_MSG(int32_t, (int32_t)0, (int32_t)1, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Equal_With_Msg_2_uint64_t_Fails)
-{
-    CTEST_ASSERT_ARE_EQUAL_WITH_MSG(uint64_t, (uint64_t)0, (uint64_t)1, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Equal_With_Msg_2_int64_t_Fails)
-{
-    CTEST_ASSERT_ARE_EQUAL_WITH_MSG(int64_t, (int64_t)0, (int64_t)1, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Equal_With_Msg_2_strings_With_To_String_Type_Fails)
-{
-    CTEST_ASSERT_ARE_EQUAL_WITH_MSG(char_ptr, "test", "dan", "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Equal_With_Msg_2_void_ptr_Different_Addresses_Fails)
-{
-    char c1, c2;
-    CTEST_ASSERT_ARE_EQUAL_WITH_MSG(void_ptr, &c1, &c2, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Equal_With_Msg_2_Structures_Fails)
-{
-    mystruct a = { 1 };
-    mystruct b = { 42 };
-
-    CTEST_ASSERT_ARE_EQUAL_WITH_MSG(mystruct_ptr, &a, &b, "Test message:%d", 42);
-}
-
 /* CTEST_ASSERT_ARE_NOT_EQUAL with message */
 
 CTEST_FUNCTION(Assert_Are_Not_Equal_2_Ints_Fails)
@@ -279,96 +198,6 @@ CTEST_FUNCTION(Assert_Are_Not_Equal_2_Structures_Fails)
     CTEST_ASSERT_ARE_NOT_EQUAL(mystruct_ptr, &a, &b, "Test message:%d", 42);
 }
 
-/* CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG */
-
-CTEST_FUNCTION(Assert_Are_Not_Equal_With_Msg_2_Ints_Fails)
-{
-    CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG(int, 1, 1, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Not_Equal_With_Msg_2_Chars_Fails)
-{
-    CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG(char, (char)1, (char)1, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Not_Equal_With_Msg_2_Shorts_Fails)
-{
-    CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG(short, (short)1, (short)1, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Not_Equal_With_Msg_2_Longs_Fails)
-{
-    CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG(long, (long)1, (long)1, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Not_Equal_With_Msg_2_Unsigned_Longs_Fails)
-{
-    CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG(unsigned_long, 1, 1, "Test message:%d", 42);
-}
-
-#if defined CTEST_USE_STDINT
-
-CTEST_FUNCTION(Assert_Are_Not_Equal_With_Msg_2_uint8_t_Fails)
-{
-    CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG(uint8_t, (uint8_t)1, (uint8_t)1, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Not_Equal_With_Msg_2_int8_t_Fails)
-{
-    CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG(int8_t, (int8_t)1, (int8_t)1, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Not_Equal_With_Msg_2_uint16_t_Fails)
-{
-    CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG(uint16_t, (uint16_t)1, (uint16_t)1, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Not_Equal_With_Msg_2_int16_t_Fails)
-{
-    CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG(int16_t, (int16_t)1, (int16_t)1, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Not_Equal_With_Msg_2_uint32_t_Fails)
-{
-    CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG(uint32_t, (uint32_t)1, (uint32_t)1, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Not_Equal_With_Msg_2_int32_t_Fails)
-{
-    CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG(int32_t, (int32_t)1, (int32_t)1, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Not_Equal_With_Msg_2_uint64_t_Fails)
-{
-    CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG(uint64_t, (uint64_t)1, (uint64_t)1, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Not_Equal_With_Msg_2_int64_t_Fails)
-{
-    CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG(int64_t, (int64_t)1, (int64_t)1, "Test message:%d", 42);
-}
-
-#endif
-
-CTEST_FUNCTION(Assert_Are_Not_Equal_With_Msg_2_strings_With_To_String_Type_Fails)
-{
-    CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG(char_ptr, "dan", "dan", "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Not_Equal_With_Msg_2_void_ptr_with_same_address_Fails)
-{
-    char c1;
-    CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG(void_ptr, &c1, &c1, "Test message:%d", 42);
-}
-
-CTEST_FUNCTION(Assert_Are_Not_Equal_With_Msg_2_Structures_Fails)
-{
-    mystruct a = { 1 };
-    mystruct b = { 1 };
-
-    CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG(mystruct_ptr, &a, &b, "Test message:%d", 42);
-}
-
 /* CTEST_ASSERT_IS_NULL with message */
 
 CTEST_FUNCTION(Assert_Is_NULL_Fails)
@@ -376,15 +205,6 @@ CTEST_FUNCTION(Assert_Is_NULL_Fails)
     int a;
     int *ptr = &a;
     CTEST_ASSERT_IS_NULL(ptr, "Test message:%d", 42);
-}
-
-/* CTEST_ASSERT_IS_NULL_WITH_MSG */
-
-CTEST_FUNCTION(Assert_Is_NULL_With_Msg_Fails)
-{
-    int a;
-    int *ptr = &a;
-    CTEST_ASSERT_IS_NULL_WITH_MSG(ptr, "Test message:%d", 42);
 }
 
 /* CTEST_ASSERT_IS_NOT_NULL with message */
@@ -395,14 +215,6 @@ CTEST_FUNCTION(Assert_Is_Not_NULL_Fails)
     CTEST_ASSERT_IS_NOT_NULL(test_value, "Test message:%d", 42);
 }
 
-/* CTEST_ASSERT_IS_NOT_NULL_WITH_MSG */
-
-CTEST_FUNCTION(Assert_Is_Not_NULL_With_Msg_Fails)
-{
-    void* test_value = NULL;
-    CTEST_ASSERT_IS_NOT_NULL_WITH_MSG(test_value, "Test message:%d", 42);
-}
-
 /* CTEST_ASSERT_IS_TRUE with message */
 
 CTEST_FUNCTION(Assert_Is_True_Fails)
@@ -411,28 +223,12 @@ CTEST_FUNCTION(Assert_Is_True_Fails)
     CTEST_ASSERT_IS_TRUE(tested_value, "Test message:%d", 42);
 }
 
-/* CTEST_ASSERT_IS_TRUE_WITH_MSG */
-
-CTEST_FUNCTION(Assert_Is_True_With_Msg_Fails)
-{
-    int tested_value = 0;
-    CTEST_ASSERT_IS_TRUE_WITH_MSG(tested_value, "Test message:%d", 42);
-}
-
 /* CTEST_ASSERT_IS_FALSE with message */
 
 CTEST_FUNCTION(Assert_Is_False_Fails)
 {
     int tested_value = 1;
     CTEST_ASSERT_IS_FALSE(tested_value, "Test message:%d", 42);
-}
-
-/* CTEST_ASSERT_IS_FALSE_WITH_MSG */
-
-CTEST_FUNCTION(Assert_Is_False_With_Msg_Fails)
-{
-    int tested_value = 1;
-    CTEST_ASSERT_IS_FALSE_WITH_MSG(tested_value, "Test message:%d", 42);
 }
 
 CTEST_END_TEST_SUITE(AssertFailureTestsWithPrintfLikeMsgs)

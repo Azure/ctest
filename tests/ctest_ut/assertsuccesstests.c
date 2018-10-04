@@ -107,7 +107,7 @@ CTEST_FUNCTION(Assert_Are_Equal_2_Structures_Succeeds)
     CTEST_ASSERT_ARE_EQUAL(mystruct_ptr, &a, &b);
 }
 
-/* CTEST_ASSERT_ARE_EQUAL_WITH_MSG */
+/* CTEST_ASSERT_ARE_EQUAL with custom message string */
 
 CTEST_FUNCTION(Assert_Are_Equal_With_Msg_2_Ints_Succeeds)
 {
@@ -278,7 +278,7 @@ CTEST_FUNCTION(Assert_Are_Not_Equal_2_Structures_Succeeds)
     CTEST_ASSERT_ARE_NOT_EQUAL(mystruct_ptr, &a, &b);
 }
 
-/* CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG */
+/* CTEST_ASSERT_ARE_NOT_EQUAL with custom message string */
 
 CTEST_FUNCTION(Assert_Are_Not_Equal_With_Msg_2_Ints_Succeeds)
 {
@@ -371,7 +371,7 @@ CTEST_FUNCTION(Assert_Is_NULL_Succeeds)
     CTEST_ASSERT_IS_NULL(test_value);
 }
 
-/* CTEST_ASSERT_IS_NULL_WITH_MSG */
+/* CTEST_ASSERT_IS_NULL with custom message string */
 
 CTEST_FUNCTION(Assert_Is_NULL_With_Msg_Succeeds)
 {
@@ -388,7 +388,7 @@ CTEST_FUNCTION(Assert_Is_Not_NULL_Succeeds)
     CTEST_ASSERT_IS_NOT_NULL(ptr);
 }
 
-/* CTEST_ASSERT_IS_NOT_NULL_WITH_MSG */
+/* CTEST_ASSERT_IS_NOT_NULL with custom message string */
 
 CTEST_FUNCTION(Assert_Is_Not_NULL_With_Msg_Succeeds)
 {
@@ -405,7 +405,7 @@ CTEST_FUNCTION(Assert_Is_True_Succeeds)
     CTEST_ASSERT_IS_TRUE(tested_value);
 }
 
-/* CTEST_ASSERT_IS_TRUE_WITH_MSG */
+/* CTEST_ASSERT_IS_TRUE with custom message string */
 
 CTEST_FUNCTION(Assert_Is_True_With_Msg_Succeeds)
 {
@@ -421,7 +421,7 @@ CTEST_FUNCTION(Assert_Is_False_Succeeds)
     CTEST_ASSERT_IS_FALSE(tested_value);
 }
 
-/* CTEST_ASSERT_IS_FALSE_WITH_MSG */
+/* CTEST_ASSERT_IS_FALSE with custom message string */
 
 CTEST_FUNCTION(Assert_Is_False_With_Msg_Succeeds)
 {

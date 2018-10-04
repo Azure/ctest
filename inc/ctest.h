@@ -213,9 +213,6 @@ static void toStringType##_ToString(char* string, size_t bufferSize, cType value
 
 void do_jump(jmp_buf *exceptionJump, const volatile void* expected, const volatile void* actual);
 
-#define CTEST_ASSERT_ARE_EQUAL_WITH_MSG(type, A, B, ...) \
-    CTEST_ASSERT_ARE_EQUAL(type, A, B, __VA_ARGS__)
-
 #define CTEST_ASSERT_ARE_EQUAL(type, A, B, ...) \
 do { \
     const type A_value = (const type)(A); \
@@ -233,9 +230,6 @@ do { \
         do_jump(&g_ExceptionJump, expectedString, actualString); \
     } \
 } while (0)
-
-#define CTEST_ASSERT_ARE_NOT_EQUAL_WITH_MSG(type, A, B, ...) \
-    CTEST_ASSERT_ARE_NOT_EQUAL(type, A, B, __VA_ARGS__)
 
 #define CTEST_ASSERT_ARE_NOT_EQUAL(type, A, B, ...) \
 do { \
@@ -255,9 +249,6 @@ do { \
     } \
 } while (0)
 
-#define CTEST_ASSERT_IS_NULL_WITH_MSG(value, ...) \
-    CTEST_ASSERT_IS_NULL(value, __VA_ARGS__)
-
 #define CTEST_ASSERT_IS_NULL(value, ...) \
 do \
 { \
@@ -273,9 +264,6 @@ do \
 } \
 while(0)
 
-#define CTEST_ASSERT_IS_NOT_NULL_WITH_MSG(value, ...) \
-    CTEST_ASSERT_IS_NOT_NULL(value, __VA_ARGS__)
-
 #define CTEST_ASSERT_IS_NOT_NULL(value, ...) \
 do \
 { \
@@ -290,9 +278,6 @@ do \
     } \
 }while(0)
 
-#define CTEST_ASSERT_IS_TRUE_WITH_MSG(value, ...) \
-    CTEST_ASSERT_IS_TRUE(value, __VA_ARGS__)
-
 #define CTEST_ASSERT_IS_TRUE(expression, ...) \
 do { \
     int expression_is_false = ((expression)==0);/*one evaluation per argument*/ \
@@ -305,9 +290,6 @@ do { \
         do_jump(&g_ExceptionJump, "expected it to be true", "but it wasn't"); \
     } \
 }while(0)
-
-#define CTEST_ASSERT_IS_FALSE_WITH_MSG(value, ...) \
-    CTEST_ASSERT_IS_FALSE(value, __VA_ARGS__)
 
 #define CTEST_ASSERT_IS_FALSE(expression, ...) \
 do { \
