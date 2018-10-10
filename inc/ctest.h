@@ -223,9 +223,9 @@ do { \
     type##_ToString(actualString, sizeof(actualString), B_value);/*one evaluation per argument*/ \
     if (type##_Compare(A_value, B_value)) \
     { \
-        char* message = GET_MESSAGE(__VA_ARGS__); \
-        (void)printf("  Assert failed: %s Expected: %s, Actual: %s\n", (message == NULL) ? "" : message, expectedString, actualString); \
-        ctest_sprintf_free(message); \
+        char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
+        (void)printf("  Assert failed: %s Expected: %s, Actual: %s\n", (ctest_message == NULL) ? "" : ctest_message, expectedString, actualString); \
+        ctest_sprintf_free(ctest_message); \
         if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
         do_jump(&g_ExceptionJump, expectedString, actualString); \
     } \
@@ -241,9 +241,9 @@ do { \
     type##_ToString(actualString, sizeof(actualString), B_value);/*one evaluation per argument*/ \
     if (!type##_Compare(A_value, B_value)) \
     { \
-        char* message = GET_MESSAGE(__VA_ARGS__); \
-        (void)printf("  Assert failed: %s Expected: %s, Actual: %s\n", (message == NULL) ? "" : message, expectedString, actualString); \
-        ctest_sprintf_free(message); \
+        char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
+        (void)printf("  Assert failed: %s Expected: %s, Actual: %s\n", (ctest_message == NULL) ? "" : ctest_message, expectedString, actualString); \
+        ctest_sprintf_free(ctest_message); \
         if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
         do_jump(&g_ExceptionJump, "some expected string", actualString); \
     } \
@@ -255,9 +255,9 @@ do \
     const void* copy_of_value = (void*)(value); \
     if (copy_of_value != NULL) \
     { \
-        char* message = GET_MESSAGE(__VA_ARGS__); \
-        (void)printf("  Assert failed in line %d: NULL expected, actual: 0x%p. %s\n", __LINE__, copy_of_value, (message == NULL) ? "" : message); \
-        ctest_sprintf_free(message); \
+        char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
+        (void)printf("  Assert failed in line %d: NULL expected, actual: 0x%p. %s\n", __LINE__, copy_of_value, (ctest_message == NULL) ? "" : ctest_message); \
+        ctest_sprintf_free(ctest_message); \
         if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
         do_jump(&g_ExceptionJump, "expected it to be NULL (actual is the value)", copy_of_value); \
     } \
@@ -270,9 +270,9 @@ do \
     const void* copy_of_value = (void*)(value); \
     if (copy_of_value == NULL) \
     { \
-        char* message = GET_MESSAGE(__VA_ARGS__); \
-        (void)printf("  Assert failed in line %d: non-NULL expected. %s\n", __LINE__, (message == NULL) ? "" : message); \
-        ctest_sprintf_free(message); \
+        char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
+        (void)printf("  Assert failed in line %d: non-NULL expected. %s\n", __LINE__, (ctest_message == NULL) ? "" : ctest_message); \
+        ctest_sprintf_free(ctest_message); \
         if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
         do_jump(&g_ExceptionJump, "expected it not to be NULL (actual is value)", copy_of_value); \
     } \
@@ -283,9 +283,9 @@ do { \
     int expression_is_false = ((expression)==0);/*one evaluation per argument*/ \
     if (expression_is_false) \
     { \
-        char* message = GET_MESSAGE(__VA_ARGS__); \
-        (void)printf("  Assert failed in line %d: Expression should be true: %s. %s\n", __LINE__, #expression, (message == NULL) ? "" : message); \
-        ctest_sprintf_free(message); \
+        char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
+        (void)printf("  Assert failed in line %d: Expression should be true: %s. %s\n", __LINE__, #expression, (ctest_message == NULL) ? "" : ctest_message); \
+        ctest_sprintf_free(ctest_message); \
         if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
         do_jump(&g_ExceptionJump, "expected it to be true", "but it wasn't"); \
     } \
@@ -296,9 +296,9 @@ do { \
     int expression_is_true = ((expression)!=0);/*one evaluation per argument*/ \
     if (expression_is_true) \
     { \
-        char* message = GET_MESSAGE(__VA_ARGS__); \
-        (void)printf("  Assert failed in line %d: Expression should be true: %s. %s\n", __LINE__, #expression, (message == NULL) ? "" : message); \
-        ctest_sprintf_free(message); \
+        char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
+        (void)printf("  Assert failed in line %d: Expression should be true: %s. %s\n", __LINE__, #expression, (ctest_message == NULL) ? "" : ctest_message); \
+        ctest_sprintf_free(ctest_message); \
         if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
         do_jump(&g_ExceptionJump, "expected it to be false", "but it was true"); \
     } \
@@ -307,12 +307,12 @@ do { \
 #define CTEST_ASSERT_FAIL(...) \
 do \
 { \
-    char* message = GET_MESSAGE(__VA_ARGS__); \
-    (void)printf("  Assert failed in line %d: %s \n" , __LINE__, (message == NULL) ? "" : message); \
-    ctest_sprintf_free(message); \
+    char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
+    (void)printf("  Assert failed in line %d: %s \n" , __LINE__, (ctest_message == NULL) ? "" : ctest_message); \
+    ctest_sprintf_free(ctest_message); \
     if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
     do_jump(&g_ExceptionJump, (void*)"nothing expected, 100% fail", (void*)"nothing actual, 100% fail"); \
-    ctest_sprintf_free(message); \
+    ctest_sprintf_free(ctest_message); \
 } \
 while(0)
 
