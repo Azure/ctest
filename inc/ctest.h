@@ -195,10 +195,10 @@ extern C_LINKAGE void ctest_sprintf_free(char* string);
 
 #define CTEST_COMPARE(toStringType, cType) \
     typedef cType toStringType; \
-    static int toStringType##_Compare(toStringType left, toStringType right)
+    static int C2(toStringType,_Compare)(toStringType left, toStringType right)
 
 #define CTEST_TO_STRING(toStringType, cType, string, bufferSize, value) \
-static void toStringType##_ToString(char* string, size_t bufferSize, cType value)
+static void C2(toStringType,_ToString)(char* string, size_t bufferSize, cType value)
 
 // these are generic macros for formatting the optional message
 // they can be used in all the ASSERT macros without repeating the code over and over again
@@ -219,9 +219,9 @@ do { \
     const type B_value = (const type)(B); \
     char expectedString[1024]; \
     char actualString[1024]; \
-    type##_ToString(expectedString, sizeof(expectedString), A_value); /*one evaluation per argument*/ \
-    type##_ToString(actualString, sizeof(actualString), B_value);/*one evaluation per argument*/ \
-    if (type##_Compare(A_value, B_value)) \
+    C2(type,_ToString)(expectedString, sizeof(expectedString), A_value); /*one evaluation per argument*/ \
+    C2(type,_ToString)(actualString, sizeof(actualString), B_value);/*one evaluation per argument*/ \
+    if (C2(type,_Compare)(A_value, B_value)) \
     { \
         char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
         (void)printf("  Assert failed: %s Expected: %s, Actual: %s\n", (ctest_message == NULL) ? "" : ctest_message, expectedString, actualString); \
@@ -237,9 +237,9 @@ do { \
     const type B_value = (const type)(B); \
     char expectedString[1024]; \
     char actualString[1024]; \
-    type##_ToString(expectedString, sizeof(expectedString), A_value); /*one evaluation per argument*/ \
-    type##_ToString(actualString, sizeof(actualString), B_value);/*one evaluation per argument*/ \
-    if (!type##_Compare(A_value, B_value)) \
+    C2(type,_ToString)(expectedString, sizeof(expectedString), A_value); /*one evaluation per argument*/ \
+    C2(type,_ToString)(actualString, sizeof(actualString), B_value);/*one evaluation per argument*/ \
+    if (!C2(type,_Compare)(A_value, B_value)) \
     { \
         char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
         (void)printf("  Assert failed: %s Expected: %s, Actual: %s\n", (ctest_message == NULL) ? "" : ctest_message, expectedString, actualString); \
