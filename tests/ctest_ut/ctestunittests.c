@@ -61,5 +61,23 @@ int main()
         }
     }
 
+    {
+        size_t temp_failed_tests = 0;
+        CTEST_RUN_TEST_SUITE(TestSuiteCleanupTests, temp_failed_tests);
+        if (temp_failed_tests == 0) /*the tests in TestSuiteCleanupTests HAVE to fail*/
+        {
+            failedTests++;
+        }
+    }
+
+    {
+        size_t temp_failed_tests = 0;
+        CTEST_RUN_TEST_SUITE(TestSuiteCleanupTests2, temp_failed_tests);
+        if (temp_failed_tests == 0) /*the tests in TestSuiteCleanupTests HAVE to fail*/
+        {
+            failedTests++;
+        }
+    }
+
     return failedTests;
 }
