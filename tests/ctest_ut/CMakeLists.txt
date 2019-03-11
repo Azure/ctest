@@ -16,6 +16,8 @@ set(ctest_ut_c_files
     whentestsuiteinitializefailstests.c
     whentestfunctioninitializefailstests.c
     testfunctioncleanupfailstests.c
+    testsuitecleanuptests.c
+    testsuitecleanuptests2.c
 )
 
 set(ctest_ut_cpp_files
