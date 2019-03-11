@@ -158,9 +158,19 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
             currentTestFunction = (TEST_FUNCTION_DATA*)currentTestFunction->NextTestFunctionData;
         }
 
-        if (testSuiteCleanup != NULL)
+        if (setjmp(g_ExceptionJump) == 0)
         {
-            testSuiteCleanup->TestFunction();
+            if (testSuiteCleanup != NULL)
+            {
+                testSuiteCleanup->TestFunction();
+            }
+        }
+        else
+        {
+            /*only get here when testSuiteCleanup did asserted*/
+            /*should fail the tests*/
+            (void)printf("TEST_SUITE_CLEANUP failed - all tests are marked as failed\n");
+            failedTestCount = (totalTestCount > 0) ? totalTestCount : SIZE_MAX;
         }
 
         /* print results */
