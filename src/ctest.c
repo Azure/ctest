@@ -141,7 +141,7 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
                 if (*currentTestFunction->TestResult == TEST_FAILED)
                 {
                     failedTestCount++;
-                    (void)printf("!!! FAILED !!!\n");
+                    (void)printf("Test %s result = !!! FAILED !!!\n", currentTestFunction->TestFunctionName);
                 }
                 else if (*currentTestFunction->TestResult == TEST_NOT_EXECUTED)
                 {
@@ -150,7 +150,7 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
                 }
                 else
                 {
-                    (void)printf("Succeeded.\n");
+                    (void)printf("Test %s result = Succeeded.\n", currentTestFunction->TestFunctionName);
                 }
                 totalTestCount++;
             }
