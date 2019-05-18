@@ -300,7 +300,7 @@ do { \
     if (expression_is_true) \
     { \
         char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
-        (void)printf("  Assert failed in line %d: Expression should be true: %s. %s\n", __LINE__, #expression, (ctest_message == NULL) ? "" : ctest_message); \
+        (void)printf("  Assert failed in line %d: Expression should be false: %s. %s\n", __LINE__, #expression, (ctest_message == NULL) ? "" : ctest_message); \
         ctest_sprintf_free(ctest_message); \
         if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
         do_jump(&g_ExceptionJump, "expected it to be false", "but it was true"); \
