@@ -12,7 +12,6 @@
 #include <csetjmp>
 #include <setjmp.h> /* Some compilers do not want to play by the standard, specifically ARM CC */
 #include <stdio.h> /* Some compilers do not want to play by the standard, specifically ARM CC */
-extern "C" {
 #define C_LINKAGE "C"
 #define C_LINKAGE_PREFIX extern "C"
 #else
@@ -44,6 +43,10 @@ C_LINKAGE_PREFIX int snprintf(char * s, size_t n, const char * format, ...);
 
 #if defined CTEST_USE_STDINT
 #include <stdint.h>
+#endif
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 typedef void(*TEST_FUNC)(void);
