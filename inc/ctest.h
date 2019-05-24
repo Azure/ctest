@@ -49,6 +49,18 @@ C_LINKAGE_PREFIX int snprintf(char * s, size_t n, const char * format, ...);
 extern "C" {
 #endif
 
+#ifdef USE_COLORING
+#define CTEST_ANSI_COLOR_RED     "\x1b[31m"
+#define CTEST_ANSI_COLOR_GREEN   "\x1b[32m"
+#define CTEST_ANSI_COLOR_YELLOW  "\x1b[33m"
+#define CTEST_ANSI_COLOR_RESET   "\x1b[0m"
+#else
+#define CTEST_ANSI_COLOR_RED     ""
+#define CTEST_ANSI_COLOR_GREEN   ""
+#define CTEST_ANSI_COLOR_YELLOW  ""
+#define CTEST_ANSI_COLOR_RESET   ""
+#endif
+
 typedef void(*TEST_FUNC)(void);
 
 typedef enum CTEST_FUNCTION_TYPE_TAG
