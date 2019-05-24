@@ -6,6 +6,9 @@
 #include <stdarg.h>
 #include <inttypes.h>
 #include "ctest.h"
+#if defined _MSC_VER
+#include <windows.h>
+#endif
 
 const TEST_FUNCTION_DATA* g_CurrentTestFunction;
 jmp_buf g_ExceptionJump;
@@ -19,6 +22,27 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
     const TEST_FUNCTION_DATA* testFunctionInitialize = NULL;
     const TEST_FUNCTION_DATA* testFunctionCleanup = NULL;
     int testSuiteInitializeFailed = 0;
+
+#if defined _MSC_VER
+    // Set output mode to handle virtual terminal sequences
+    HANDLE std_out_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (std_out_handle == INVALID_HANDLE_VALUE)
+    {
+        (void)printf("Error getting console handle, no coloring available");
+    }
+
+    DWORD console_mode = 0;
+    if (!GetConsoleMode(std_out_handle, &console_mode))
+    {
+        (void)printf("Error getting console mode, no coloring available");
+    }
+
+    console_mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    if (!SetConsoleMode(std_out_handle, console_mode))
+    {
+        (void)printf("Error setting console mode, no coloring available");
+    }
+#endif
 
     g_CurrentTestFunction = NULL;
 
@@ -65,7 +89,7 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
     if (testSuiteInitializeFailed == 1)
     {
         /* print results */
-        (void)printf("0 tests ran, ALL failed, NONE succeeded.\n");
+        (void)printf(CTEST_ANSI_COLOR_RED "0 tests ran, ALL failed, NONE succeeded.\n" CTEST_ANSI_COLOR_RESET);
         failedTestCount = 1;
     }
     else
@@ -90,7 +114,7 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
                         else
                         {
                             testFunctionInitializeFailed = 1;
-                            (void)printf("TEST_FUNCTION_INITIALIZE failed - next TEST_FUNCTION will fail\n");
+                            (void)printf(CTEST_ANSI_COLOR_RED "TEST_FUNCTION_INITIALIZE failed - next TEST_FUNCTION will fail\n" CTEST_ANSI_COLOR_RESET);
                         }
                     }
 
@@ -98,7 +122,7 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
                     if (testFunctionInitializeFailed)
                     {
                         *currentTestFunction->TestResult = TEST_FAILED;
-                        (void)printf("Not executing test %s ...\n", currentTestFunction->TestFunctionName);
+                        (void)printf(CTEST_ANSI_COLOR_YELLOW "Not executing test %s ...\n" CTEST_ANSI_COLOR_RESET, currentTestFunction->TestFunctionName);
                     }
                     else
                     {
@@ -141,16 +165,16 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
                 if (*currentTestFunction->TestResult == TEST_FAILED)
                 {
                     failedTestCount++;
-                    (void)printf("Test %s result = !!! FAILED !!!\n", currentTestFunction->TestFunctionName);
+                    (void)printf(CTEST_ANSI_COLOR_RED "Test %s result = !!! FAILED !!!\n" CTEST_ANSI_COLOR_RESET, currentTestFunction->TestFunctionName);
                 }
                 else if (*currentTestFunction->TestResult == TEST_NOT_EXECUTED)
                 {
                     failedTestCount++;
-                    (void)printf("Test %s ... SKIPPED due to a failure in test function cleanup. \n", currentTestFunction->TestFunctionName);
+                    (void)printf(CTEST_ANSI_COLOR_YELLOW "Test %s ... SKIPPED due to a failure in test function cleanup. \n" CTEST_ANSI_COLOR_RESET, currentTestFunction->TestFunctionName);
                 }
                 else
                 {
-                    (void)printf("Test %s result = Succeeded.\n", currentTestFunction->TestFunctionName);
+                    (void)printf(CTEST_ANSI_COLOR_GREEN "Test %s result = Succeeded.\n" CTEST_ANSI_COLOR_RESET, currentTestFunction->TestFunctionName);
                 }
                 totalTestCount++;
             }
@@ -169,12 +193,12 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
         {
             /*only get here when testSuiteCleanup did asserted*/
             /*should fail the tests*/
-            (void)printf("TEST_SUITE_CLEANUP failed - all tests are marked as failed\n");
+            (void)printf(CTEST_ANSI_COLOR_RED "TEST_SUITE_CLEANUP failed - all tests are marked as failed\n" CTEST_ANSI_COLOR_RESET);
             failedTestCount = (totalTestCount > 0) ? totalTestCount : SIZE_MAX;
         }
 
         /* print results */
-        (void)printf("%d tests ran, %d failed, %d succeeded.\n", (int)totalTestCount, (int)failedTestCount, (int)(totalTestCount - failedTestCount));
+        (void)printf("%s%d tests ran, %d failed, %d succeeded.\n" CTEST_ANSI_COLOR_RESET, (failedTestCount > 0) ? (CTEST_ANSI_COLOR_RED) : (CTEST_ANSI_COLOR_GREEN), (int)totalTestCount, (int)failedTestCount, (int)(totalTestCount - failedTestCount));
     }
 
     return failedTestCount;
