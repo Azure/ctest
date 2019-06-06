@@ -5,9 +5,13 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <inttypes.h>
+#include <stdbool.h>
+#include <setjmp.h>
+
 #include "ctest.h"
+
 #if defined _MSC_VER
-#include <windows.h>
+#include "windows.h"
 #endif
 
 const TEST_FUNCTION_DATA* g_CurrentTestFunction;
@@ -26,22 +30,31 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
 #if defined _MSC_VER
     // Set output mode to handle virtual terminal sequences
     HANDLE std_out_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+    bool SetConsoleMode_succeeded = false;
+    DWORD console_mode_initial = 0;
     if (std_out_handle == INVALID_HANDLE_VALUE)
     {
-        (void)printf("Error getting console handle, no coloring available");
+        (void)printf("Error getting console handle, no coloring available\n");
     }
-
-    DWORD console_mode = 0;
-    if (!GetConsoleMode(std_out_handle, &console_mode))
+    else
     {
-        (void)printf("Error getting console mode, no coloring available");
+        if (!GetConsoleMode(std_out_handle, &console_mode_initial))
+        {
+            (void)printf("Error getting console mode, no coloring available. GetLastError()=%" PRIx32 "\n", GetLastError());
+        }
+        else
+        {
+            if (!SetConsoleMode(std_out_handle, console_mode_initial | ENABLE_VIRTUAL_TERMINAL_PROCESSING))
+            {
+                (void)printf("Error setting console mode, no coloring available. GetLastError()=%" PRIx32 "\n", GetLastError());
+            }
+            else
+            {
+                SetConsoleMode_succeeded = true;
+            }
+        }
     }
-
-    console_mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-    if (!SetConsoleMode(std_out_handle, console_mode))
-    {
-        (void)printf("Error setting console mode, no coloring available");
-    }
+    
 #endif
 
     g_CurrentTestFunction = NULL;
@@ -200,6 +213,25 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
         /* print results */
         (void)printf("%s%d tests ran, %d failed, %d succeeded.\n" CTEST_ANSI_COLOR_RESET, (failedTestCount > 0) ? (CTEST_ANSI_COLOR_RED) : (CTEST_ANSI_COLOR_GREEN), (int)totalTestCount, (int)failedTestCount, (int)(totalTestCount - failedTestCount));
     }
+
+#if defined _MSC_VER
+    if (std_out_handle != INVALID_HANDLE_VALUE)
+    {
+        if (SetConsoleMode_succeeded)
+        {
+            /*revert console to initial state*/
+            if (!SetConsoleMode(std_out_handle, console_mode_initial))
+            {
+                (void)printf("Error resetting console mode to initial value of %" PRIx32 ". GetLastError()=%" PRIx32 "\n", console_mode_initial, GetLastError());
+            }
+        }
+
+        if (!CloseHandle(std_out_handle))
+        {
+            (void)printf("failed to CloseHandle %p. GetLastError()=%" PRId32 "\n", std_out_handle, GetLastError());
+        }
+    }
+#endif
 
     return failedTestCount;
 }
