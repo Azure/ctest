@@ -14,10 +14,17 @@
 #include "windows.h"
 #endif
 
+#ifdef VLD_OPT_REPORT_TO_STDOUT
+#include "vld.h"
+#endif
+
 const TEST_FUNCTION_DATA* g_CurrentTestFunction;
 jmp_buf g_ExceptionJump;
 size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName)
 {
+#ifdef VLD_OPT_REPORT_TO_STDOUT
+    VLD_UINT initial_leak_count = VLDGetLeaksCount();
+#endif
     size_t totalTestCount = 0;
     size_t failedTestCount = 0;
     const TEST_FUNCTION_DATA* currentTestFunction = (const TEST_FUNCTION_DATA*)testListHead->NextTestFunctionData;
@@ -226,6 +233,10 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
             }
         }
     }
+#endif
+
+#ifdef VLD_OPT_REPORT_TO_STDOUT
+    failedTestCount = (failedTestCount > 0) ? failedTestCount : (size_t)(-(int)(VLDGetLeaksCount() - initial_leak_count));
 #endif
 
     return failedTestCount;
