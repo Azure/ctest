@@ -34,7 +34,7 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
     DWORD console_mode_initial = 0;
     if (std_out_handle == INVALID_HANDLE_VALUE)
     {
-        (void)printf("Error getting console handle, no coloring available\n");
+        (void)printf("Error getting console handle, no coloring available. GetLastError()=%" PRIx32 "\n", GetLastError());
     }
     else
     {
@@ -224,11 +224,6 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
             {
                 (void)printf("Error resetting console mode to initial value of %" PRIx32 ". GetLastError()=%" PRIx32 "\n", console_mode_initial, GetLastError());
             }
-        }
-
-        if (!CloseHandle(std_out_handle))
-        {
-            (void)printf("failed to CloseHandle %p. GetLastError()=%" PRId32 "\n", std_out_handle, GetLastError());
         }
     }
 #endif
