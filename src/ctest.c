@@ -18,6 +18,11 @@
 #include "vld.h"
 #endif
 
+// this is because older versions of VS do not have the define
+#ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
+#define ENABLE_VIRTUAL_TERMINAL_PROCESSING  0x0004
+#endif
+
 const TEST_FUNCTION_DATA* g_CurrentTestFunction;
 jmp_buf g_ExceptionJump;
 size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName)
