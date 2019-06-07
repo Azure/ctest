@@ -10,13 +10,8 @@
 
 #include "ctest.h"
 
-#if defined _MSC_VER
+#if defined _MSC_VER && !defined(WINCE)
 #include "windows.h"
-
-// this is because older versions of VS do not have the define
-#ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
-#define ENABLE_VIRTUAL_TERMINAL_PROCESSING  0x0004
-#endif
 #endif
 
 #ifdef VLD_OPT_REPORT_TO_STDOUT
@@ -39,7 +34,7 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
     const TEST_FUNCTION_DATA* testFunctionCleanup = NULL;
     int testSuiteInitializeFailed = 0;
 
-#if defined _MSC_VER
+#if defined _MSC_VER && !defined(WINCE)
     // Set output mode to handle virtual terminal sequences
     HANDLE std_out_handle = GetStdHandle(STD_OUTPUT_HANDLE);
     bool SetConsoleMode_succeeded = false;
@@ -226,7 +221,7 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
         (void)printf("%s%d tests ran, %d failed, %d succeeded.\n" CTEST_ANSI_COLOR_RESET, (failedTestCount > 0) ? (CTEST_ANSI_COLOR_RED) : (CTEST_ANSI_COLOR_GREEN), (int)totalTestCount, (int)failedTestCount, (int)(totalTestCount - failedTestCount));
     }
 
-#if defined _MSC_VER
+#if defined _MSC_VER && !defined(WINCE)
     if (std_out_handle != INVALID_HANDLE_VALUE)
     {
         if (SetConsoleMode_succeeded)
