@@ -12,15 +12,15 @@
 
 #if defined _MSC_VER
 #include "windows.h"
-#endif
-
-#ifdef VLD_OPT_REPORT_TO_STDOUT
-#include "vld.h"
-#endif
 
 // this is because older versions of VS do not have the define
 #ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
 #define ENABLE_VIRTUAL_TERMINAL_PROCESSING  0x0004
+#endif
+#endif
+
+#ifdef VLD_OPT_REPORT_TO_STDOUT
+#include "vld.h"
 #endif
 
 const TEST_FUNCTION_DATA* g_CurrentTestFunction;
