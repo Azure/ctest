@@ -60,13 +60,22 @@ elseif(LINUX)
     endif()
 endif()
 
+if (NOT TARGET azure_macro_utils_c) 
+    if (EXISTS ${CMAKE_CURRENT_LIST_DIR}/deps/azure-macro-utils-c/CMakeLists.txt)
+        add_subdirectory(deps/azure-macro-utils-c)
+    else()
+        message(FATAL_ERROR "Could not find azure_macro_utils_c")
+    endif()
+endif()
+
+include_directories(${MACRO_UTILS_INC_FOLDER})
+
 set(ctest_c_files
 ./src/ctest.c
 )
 
 set(ctest_h_files
-./inc/ctest.h
-./inc/ctest_macros.h)
+./inc/ctest.h)
 
 #these are the include folders
 #the following "set" statetement exports across the project a global variable called CTEST_INC_FOLDER that expands to whatever needs to included when using ctest library
