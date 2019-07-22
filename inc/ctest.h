@@ -4,11 +4,12 @@
 #ifndef CTEST_H
 #define CTEST_H
 
+#include "azure_macro_utils/macro_utils.h"
+
 #ifdef __cplusplus
 #include <cstddef>
 #include <cstring>
 #include <cstdio>
-#include "ctest_macros.h"
 #include <csetjmp>
 #include <setjmp.h> /* Some compilers do not want to play by the standard, specifically ARM CC */
 #include <stdio.h> /* Some compilers do not want to play by the standard, specifically ARM CC */
@@ -18,7 +19,6 @@
 #include <stddef.h>
 #include <string.h>
 #include <stdio.h>
-#include "ctest_macros.h"
 #include <setjmp.h>
 #define C_LINKAGE
 #define C_LINKAGE_PREFIX
@@ -90,9 +90,6 @@ typedef struct TEST_FUNCTION_DATA_TAG
     const CTEST_FUNCTION_TYPE FunctionType;
 } TEST_FUNCTION_DATA;
 
-#define STR_CONCAT2(x,y) x##y
-#define STR_CONCAT(x,y) STR_CONCAT2(x,y)
-
 #define EXPAND_1(A) A
 
 extern const TEST_FUNCTION_DATA* g_CurrentTestFunction;
@@ -100,42 +97,42 @@ extern jmp_buf g_ExceptionJump;
 
 #define CTEST_BEGIN_TEST_SUITE(testSuiteName) \
     C_LINKAGE_PREFIX const int TestListHead_Begin_##testSuiteName = 0; \
-    static const TEST_FUNCTION_DATA STR_CONCAT(TestFunctionData, EXPAND_1(__COUNTER__)) = { NULL, NULL, NULL, NULL, CTEST_BEGIN_SUITE }; \
+    static const TEST_FUNCTION_DATA MU_C2(TestFunctionData, MU_C1(__COUNTER__)) = { NULL, NULL, NULL, NULL, CTEST_BEGIN_SUITE }; \
 
-#define CTEST_FUNCTION(funcName)	\
+#define CTEST_FUNCTION(funcName)    \
     static void funcName(void); \
     static TEST_RESULT funcName##_TestResult; \
-    static const TEST_FUNCTION_DATA STR_CONCAT(TestFunctionData, EXPAND_1(CTEST_INC(__COUNTER__))) = \
-{ funcName, #funcName, &STR_CONCAT(TestFunctionData, EXPAND_1(CTEST_DEC(CTEST_DEC(__COUNTER__)))), &funcName##_TestResult, CTEST_TEST_FUNCTION }; \
+    static const TEST_FUNCTION_DATA MU_C2(TestFunctionData, MU_C1(MU_INC(__COUNTER__))) = \
+{ funcName, #funcName, &MU_C2(TestFunctionData, MU_C1(MU_DEC(MU_DEC(__COUNTER__)))), &funcName##_TestResult, CTEST_TEST_FUNCTION }; \
     static void funcName(void)
 
-#define CTEST_SUITE_INITIALIZE()	\
+#define CTEST_SUITE_INITIALIZE()    \
     static void TestSuiteInitialize(void); \
-    static const TEST_FUNCTION_DATA STR_CONCAT(TestFunctionData, EXPAND_1(CTEST_INC(__COUNTER__))) = \
-{ TestSuiteInitialize, "TestSuiteInitialize", &STR_CONCAT(TestFunctionData, EXPAND_1(CTEST_DEC(CTEST_DEC(__COUNTER__)))), NULL, CTEST_TEST_SUITE_INITIALIZE }; \
+    static const TEST_FUNCTION_DATA MU_C2(TestFunctionData, MU_C1(MU_INC(__COUNTER__))) = \
+{ TestSuiteInitialize, "TestSuiteInitialize", &MU_C2(TestFunctionData, MU_C1(MU_DEC(MU_DEC(__COUNTER__)))), NULL, CTEST_TEST_SUITE_INITIALIZE }; \
     static void TestSuiteInitialize(void)
 
-#define CTEST_SUITE_CLEANUP()	\
+#define CTEST_SUITE_CLEANUP()    \
     static void TestSuiteCleanup(void); \
-    static const TEST_FUNCTION_DATA STR_CONCAT(TestFunctionData, EXPAND_1(CTEST_INC(__COUNTER__))) = \
-{ &TestSuiteCleanup, "TestSuiteCleanup", &STR_CONCAT(TestFunctionData, EXPAND_1(CTEST_DEC(CTEST_DEC(__COUNTER__)))), NULL, CTEST_TEST_SUITE_CLEANUP }; \
+    static const TEST_FUNCTION_DATA MU_C2(TestFunctionData, MU_C1(MU_INC(__COUNTER__))) = \
+{ &TestSuiteCleanup, "TestSuiteCleanup", &MU_C2(TestFunctionData, MU_C1(MU_DEC(MU_DEC(__COUNTER__)))), NULL, CTEST_TEST_SUITE_CLEANUP }; \
     static void TestSuiteCleanup(void)
 
-#define CTEST_FUNCTION_INITIALIZE()	\
+#define CTEST_FUNCTION_INITIALIZE()    \
     static void TestFunctionInitialize(void); \
-    static const TEST_FUNCTION_DATA STR_CONCAT(TestFunctionData, EXPAND_1(CTEST_INC(__COUNTER__))) = \
-{ TestFunctionInitialize, "TestFunctionInitialize", &STR_CONCAT(TestFunctionData, EXPAND_1(CTEST_DEC(CTEST_DEC(__COUNTER__)))), NULL, CTEST_TEST_FUNCTION_INITIALIZE }; \
+    static const TEST_FUNCTION_DATA MU_C2(TestFunctionData, MU_C1(MU_INC(__COUNTER__))) = \
+{ TestFunctionInitialize, "TestFunctionInitialize", &MU_C2(TestFunctionData, MU_C1(MU_DEC(MU_DEC(__COUNTER__)))), NULL, CTEST_TEST_FUNCTION_INITIALIZE }; \
     static void TestFunctionInitialize(void)
 
-#define CTEST_FUNCTION_CLEANUP()	\
+#define CTEST_FUNCTION_CLEANUP()    \
     static void TestFunctionCleanup(void); \
-    static const TEST_FUNCTION_DATA STR_CONCAT(TestFunctionData, EXPAND_1(CTEST_INC(__COUNTER__))) = \
-{ &TestFunctionCleanup, "TestFunctionCleanup", &STR_CONCAT(TestFunctionData, EXPAND_1(CTEST_DEC(CTEST_DEC(__COUNTER__)))), NULL, CTEST_TEST_FUNCTION_CLEANUP }; \
+    static const TEST_FUNCTION_DATA MU_C2(TestFunctionData, MU_C1(MU_INC(__COUNTER__))) = \
+{ &TestFunctionCleanup, "TestFunctionCleanup", &MU_C2(TestFunctionData, MU_C1(MU_DEC(MU_DEC(__COUNTER__)))), NULL, CTEST_TEST_FUNCTION_CLEANUP }; \
     static void TestFunctionCleanup(void)
 
 #define CTEST_END_TEST_SUITE(testSuiteName) \
-    static const TEST_FUNCTION_DATA STR_CONCAT(TestFunctionData, EXPAND_1(CTEST_INC(__COUNTER__))) = { NULL, NULL, NULL, NULL, CTEST_TEST_FUNCTION }; \
-    C_LINKAGE_PREFIX const TEST_FUNCTION_DATA TestListHead_##testSuiteName = { NULL, NULL, &STR_CONCAT(TestFunctionData, EXPAND_1(CTEST_DEC(CTEST_DEC(__COUNTER__)))), NULL, CTEST_END_SUITE }; \
+    static const TEST_FUNCTION_DATA MU_C2(TestFunctionData, MU_C1(MU_INC(__COUNTER__))) = { NULL, NULL, NULL, NULL, CTEST_TEST_FUNCTION }; \
+    C_LINKAGE_PREFIX const TEST_FUNCTION_DATA TestListHead_##testSuiteName = { NULL, NULL, &MU_C2(TestFunctionData, MU_C1(MU_DEC(MU_DEC(__COUNTER__)))), NULL, CTEST_END_SUITE }; \
     static const int* TestListHead_End_##testSuiteName = &TestListHead_Begin_##testSuiteName;
 
 #define PRINT_MY_ARG_2(A)
@@ -145,17 +142,19 @@ extern jmp_buf g_ExceptionJump;
 
 #ifdef _MSC_VER
 #define PRINT_SECOND_ARG(argCount, B) \
-    C2(PRINT_MY_ARG_,argCount) LPAREN B )
+    MU_C2(PRINT_MY_ARG_,argCount) MU_LPAREN B )
 #else
 #define PRINT_SECOND_ARG(argCount, B) \
-    C2(PRINT_MY_ARG_,argCount) (B)
+    MU_C2(PRINT_MY_ARG_,argCount) (B)
 #endif
+
+#define FIRST_ARG(A, ...) A
 
 #define CTEST_RUN_TEST_SUITE(...) \
 do \
 { \
-	extern C_LINKAGE const TEST_FUNCTION_DATA C2(TestListHead_,FIRST_ARG(__VA_ARGS__)); \
-	IF(DIV2(COUNT_ARG(__VA_ARGS__)),FOR_EACH_1_COUNTED(PRINT_SECOND_ARG, __VA_ARGS__),) RunTests(&C2(TestListHead_, FIRST_ARG(__VA_ARGS__)), TOSTRING(FIRST_ARG(__VA_ARGS__))); \
+    extern C_LINKAGE const TEST_FUNCTION_DATA MU_C2(TestListHead_,FIRST_ARG(__VA_ARGS__)); \
+    MU_IF(MU_DIV2(MU_COUNT_ARG(__VA_ARGS__)),MU_FOR_EACH_1_COUNTED(PRINT_SECOND_ARG, __VA_ARGS__),) RunTests(&MU_C2(TestListHead_, FIRST_ARG(__VA_ARGS__)), MU_TOSTRING(FIRST_ARG(__VA_ARGS__))); \
 } while ((void)0,0)
 
 typedef const char* char_ptr;
@@ -210,21 +209,21 @@ extern C_LINKAGE void ctest_sprintf_free(char* string);
 
 #define CTEST_COMPARE(toStringType, cType) \
     typedef cType toStringType; \
-    static int C2(toStringType,_Compare)(toStringType left, toStringType right)
+    static int MU_C2(toStringType,_Compare)(toStringType left, toStringType right)
 
 #define CTEST_TO_STRING(toStringType, cType, string, bufferSize, value) \
-static void C2(toStringType,_ToString)(char* string, size_t bufferSize, cType value)
+static void MU_C2(toStringType,_ToString)(char* string, size_t bufferSize, cType value)
 
 // these are generic macros for formatting the optional message
 // they can be used in all the ASSERT macros without repeating the code over and over again
 #define GET_MESSAGE_FORMATTED(format, ...) \
-    IF(COUNT_ARG(__VA_ARGS__), ctest_sprintf_char(format, __VA_ARGS__), ctest_sprintf_char(format));
+    MU_IF(MU_COUNT_ARG(__VA_ARGS__), ctest_sprintf_char(format, __VA_ARGS__), ctest_sprintf_char(format));
 
 #define GET_MESSAGE_FORMATTED_EMPTY(...) \
     NULL
 
 #define GET_MESSAGE(...) \
-    IF(COUNT_ARG(__VA_ARGS__), GET_MESSAGE_FORMATTED, GET_MESSAGE_FORMATTED_EMPTY)(__VA_ARGS__)
+    MU_IF(MU_COUNT_ARG(__VA_ARGS__), GET_MESSAGE_FORMATTED, GET_MESSAGE_FORMATTED_EMPTY)(__VA_ARGS__)
 
 void do_jump(jmp_buf *exceptionJump, const volatile void* expected, const volatile void* actual);
 
@@ -234,9 +233,9 @@ do { \
     const type B_value = (const type)(B); \
     char expectedString[1024]; \
     char actualString[1024]; \
-    C2(type,_ToString)(expectedString, sizeof(expectedString), A_value); /*one evaluation per argument*/ \
-    C2(type,_ToString)(actualString, sizeof(actualString), B_value);/*one evaluation per argument*/ \
-    if (C2(type,_Compare)(A_value, B_value)) \
+    MU_C2(type,_ToString)(expectedString, sizeof(expectedString), A_value); /*one evaluation per argument*/ \
+    MU_C2(type,_ToString)(actualString, sizeof(actualString), B_value);/*one evaluation per argument*/ \
+    if (MU_C2(type,_Compare)(A_value, B_value)) \
     { \
         char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
         (void)printf("  Assert failed in line %d %s Expected: %s, Actual: %s\n", __LINE__, (ctest_message == NULL) ? "" : ctest_message, expectedString, actualString); \
@@ -252,9 +251,9 @@ do { \
     const type B_value = (const type)(B); \
     char expectedString[1024]; \
     char actualString[1024]; \
-    C2(type,_ToString)(expectedString, sizeof(expectedString), A_value); /*one evaluation per argument*/ \
-    C2(type,_ToString)(actualString, sizeof(actualString), B_value);/*one evaluation per argument*/ \
-    if (!C2(type,_Compare)(A_value, B_value)) \
+    MU_C2(type,_ToString)(expectedString, sizeof(expectedString), A_value); /*one evaluation per argument*/ \
+    MU_C2(type,_ToString)(actualString, sizeof(actualString), B_value);/*one evaluation per argument*/ \
+    if (!MU_C2(type,_Compare)(A_value, B_value)) \
     { \
         char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
         (void)printf("  Assert failed in line %d: %s Expected: %s, Actual: %s\n", __LINE__, (ctest_message == NULL) ? "" : ctest_message, expectedString, actualString); \
