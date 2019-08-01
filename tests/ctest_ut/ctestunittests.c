@@ -79,5 +79,16 @@ int main()
         }
     }
 
+#if defined _MSC_VER
+    {
+        size_t temp_failed_tests = 0;
+        CTEST_RUN_TEST_SUITE(WindowsTypesTests, temp_failed_tests);
+        if (temp_failed_tests != 5) // 5 expected failing tests
+        {
+            failedTests++;
+        }
+    }
+#endif
+
     return failedTests;
 }
