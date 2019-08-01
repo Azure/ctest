@@ -20,6 +20,13 @@ set(ctest_ut_c_files
     testsuitecleanuptests2.c
 )
 
+if (MSVC)
+set(ctest_ut_c_files
+    ${ctest_ut_c_files}
+    windows_types_tests.c
+)
+endif()
+
 set(ctest_ut_cpp_files
     simpletestsuiteonetestcpp.cpp
 )

@@ -71,11 +71,24 @@ endif()
 include_directories(${MACRO_UTILS_INC_FOLDER})
 
 set(ctest_c_files
-./src/ctest.c
+    ./src/ctest.c
 )
 
 set(ctest_h_files
-./inc/ctest.h)
+    ./inc/ctest.h
+)
+
+if (MSVC)
+set(ctest_c_files
+    ${ctest_c_files}
+    ./src/ctest_windows.c
+)
+
+set(ctest_h_files
+    ${ctest_h_files}
+    ./inc/ctest_windows.h
+)
+endif()
 
 #these are the include folders
 #the following "set" statetement exports across the project a global variable called CTEST_INC_FOLDER that expands to whatever needs to included when using ctest library

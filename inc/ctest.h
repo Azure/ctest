@@ -25,6 +25,7 @@
 #endif
 
 #if defined _MSC_VER
+#include "ctest_windows.h"
 #define CTEST_USE_STDINT
 #define snprintf _snprintf
 #elif defined __cplusplus
