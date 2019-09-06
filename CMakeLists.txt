@@ -112,6 +112,12 @@ add_library(
 ctest ${ctest_c_files} ${ctest_h_files}
 )
 
+target_include_directories(ctest
+    PUBLIC
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/inc>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
+
 set_target_properties(ctest
                PROPERTIES
                FOLDER "test_tools")
