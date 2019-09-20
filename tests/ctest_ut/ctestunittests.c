@@ -10,6 +10,14 @@ int main()
     /* This first suite is ran without counting failed tests to prove that the argument is optional. */
     CTEST_RUN_TEST_SUITE(SimpleTestSuiteOneTest);
 
+    {
+        size_t temp_failed_tests = 0;
+        CTEST_RUN_TEST_SUITE(enum_define_tests, temp_failed_tests);
+        if (temp_failed_tests != 2) // 2 expected failing tests
+        {
+            failedTests++;
+        }
+    }
     CTEST_RUN_TEST_SUITE(SimpleTestSuiteOneTest, failedTests);
     CTEST_RUN_TEST_SUITE(SimpleTestSuiteTwoTests, failedTests);
     CTEST_RUN_TEST_SUITE(TestSuiteInitializeCleanupTests, failedTests);

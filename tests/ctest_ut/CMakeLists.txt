@@ -8,6 +8,7 @@ set(ctest_ut_c_files
     assertfailurestests.c
     assertsuccesstests.c
     ctestunittests.c
+    enum_define_tests.c
     simpletestsuiteonetest.c
     simpletestsuitetwotests.c
     testfunctioncleanuptests.c

@@ -331,6 +331,30 @@ do \
 } \
 while(0)
 
+// this macro expans to the needed _ToString and _Compare functions for an enum,
+// while using the macro utils ENUM_TO_STRING
+#define CTEST_DEFINE_ENUM_TYPE(enum_name, ...) \
+static void MU_C2(enum_name, _ToString)(char* dest, size_t bufferSize, enum_name enumValue) \
+{ \
+    (void)snprintf(dest, bufferSize, "%s", MU_ENUM_TO_STRING(enum_name, enumValue)); \
+} \
+static int MU_C2(enum_name, _Compare)(enum_name left, enum_name right) \
+{ \
+    return left != right; \
+}
+
+// this macro expans to the needed _ToString and _Compare functions for an enum defined with MU_DEFINE_ENUM_2,
+// while using the macro utils ENUM_TO_STRING_2
+#define CTEST_DEFINE_ENUM_2_TYPE(enum_name, ...) \
+static void MU_C2(enum_name, _ToString)(char* dest, size_t bufferSize, enum_name enumValue) \
+{ \
+    (void)snprintf(dest, bufferSize, "%s", MU_ENUM_TO_STRING_2(enum_name, enumValue)); \
+} \
+static int MU_C2(enum_name, _Compare)(enum_name left, enum_name right) \
+{ \
+    return left != right; \
+}
+
 extern C_LINKAGE size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName);
 
 #ifdef __cplusplus

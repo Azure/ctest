@@ -305,3 +305,35 @@ The `CTest` harness supports out of the box string formatting and comparers for 
 - `double`
 - `long double`
 - `char*` (`char_ptr`)
+
+### CTEST_DEFINE_ENUM_TYPE
+
+`CTEST_DEFINE_ENUM_TYPE` can be used with an enum defined by using the macro utils feature `MU_DEFINE_ENUM` in order to generate the needed `_ToString` and `_Compare` functions.
+
+Example:
+
+```c
+#define TEST_ENUM_VALUES \
+    TEST_VALUE_A, \
+    TEST_VALUE_B
+
+MU_DEFINE_ENUM(TEST_ENUM, TEST_ENUM_VALUES)
+MU_DEFINE_ENUM_STRINGS(TEST_ENUM, TEST_ENUM_VALUES)
+CTEST_DEFINE_ENUM_TYPE(TEST_ENUM, TEST_ENUM_VALUES)
+```
+
+### CTEST_DEFINE_ENUM_2_TYPE
+
+`CTEST_DEFINE_ENUM_2_TYPE` can be used with an enum defined by using the macro utils feature `MU_DEFINE_ENUM_2` in order to generate the needed `_ToString` and `_Compare` functions.
+
+Example:
+
+```c
+#define TEST_ENUM_VALUES \
+    TEST_VALUE_A, 0 \
+    TEST_VALUE_B, 1
+
+MU_DEFINE_ENUM_2(TEST_ENUM, TEST_ENUM_VALUES)
+MU_DEFINE_ENUM_STRINGS_2(TEST_ENUM, TEST_ENUM_VALUES)
+CTEST_DEFINE_ENUM_2_TYPE(TEST_ENUM, TEST_ENUM_VALUES)
+```
