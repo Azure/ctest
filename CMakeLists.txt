@@ -24,12 +24,17 @@ option(use_coloring "use test coloring (default is ON)" ON)
 else()
 option(use_coloring "use test coloring (default is OFF)" OFF)
 endif()
+option(abort_on_fail "abort on test failure (default is OFF)" OFF)
 
 include (CTest)
 include (CheckIncludeFiles)
 
 if(${use_coloring})
-add_definitions(-DUSE_COLORING)
+    add_definitions(-DUSE_COLORING)
+endif()
+
+if(${abort_on_fail})
+    add_definitions(-DCTEST_ABORT_ON_FAIL)
 endif()
 
 if (CMAKE_VERSION VERSION_LESS "3.1")
