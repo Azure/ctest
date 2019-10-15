@@ -525,7 +525,9 @@ void do_jump(jmp_buf *exceptionJump, const volatile void* expected, const volati
     (void)expected;
     (void)actual;
 #if CTEST_ABORT_ON_FAIL
+    (void)exceptionJump;
     abort();
-#endif
+#else
     longjmp(*exceptionJump, 0xca1e4);
+#endif
 }
