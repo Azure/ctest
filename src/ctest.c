@@ -35,6 +35,8 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
     int testSuiteInitializeFailed = 0;
 
 #if defined _MSC_VER && !defined(WINCE)
+    _set_abort_behavior(_CALL_REPORTFAULT, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
+
     // Set output mode to handle virtual terminal sequences
     HANDLE std_out_handle = GetStdHandle(STD_OUTPUT_HANDLE);
     bool SetConsoleMode_succeeded = false;
@@ -522,5 +524,8 @@ void do_jump(jmp_buf *exceptionJump, const volatile void* expected, const volati
     /*setting a breakpoint here allows catching the jump before it happens*/
     (void)expected;
     (void)actual;
+#if CTEST_ABORT_ON_FAIL
+    abort();
+#endif
     longjmp(*exceptionJump, 0xca1e4);
 }
