@@ -217,8 +217,8 @@ static void MU_C2(toStringType,_ToString)(char* string, size_t bufferSize, cType
 
 // these are generic macros for formatting the optional message
 // they can be used in all the ASSERT macros without repeating the code over and over again
-#define GET_MESSAGE_FORMATTED(format, ...) \
-    MU_IF(MU_COUNT_ARG(__VA_ARGS__), ctest_sprintf_char(format, __VA_ARGS__), ctest_sprintf_char(format));
+#define GET_MESSAGE_FORMATTED(...) \
+    ctest_sprintf_char(__VA_ARGS__);(void)(0 && printf(__VA_ARGS__)); \
 
 #define GET_MESSAGE_FORMATTED_EMPTY(...) \
     NULL
