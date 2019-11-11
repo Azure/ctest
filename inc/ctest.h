@@ -20,6 +20,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <setjmp.h>
+#include <wchar.h>
 #define C_LINKAGE
 #define C_LINKAGE_PREFIX
 #endif
@@ -139,7 +140,7 @@ extern jmp_buf g_ExceptionJump;
 #define PRINT_MY_ARG_2(A)
 
 #define PRINT_MY_ARG_1(A) \
-    A += 
+    A +=
 
 #ifdef _MSC_VER
 #define PRINT_SECOND_ARG(argCount, B) \
@@ -159,6 +160,7 @@ do \
 } while ((void)0,0)
 
 typedef const char* char_ptr;
+typedef const wchar_t* wchar_ptr;
 typedef void* void_ptr;
 typedef long double long_double;
 typedef unsigned long unsigned_long;
@@ -172,6 +174,7 @@ extern C_LINKAGE void float_ToString(char* string, size_t bufferSize, float val)
 extern C_LINKAGE void double_ToString(char* string, size_t bufferSize, double val);
 extern C_LINKAGE void long_double_ToString(char* string, size_t bufferSize, long double val);
 extern C_LINKAGE void char_ptr_ToString(char* string, size_t bufferSize, const char* val);
+extern C_LINKAGE void wchar_ptr_ToString(char* string, size_t bufferSize, const wchar_t* val);
 extern C_LINKAGE void void_ptr_ToString(char* string, size_t bufferSize, const void* val);
 extern C_LINKAGE void unsigned_long_ToString(char* string, size_t bufferSize, unsigned long val);
 extern C_LINKAGE int int_Compare(int left, int right);
@@ -183,6 +186,7 @@ extern C_LINKAGE int float_Compare(float left, float right);
 extern C_LINKAGE int double_Compare(double left, double right);
 extern C_LINKAGE int long_double_Compare(long double left, long double right);
 extern C_LINKAGE int char_ptr_Compare(const char* left, const char* right);
+extern C_LINKAGE int wchar_ptr_Compare(const wchar_t* left, const wchar_t* right);
 extern C_LINKAGE int void_ptr_Compare(const void * left, const void* right);
 extern C_LINKAGE int unsigned_long_Compare(unsigned long left, unsigned long right);
 
@@ -331,7 +335,7 @@ do \
 } \
 while(0)
 
-// this macro expans to the needed _ToString and _Compare functions for an enum,
+// this macro expands to the needed _ToString and _Compare functions for an enum,
 // while using the macro utils ENUM_TO_STRING
 #define CTEST_DEFINE_ENUM_TYPE(enum_name, ...) \
 static void MU_C2(enum_name, _ToString)(char* dest, size_t bufferSize, enum_name enumValue) \
@@ -343,7 +347,7 @@ static int MU_C2(enum_name, _Compare)(enum_name left, enum_name right) \
     return left != right; \
 }
 
-// this macro expans to the needed _ToString and _Compare functions for an enum defined with MU_DEFINE_ENUM_2,
+// this macro expands to the needed _ToString and _Compare functions for an enum defined with MU_DEFINE_ENUM_2,
 // while using the macro utils ENUM_TO_STRING_2
 #define CTEST_DEFINE_ENUM_2_TYPE(enum_name, ...) \
 static void MU_C2(enum_name, _ToString)(char* dest, size_t bufferSize, enum_name enumValue) \

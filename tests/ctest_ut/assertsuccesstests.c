@@ -92,6 +92,11 @@ CTEST_FUNCTION(Assert_Are_Equal_2_strings_With_To_String_Type_Succeeds)
     CTEST_ASSERT_ARE_EQUAL(char_ptr, "dan", "dan");
 }
 
+CTEST_FUNCTION(Assert_Are_Equal_2_wide_strings_With_To_String_Type_Succeeds)
+{
+    CTEST_ASSERT_ARE_EQUAL(wchar_ptr, L"matt", L"matt");
+}
+
 CTEST_FUNCTION(Assert_Are_Equal_2_strings_With_Same_Address_Succeeds)
 {
     char c1;
@@ -179,6 +184,11 @@ CTEST_FUNCTION(Assert_Are_Equal_With_Msg_2_strings_With_To_String_Type_Succeeds)
     CTEST_ASSERT_ARE_EQUAL(char_ptr, "dan", "dan", "Test message");
 }
 
+CTEST_FUNCTION(Assert_Are_Equal_With_Msg_2_wide_strings_With_To_String_Type_Succeeds)
+{
+    CTEST_ASSERT_ARE_EQUAL(wchar_ptr, L"matt", L"matt", "Test message");
+}
+
 CTEST_FUNCTION(Assert_Are_Equal_With_Msg_2_void_ptr_same_address_Succeeds)
 {
     char c1;
@@ -264,6 +274,11 @@ CTEST_FUNCTION(Assert_Are_Not_Equal_2_strings_With_To_String_Type_Succeeds)
     CTEST_ASSERT_ARE_NOT_EQUAL(char_ptr, "test", "dan");
 }
 
+CTEST_FUNCTION(Assert_Are_Not_Equal_2_wide_strings_With_To_String_Type_Succeeds)
+{
+    CTEST_ASSERT_ARE_NOT_EQUAL(wchar_ptr, L"test", L"matt");
+}
+
 CTEST_FUNCTION(Assert_Are_Not_Equal_2_void_ptr_different_address_Succeeds)
 {
     int c1, c2;
@@ -347,6 +362,11 @@ CTEST_FUNCTION(Assert_Are_Not_Equal_With_Msg_2_int64_t_Succeeds)
 CTEST_FUNCTION(Assert_Are_Not_Equal_With_Msg_2_strings_With_To_String_Type_Succeeds)
 {
     CTEST_ASSERT_ARE_NOT_EQUAL(char_ptr, "test", "dan", "Test message");
+}
+
+CTEST_FUNCTION(Assert_Are_Not_Equal_With_Msg_2_wide_strings_With_To_String_Type_Succeeds)
+{
+    CTEST_ASSERT_ARE_NOT_EQUAL(wchar_ptr, L"test", L"matt", "Test message");
 }
 
 CTEST_FUNCTION(Assert_Are_Not_Equal_With_Msg_2_void_ptr_with_different_addresses_Succeeds)
