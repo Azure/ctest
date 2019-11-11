@@ -94,6 +94,11 @@ CTEST_FUNCTION(Assert_Are_Equal_2_strings_With_To_String_Type_Fails)
     CTEST_ASSERT_ARE_EQUAL(char_ptr, "test", "dan", "test arg:%d", 42);
 }
 
+CTEST_FUNCTION(Assert_Are_Equal_2_wide_strings_With_To_String_Type_Fails)
+{
+    CTEST_ASSERT_ARE_EQUAL(wchar_ptr, L"test", L"matt", "test arg:%d", 42);
+}
+
 CTEST_FUNCTION(Assert_Are_Equal_2_void_ptr_With_To_Different_Addresses_Fails)
 {
     char c1, c2;
@@ -182,6 +187,11 @@ CTEST_FUNCTION(Assert_Are_Not_Equal_2_int64_t_Fails)
 CTEST_FUNCTION(Assert_Are_Not_Equal_2_strings_With_To_String_Type_Fails)
 {
     CTEST_ASSERT_ARE_NOT_EQUAL(char_ptr, "dan", "dan", "Test message:%d", 42);
+}
+
+CTEST_FUNCTION(Assert_Are_Not_Equal_2_wide_strings_With_To_String_Type_Fails)
+{
+    CTEST_ASSERT_ARE_NOT_EQUAL(wchar_ptr, L"matt", L"matt", "Test message:%d", 42);
 }
 
 CTEST_FUNCTION(Assert_Are_Not_Equal_2_void_ptr_With_2_same_addresses_Fails)

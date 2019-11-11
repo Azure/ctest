@@ -26,7 +26,7 @@ int main()
         // tests with regular assert failures, no special messages
         size_t temp_failed_tests = 0;
         CTEST_RUN_TEST_SUITE(AssertFailureTests, temp_failed_tests);
-        if (temp_failed_tests != 71)
+        if (temp_failed_tests != 75)
         {
             failedTests ++;
         }
@@ -35,7 +35,7 @@ int main()
         // tests with assert failures with printf like messages
         size_t temp_failed_tests = 0;
         CTEST_RUN_TEST_SUITE(AssertFailureTestsWithPrintfLikeMsgs, temp_failed_tests);
-        if (temp_failed_tests != 36)
+        if (temp_failed_tests != 38)
         {
             failedTests++;
         }

@@ -7,6 +7,7 @@
 #include <inttypes.h>
 #include <stdbool.h>
 #include <setjmp.h>
+#include <wchar.h>
 
 #include "ctest.h"
 
@@ -63,7 +64,7 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
             }
         }
     }
-    
+
 #endif
 
     g_CurrentTestFunction = NULL;
@@ -289,6 +290,11 @@ void char_ptr_ToString(char* string, size_t bufferSize, const char* val)
     (void)snprintf(string, bufferSize, "%s", val);
 }
 
+void wchar_ptr_ToString(char* string, size_t bufferSize, const wchar_t* val)
+{
+    (void)snprintf(string, bufferSize, "%ls", val);
+}
+
 void void_ptr_ToString(char* string, size_t bufferSize, const void* val)
 {
     (void)snprintf(string, bufferSize, "%p", val);
@@ -362,6 +368,27 @@ int char_ptr_Compare(const char* left, const char* right)
     else
     {
         return strcmp(left, right);
+    }
+}
+
+int wchar_ptr_Compare(const wchar_t* left, const wchar_t* right)
+{
+    if ((left == NULL) &&
+        (right == NULL))
+    {
+        return 0;
+    }
+    else if (left == NULL)
+    {
+        return -1;
+    }
+    else if (right == NULL)
+    {
+        return 1;
+    }
+    else
+    {
+        return wcscmp(left, right);
     }
 }
 
