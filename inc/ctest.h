@@ -28,7 +28,12 @@
 #if defined _MSC_VER
 #include "ctest_windows.h"
 #define CTEST_USE_STDINT
+#if _MSC_VER < 1900 
+/*https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/snprintf-snprintf-snprintf-l-snwprintf-snwprintf-l?view=vs-2019 says snprintf is C99 compliant since VS 2015*/
+/*https://docs.microsoft.com/en-us/cpp/preprocessor/predefined-macros?view=vs-2019 says VS 2015 is 1900*/
+/*so for all the "old" VSes use _snprintf*/
 #define snprintf _snprintf
+#endif
 #elif defined __cplusplus
 #define CTEST_USE_STDINT
 #elif defined __STDC_VERSION__
