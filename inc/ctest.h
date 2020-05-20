@@ -4,8 +4,6 @@
 #ifndef CTEST_H
 #define CTEST_H
 
-#include "azure_macro_utils/macro_utils.h"
-
 #ifdef __cplusplus
 #include <cstddef>
 #include <cstring>
@@ -13,7 +11,6 @@
 #include <csetjmp>
 #include <setjmp.h> /* Some compilers do not want to play by the standard, specifically ARM CC */
 #include <stdio.h> /* Some compilers do not want to play by the standard, specifically ARM CC */
-#define C_LINKAGE "C"
 #define C_LINKAGE_PREFIX extern "C"
 #else
 #include <stddef.h>
@@ -21,9 +18,11 @@
 #include <stdio.h>
 #include <setjmp.h>
 #include <wchar.h>
-#define C_LINKAGE
 #define C_LINKAGE_PREFIX
 #endif
+
+#include "azure_macro_utils/macro_utils.h"
+#include "azure_c_logging/xlogging.h"
 
 #if defined _MSC_VER
 #include "ctest_windows.h"
@@ -160,7 +159,7 @@ extern jmp_buf g_ExceptionJump;
 #define CTEST_RUN_TEST_SUITE(...) \
 do \
 { \
-    extern C_LINKAGE const TEST_FUNCTION_DATA MU_C2(TestListHead_,FIRST_ARG(__VA_ARGS__)); \
+    C_LINKAGE_PREFIX const TEST_FUNCTION_DATA MU_C2(TestListHead_,FIRST_ARG(__VA_ARGS__)); \
     MU_IF(MU_DIV2(MU_COUNT_ARG(__VA_ARGS__)),MU_FOR_EACH_1_COUNTED(PRINT_SECOND_ARG, __VA_ARGS__),) RunTests(&MU_C2(TestListHead_, FIRST_ARG(__VA_ARGS__)), MU_TOSTRING(FIRST_ARG(__VA_ARGS__))); \
 } while ((void)0,0)
 
@@ -170,52 +169,52 @@ typedef void* void_ptr;
 typedef long double long_double;
 typedef unsigned long unsigned_long;
 
-extern C_LINKAGE void int_ToString(char* string, size_t bufferSize, int val);
-extern C_LINKAGE void char_ToString(char* string, size_t bufferSize, char val);
-extern C_LINKAGE void short_ToString(char* string, size_t bufferSize, short val);
-extern C_LINKAGE void long_ToString(char* string, size_t bufferSize, long val);
-extern C_LINKAGE void size_t_ToString(char* string, size_t bufferSize, size_t val);
-extern C_LINKAGE void float_ToString(char* string, size_t bufferSize, float val);
-extern C_LINKAGE void double_ToString(char* string, size_t bufferSize, double val);
-extern C_LINKAGE void long_double_ToString(char* string, size_t bufferSize, long double val);
-extern C_LINKAGE void char_ptr_ToString(char* string, size_t bufferSize, const char* val);
-extern C_LINKAGE void wchar_ptr_ToString(char* string, size_t bufferSize, const wchar_t* val);
-extern C_LINKAGE void void_ptr_ToString(char* string, size_t bufferSize, const void* val);
-extern C_LINKAGE void unsigned_long_ToString(char* string, size_t bufferSize, unsigned long val);
-extern C_LINKAGE int int_Compare(int left, int right);
-extern C_LINKAGE int char_Compare(char left, char right);
-extern C_LINKAGE int short_Compare(short left, short right);
-extern C_LINKAGE int long_Compare(long left, long right);
-extern C_LINKAGE int size_t_Compare(size_t left, size_t right);
-extern C_LINKAGE int float_Compare(float left, float right);
-extern C_LINKAGE int double_Compare(double left, double right);
-extern C_LINKAGE int long_double_Compare(long double left, long double right);
-extern C_LINKAGE int char_ptr_Compare(const char* left, const char* right);
-extern C_LINKAGE int wchar_ptr_Compare(const wchar_t* left, const wchar_t* right);
-extern C_LINKAGE int void_ptr_Compare(const void * left, const void* right);
-extern C_LINKAGE int unsigned_long_Compare(unsigned long left, unsigned long right);
+C_LINKAGE_PREFIX void int_ToString(char* string, size_t bufferSize, int val);
+C_LINKAGE_PREFIX void char_ToString(char* string, size_t bufferSize, char val);
+C_LINKAGE_PREFIX void short_ToString(char* string, size_t bufferSize, short val);
+C_LINKAGE_PREFIX void long_ToString(char* string, size_t bufferSize, long val);
+C_LINKAGE_PREFIX void size_t_ToString(char* string, size_t bufferSize, size_t val);
+C_LINKAGE_PREFIX void float_ToString(char* string, size_t bufferSize, float val);
+C_LINKAGE_PREFIX void double_ToString(char* string, size_t bufferSize, double val);
+C_LINKAGE_PREFIX void long_double_ToString(char* string, size_t bufferSize, long double val);
+C_LINKAGE_PREFIX void char_ptr_ToString(char* string, size_t bufferSize, const char* val);
+C_LINKAGE_PREFIX void wchar_ptr_ToString(char* string, size_t bufferSize, const wchar_t* val);
+C_LINKAGE_PREFIX void void_ptr_ToString(char* string, size_t bufferSize, const void* val);
+C_LINKAGE_PREFIX void unsigned_long_ToString(char* string, size_t bufferSize, unsigned long val);
+C_LINKAGE_PREFIX int int_Compare(int left, int right);
+C_LINKAGE_PREFIX int char_Compare(char left, char right);
+C_LINKAGE_PREFIX int short_Compare(short left, short right);
+C_LINKAGE_PREFIX int long_Compare(long left, long right);
+C_LINKAGE_PREFIX int size_t_Compare(size_t left, size_t right);
+C_LINKAGE_PREFIX int float_Compare(float left, float right);
+C_LINKAGE_PREFIX int double_Compare(double left, double right);
+C_LINKAGE_PREFIX int long_double_Compare(long double left, long double right);
+C_LINKAGE_PREFIX int char_ptr_Compare(const char* left, const char* right);
+C_LINKAGE_PREFIX int wchar_ptr_Compare(const wchar_t* left, const wchar_t* right);
+C_LINKAGE_PREFIX int void_ptr_Compare(const void * left, const void* right);
+C_LINKAGE_PREFIX int unsigned_long_Compare(unsigned long left, unsigned long right);
 
 #if defined CTEST_USE_STDINT
-extern C_LINKAGE void uint8_t_ToString(char* string, size_t bufferSize, uint8_t val);
-extern C_LINKAGE void int8_t_ToString(char* string, size_t bufferSize, int8_t val);
-extern C_LINKAGE void uint16_t_ToString(char* string, size_t bufferSize, uint16_t val);
-extern C_LINKAGE void int16_t_ToString(char* string, size_t bufferSize, int16_t val);
-extern C_LINKAGE void uint32_t_ToString(char* string, size_t bufferSize, uint32_t val);
-extern C_LINKAGE void int32_t_ToString(char* string, size_t bufferSize, int32_t val);
-extern C_LINKAGE void uint64_t_ToString(char* string, size_t bufferSize, uint64_t val);
-extern C_LINKAGE void int64_t_ToString(char* string, size_t bufferSize, int64_t val);
-extern C_LINKAGE int uint8_t_Compare(uint8_t left, uint8_t right);
-extern C_LINKAGE int int8_t_Compare(int8_t left, int8_t right);
-extern C_LINKAGE int uint16_t_Compare(uint16_t left, uint16_t right);
-extern C_LINKAGE int int16_t_Compare(int16_t left, int16_t right);
-extern C_LINKAGE int uint32_t_Compare(uint32_t left, uint32_t right);
-extern C_LINKAGE int int32_t_Compare(int32_t left, int32_t right);
-extern C_LINKAGE int uint64_t_Compare(uint64_t left, uint64_t right);
-extern C_LINKAGE int int64_t_Compare(int64_t left, int64_t right);
+C_LINKAGE_PREFIX void uint8_t_ToString(char* string, size_t bufferSize, uint8_t val);
+C_LINKAGE_PREFIX void int8_t_ToString(char* string, size_t bufferSize, int8_t val);
+C_LINKAGE_PREFIX void uint16_t_ToString(char* string, size_t bufferSize, uint16_t val);
+C_LINKAGE_PREFIX void int16_t_ToString(char* string, size_t bufferSize, int16_t val);
+C_LINKAGE_PREFIX void uint32_t_ToString(char* string, size_t bufferSize, uint32_t val);
+C_LINKAGE_PREFIX void int32_t_ToString(char* string, size_t bufferSize, int32_t val);
+C_LINKAGE_PREFIX void uint64_t_ToString(char* string, size_t bufferSize, uint64_t val);
+C_LINKAGE_PREFIX void int64_t_ToString(char* string, size_t bufferSize, int64_t val);
+C_LINKAGE_PREFIX int uint8_t_Compare(uint8_t left, uint8_t right);
+C_LINKAGE_PREFIX int int8_t_Compare(int8_t left, int8_t right);
+C_LINKAGE_PREFIX int uint16_t_Compare(uint16_t left, uint16_t right);
+C_LINKAGE_PREFIX int int16_t_Compare(int16_t left, int16_t right);
+C_LINKAGE_PREFIX int uint32_t_Compare(uint32_t left, uint32_t right);
+C_LINKAGE_PREFIX int int32_t_Compare(int32_t left, int32_t right);
+C_LINKAGE_PREFIX int uint64_t_Compare(uint64_t left, uint64_t right);
+C_LINKAGE_PREFIX int int64_t_Compare(int64_t left, int64_t right);
 #endif
 
-extern C_LINKAGE char* ctest_sprintf_char(const char* format, ...);
-extern C_LINKAGE void ctest_sprintf_free(char* string);
+C_LINKAGE_PREFIX char* ctest_sprintf_char(const char* format, ...);
+C_LINKAGE_PREFIX void ctest_sprintf_free(char* string);
 
 #define CTEST_COMPARE(toStringType, cType) \
     typedef cType toStringType; \
@@ -248,7 +247,7 @@ do { \
     if (MU_C2(type,_Compare)(A_value, B_value)) \
     { \
         char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
-        (void)printf("  Assert failed in line %d %s Expected: %s, Actual: %s\n", __LINE__, (ctest_message == NULL) ? "" : ctest_message, expectedString, actualString); \
+        LogError("  Assert failed in line %d %s Expected: %s, Actual: %s\n", __LINE__, (ctest_message == NULL) ? "" : ctest_message, expectedString, actualString); \
         ctest_sprintf_free(ctest_message); \
         if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
         do_jump(&g_ExceptionJump, expectedString, actualString); \
@@ -266,7 +265,7 @@ do { \
     if (!MU_C2(type,_Compare)(A_value, B_value)) \
     { \
         char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
-        (void)printf("  Assert failed in line %d: %s Expected: %s, Actual: %s\n", __LINE__, (ctest_message == NULL) ? "" : ctest_message, expectedString, actualString); \
+        LogError("  Assert failed in line %d: %s Expected: %s, Actual: %s\n", __LINE__, (ctest_message == NULL) ? "" : ctest_message, expectedString, actualString); \
         ctest_sprintf_free(ctest_message); \
         if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
         do_jump(&g_ExceptionJump, "some expected string", actualString); \
@@ -280,7 +279,7 @@ do \
     if (copy_of_value != NULL) \
     { \
         char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
-        (void)printf("  Assert failed in line %d: NULL expected, actual: 0x%p. %s\n", __LINE__, copy_of_value, (ctest_message == NULL) ? "" : ctest_message); \
+        LogError("  Assert failed in line %d: NULL expected, actual: 0x%p. %s\n", __LINE__, copy_of_value, (ctest_message == NULL) ? "" : ctest_message); \
         ctest_sprintf_free(ctest_message); \
         if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
         do_jump(&g_ExceptionJump, "expected it to be NULL (actual is the value)", copy_of_value); \
@@ -295,7 +294,7 @@ do \
     if (copy_of_value == NULL) \
     { \
         char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
-        (void)printf("  Assert failed in line %d: non-NULL expected. %s\n", __LINE__, (ctest_message == NULL) ? "" : ctest_message); \
+        LogError("  Assert failed in line %d: non-NULL expected. %s\n", __LINE__, (ctest_message == NULL) ? "" : ctest_message); \
         ctest_sprintf_free(ctest_message); \
         if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
         do_jump(&g_ExceptionJump, "expected it not to be NULL (actual is value)", copy_of_value); \
@@ -308,7 +307,7 @@ do { \
     if (expression_is_false) \
     { \
         char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
-        (void)printf("  Assert failed in line %d: Expression should be true: %s. %s\n", __LINE__, #expression, (ctest_message == NULL) ? "" : ctest_message); \
+        LogError("  Assert failed in line %d: Expression should be true: %s. %s\n", __LINE__, #expression, (ctest_message == NULL) ? "" : ctest_message); \
         ctest_sprintf_free(ctest_message); \
         if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
         do_jump(&g_ExceptionJump, "expected it to be true", "but it wasn't"); \
@@ -321,7 +320,7 @@ do { \
     if (expression_is_true) \
     { \
         char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
-        (void)printf("  Assert failed in line %d: Expression should be false: %s. %s\n", __LINE__, #expression, (ctest_message == NULL) ? "" : ctest_message); \
+        LogError("  Assert failed in line %d: Expression should be false: %s. %s\n", __LINE__, #expression, (ctest_message == NULL) ? "" : ctest_message); \
         ctest_sprintf_free(ctest_message); \
         if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
         do_jump(&g_ExceptionJump, "expected it to be false", "but it was true"); \
@@ -332,7 +331,7 @@ do { \
 do \
 { \
     char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
-    (void)printf("  Assert failed in line %d: %s \n" , __LINE__, (ctest_message == NULL) ? "" : ctest_message); \
+    LogError("  Assert failed in line %d: %s \n" , __LINE__, (ctest_message == NULL) ? "" : ctest_message); \
     ctest_sprintf_free(ctest_message); \
     if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
     do_jump(&g_ExceptionJump, (void*)"nothing expected, 100% fail", (void*)"nothing actual, 100% fail"); \
@@ -364,7 +363,7 @@ static int MU_C2(enum_name, _Compare)(enum_name left, enum_name right) \
     return left != right; \
 }
 
-extern C_LINKAGE size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName);
+C_LINKAGE_PREFIX size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName);
 
 #ifdef __cplusplus
 }
