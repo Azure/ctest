@@ -45,19 +45,19 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
     DWORD console_mode_initial = 0;
     if (std_out_handle == INVALID_HANDLE_VALUE)
     {
-        LogWarning("Error getting console handle, no coloring available. GetLastError()=%" PRIx32 "\n", GetLastError());
+        LogWarning("Error getting console handle, no coloring available. GetLastError()=%" PRIx32 "", GetLastError());
     }
     else
     {
         if (!GetConsoleMode(std_out_handle, &console_mode_initial))
         {
-            LogWarning("Error getting console mode, no coloring available. GetLastError()=%" PRIx32 "\n", GetLastError());
+            LogWarning("Error getting console mode, no coloring available. GetLastError()=%" PRIx32 "", GetLastError());
         }
         else
         {
             if (!SetConsoleMode(std_out_handle, console_mode_initial | ENABLE_VIRTUAL_TERMINAL_PROCESSING))
             {
-                LogWarning("Error setting console mode, no coloring available. GetLastError()=%" PRIx32 "\n", GetLastError());
+                LogWarning("Error setting console mode, no coloring available. GetLastError()=%" PRIx32 "", GetLastError());
             }
             else
             {
@@ -70,7 +70,7 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
 
     g_CurrentTestFunction = NULL;
 
-    LogInfo(" === Executing test suite %s ===\n", testSuiteName);
+    LogInfo(" === Executing test suite %s ===", testSuiteName);
 
     while (currentTestFunction->TestFunction != NULL)
     {
@@ -106,14 +106,14 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
         else
         {
             testSuiteInitializeFailed = 1;
-            LogError("TEST_SUITE_INITIALIZE failed - suite ending\n");
+            LogInfo("TEST_SUITE_INITIALIZE failed - suite ending");
         }
     }
 
     if (testSuiteInitializeFailed == 1)
     {
         /* print results */
-        LogError(CTEST_ANSI_COLOR_RED "0 tests ran, ALL failed, NONE succeeded.\n" CTEST_ANSI_COLOR_RESET);
+        LogInfo(CTEST_ANSI_COLOR_RED "0 tests ran, ALL failed, NONE succeeded." CTEST_ANSI_COLOR_RESET);
         failedTestCount = 1;
     }
     else
@@ -138,18 +138,18 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
                         else
                         {
                             testFunctionInitializeFailed = 1;
-                            LogError(CTEST_ANSI_COLOR_RED "TEST_FUNCTION_INITIALIZE failed - next TEST_FUNCTION will fail\n" CTEST_ANSI_COLOR_RESET);
+                            LogInfo(CTEST_ANSI_COLOR_RED "TEST_FUNCTION_INITIALIZE failed - next TEST_FUNCTION will fail" CTEST_ANSI_COLOR_RESET);
                         }
                     }
 
                     if (testFunctionInitializeFailed)
                     {
                         *currentTestFunction->TestResult = TEST_FAILED;
-                        LogWarning(CTEST_ANSI_COLOR_YELLOW "Not executing test %s ...\n" CTEST_ANSI_COLOR_RESET, currentTestFunction->TestFunctionName);
+                        LogInfo(CTEST_ANSI_COLOR_YELLOW "Not executing test %s ..." CTEST_ANSI_COLOR_RESET, currentTestFunction->TestFunctionName);
                     }
                     else
                     {
-                        LogInfo("Executing test %s ...\n", currentTestFunction->TestFunctionName);
+                        LogInfo("Executing test %s ...", currentTestFunction->TestFunctionName);
 
                         g_CurrentTestFunction = currentTestFunction;
 
@@ -188,16 +188,16 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
                 if (*currentTestFunction->TestResult == TEST_FAILED)
                 {
                     failedTestCount++;
-                    LogError(CTEST_ANSI_COLOR_RED "Test %s result = !!! FAILED !!!\n" CTEST_ANSI_COLOR_RESET, currentTestFunction->TestFunctionName);
+                    LogInfo(CTEST_ANSI_COLOR_RED "Test %s result = !!! FAILED !!!" CTEST_ANSI_COLOR_RESET, currentTestFunction->TestFunctionName);
                 }
                 else if (*currentTestFunction->TestResult == TEST_NOT_EXECUTED)
                 {
                     failedTestCount++;
-                    LogWarning(CTEST_ANSI_COLOR_YELLOW "Test %s ... SKIPPED due to a failure in test function cleanup. \n" CTEST_ANSI_COLOR_RESET, currentTestFunction->TestFunctionName);
+                    LogInfo(CTEST_ANSI_COLOR_YELLOW "Test %s ... SKIPPED due to a failure in test function cleanup. " CTEST_ANSI_COLOR_RESET, currentTestFunction->TestFunctionName);
                 }
                 else
                 {
-                    LogError(CTEST_ANSI_COLOR_GREEN "Test %s result = Succeeded.\n" CTEST_ANSI_COLOR_RESET, currentTestFunction->TestFunctionName);
+                    LogInfo(CTEST_ANSI_COLOR_GREEN "Test %s result = Succeeded." CTEST_ANSI_COLOR_RESET, currentTestFunction->TestFunctionName);
                 }
                 totalTestCount++;
             }
@@ -216,12 +216,12 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
         {
             /*only get here when testSuiteCleanup did asserted*/
             /*should fail the tests*/
-            LogError(CTEST_ANSI_COLOR_RED "TEST_SUITE_CLEANUP failed - all tests are marked as failed\n" CTEST_ANSI_COLOR_RESET);
+            LogInfo(CTEST_ANSI_COLOR_RED "TEST_SUITE_CLEANUP failed - all tests are marked as failed" CTEST_ANSI_COLOR_RESET);
             failedTestCount = (totalTestCount > 0) ? totalTestCount : SIZE_MAX;
         }
 
         /* print results */
-        LogInfo("%s%d tests ran, %d failed, %d succeeded.\n" CTEST_ANSI_COLOR_RESET, (failedTestCount > 0) ? (CTEST_ANSI_COLOR_RED) : (CTEST_ANSI_COLOR_GREEN), (int)totalTestCount, (int)failedTestCount, (int)(totalTestCount - failedTestCount));
+        LogInfo("%s%d tests ran, %d failed, %d succeeded." CTEST_ANSI_COLOR_RESET, (failedTestCount > 0) ? (CTEST_ANSI_COLOR_RED) : (CTEST_ANSI_COLOR_GREEN), (int)totalTestCount, (int)failedTestCount, (int)(totalTestCount - failedTestCount));
     }
 
 #if defined _MSC_VER && !defined(WINCE)
@@ -232,7 +232,7 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
             /*revert console to initial state*/
             if (!SetConsoleMode(std_out_handle, console_mode_initial))
             {
-                LogWarning("Error resetting console mode to initial value of %" PRIx32 ". GetLastError()=%" PRIx32 "\n", console_mode_initial, GetLastError());
+                LogWarning("Error resetting console mode to initial value of %" PRIx32 ". GetLastError()=%" PRIx32 "", console_mode_initial, GetLastError());
             }
         }
     }
@@ -486,7 +486,7 @@ static char* ctest_vsprintf_char(const char* format, va_list va)
     int neededSize = vsnprintf(NULL, 0, format, va);
     if (neededSize < 0)
     {
-        LogError("failure in vsnprintf\n");
+        LogError("failure in vsnprintf");
         result = NULL;
     }
     else
@@ -494,14 +494,14 @@ static char* ctest_vsprintf_char(const char* format, va_list va)
         result = malloc(neededSize + 1);
         if (result == NULL)
         {
-            LogError("failure in malloc\n");
+            LogError("failure in malloc");
             /*return as is*/
         }
         else
         {
             if (vsnprintf(result, neededSize + 1, format, va) != neededSize)
             {
-                LogError("inconsistent vsnprintf behavior\n");
+                LogError("inconsistent vsnprintf behavior");
                 free(result);
                 result = NULL;
             }
