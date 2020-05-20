@@ -68,7 +68,7 @@ jobs:
     displayName: 'Build solution build_x64\*.sln'
     inputs:
       solution: 'build_x64\*.sln'
-      msbuildArgs: '/p:ForceImportBeforeCppTargets=$(Build.SourcesDirectory)/vld.props'
+      msbuildArgs: '/t:restore /t:build /p:ForceImportBeforeCppTargets=$(Build.SourcesDirectory)/vld.props'
       platform: x64
       configuration: Debug
       maximumCpuCount: true
@@ -126,6 +126,7 @@ jobs:
     displayName: 'Build solution build_x86\*.sln'
     inputs:
       solution: 'build_x86\*.sln'
+      msbuildArgs: '/t:restore /t:build'
       platform: Win32
       configuration: RelWithDebInfo
       maximumCpuCount: true
@@ -204,6 +205,7 @@ jobs:
     displayName: 'Build solution build_x86\*.sln'
     inputs:
       solution: 'build_x86\*.sln'
+      msbuildArgs: '/t:restore /t:build'
       platform: Win32
       configuration: Debug
       maximumCpuCount: true
