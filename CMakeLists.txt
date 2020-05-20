@@ -65,11 +65,19 @@ elseif(LINUX)
     endif()
 endif()
 
-if (NOT TARGET azure_macro_utils_c) 
+if (NOT TARGET azure_macro_utils_c)
     if (EXISTS ${CMAKE_CURRENT_LIST_DIR}/deps/azure-macro-utils-c/CMakeLists.txt)
         add_subdirectory(deps/azure-macro-utils-c)
     else()
         message(FATAL_ERROR "Could not find azure_macro_utils_c")
+    endif()
+endif()
+
+if (NOT TARGET azure_c_logging)
+    if (EXISTS ${CMAKE_CURRENT_LIST_DIR}/deps/azure-c-logging/CMakeLists.txt)
+        add_subdirectory(deps/azure-c-logging)
+    else()
+        message(FATAL_ERROR "Could not find azure_c_logging")
     endif()
 endif()
 
@@ -122,6 +130,8 @@ target_include_directories(ctest
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/inc>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
+
+target_link_libraries(ctest azure_c_logging)
 
 set_target_properties(ctest
                PROPERTIES
