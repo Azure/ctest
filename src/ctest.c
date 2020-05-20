@@ -232,7 +232,7 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
             /*revert console to initial state*/
             if (!SetConsoleMode(std_out_handle, console_mode_initial))
             {
-                (void)LogWarning("Error resetting console mode to initial value of %" PRIx32 ". GetLastError()=%" PRIx32 "\n", console_mode_initial, GetLastError());
+                LogWarning("Error resetting console mode to initial value of %" PRIx32 ". GetLastError()=%" PRIx32 "\n", console_mode_initial, GetLastError());
             }
         }
     }
