@@ -4,3 +4,6 @@
 [submodule "deps/azure-c-logging"]
 	path = deps/azure-c-logging
 	url = https://github.com/Azure/azure-c-logging.git
+[submodule "deps/azure-c-build-tools"]
+	path = deps/azure-c-build-tools
+	url = https://github.com/Azure/azure-c-build-tools.git
