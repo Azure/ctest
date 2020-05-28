@@ -38,7 +38,7 @@
 #elif defined __cplusplus
 #define CTEST_USE_STDINT
 #elif defined __STDC_VERSION__
-#if (__STDC_VERSION__ > 199901L)
+#if (__STDC_VERSION__ >= 199901L)
 #define CTEST_USE_STDINT
 #else
 C_LINKAGE_PREFIX int snprintf(char * s, size_t n, const char * format, ...);
