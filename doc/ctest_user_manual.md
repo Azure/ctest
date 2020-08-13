@@ -337,3 +337,9 @@ MU_DEFINE_ENUM_2(TEST_ENUM, TEST_ENUM_VALUES)
 MU_DEFINE_ENUM_STRINGS_2(TEST_ENUM, TEST_ENUM_VALUES)
 CTEST_DEFINE_ENUM_2_TYPE(TEST_ENUM, TEST_ENUM_VALUES)
 ```
+
+## Leak detection (VLD)
+
+When a test is compiled using [Visual Leak Detector](https://github.com/KindDragon/vld), `CTest` will check if there were any memory leaks and report them as test failures.
+
+In case a test needs to run with some asynchronous cleanup that may be detected as false positives, the macro `CTEST_VLD_CHECK_ASYNC_WAIT` can be set. This will wait for the leaks to decrease to 0 or stabilize.
