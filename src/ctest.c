@@ -22,7 +22,7 @@
 
 const TEST_FUNCTION_DATA* g_CurrentTestFunction;
 jmp_buf g_ExceptionJump;
-size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName)
+size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName, bool useLeakCheckRetries)
 {
 #ifdef VLD_OPT_REPORT_TO_STDOUT
     VLD_UINT initial_leak_count = VLDGetLeaksCount();
@@ -239,38 +239,39 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
 #endif
 
 #ifdef VLD_OPT_REPORT_TO_STDOUT
-    #ifdef CTEST_VLD_CHECK_ASYNC_WAIT
-    if (failedTestCount == 0)
+    if (useLeakCheckRetries)
     {
-        VLD_UINT leaks_count = VLDGetLeaksCount();
-        do
+        if (failedTestCount == 0)
         {
-            if (leaks_count - initial_leak_count > 0)
+            VLD_UINT leaks_count = VLDGetLeaksCount();
+            do
             {
-                LogWarning("Leaks count is %u (initial count %u)", leaks_count, initial_leak_count);
-                Sleep(5000);
-                VLD_UINT new_leaks_count = VLDGetLeaksCount();
-
-                if (new_leaks_count == leaks_count)
+                if (leaks_count - initial_leak_count > 0)
                 {
-                    // Leaks are stable so there must be real leaks
-                    LogWarning("Leaks count has not changed...");
-                    break;
+                    LogWarning("Leaks count is %u (initial count %u)", leaks_count, initial_leak_count);
+                    Sleep(5000);
+                    VLD_UINT new_leaks_count = VLDGetLeaksCount();
+
+                    if (new_leaks_count == leaks_count)
+                    {
+                        // Leaks are stable so there must be real leaks
+                        LogWarning("Leaks count has not changed...");
+                        break;
+                    }
+                    else
+                    {
+                        // Leaks have gone down, try again
+                        leaks_count = new_leaks_count;
+                    }
                 }
                 else
                 {
-                    // Leaks have gone down, try again
-                    leaks_count = new_leaks_count;
+                    // No leaks, we are done
+                    break;
                 }
-            }
-            else
-            {
-                // No leaks, we are done
-                break;
-            }
-        } while (1);
+            } while (1);
+        }
     }
-    #endif
     failedTestCount = (failedTestCount > 0) ? failedTestCount : (size_t)(-(int)(VLDGetLeaksCount() - initial_leak_count));
 #endif
 

@@ -73,6 +73,16 @@ The execution order of the tests in a test suite is not guaranteed. Tests are ex
 
 The `failedTestCount` argument for `CTEST_RUN_TEST_SUITE` is optional. If specified, the number of failed tests will be summed up in the `failedTestCount` variable, that is passed as argument.
 
+## Leak detection (VLD)
+
+When a test is compiled using [Visual Leak Detector](https://github.com/KindDragon/vld), `CTest` will check if there were any memory leaks and report them as test failures.
+
+```c
+CTEST_RUN_TEST_SUITE_WITH_LEAK_CHECK_RETRIES(suiteName{,failedTestCount});
+```
+
+In case a test has some possible memory leaks that are cleaned up asynchronously, leak checks with retries can be enabled by using `CTEST_RUN_TEST_SUITE_WITH_LEAK_CHECK_RETRIES` instead.
+
 ## Fixtures
 
 ### CTEST_SUITE_INITIALIZE
@@ -337,9 +347,3 @@ MU_DEFINE_ENUM_2(TEST_ENUM, TEST_ENUM_VALUES)
 MU_DEFINE_ENUM_STRINGS_2(TEST_ENUM, TEST_ENUM_VALUES)
 CTEST_DEFINE_ENUM_2_TYPE(TEST_ENUM, TEST_ENUM_VALUES)
 ```
-
-## Leak detection (VLD)
-
-When a test is compiled using [Visual Leak Detector](https://github.com/KindDragon/vld), `CTest` will check if there were any memory leaks and report them as test failures.
-
-In case a test needs to run with some asynchronous cleanup that may be detected as false positives, the macro `CTEST_VLD_CHECK_ASYNC_WAIT` can be set. This will wait for the leaks to decrease to 0 or stabilize.
