@@ -73,6 +73,20 @@ The execution order of the tests in a test suite is not guaranteed. Tests are ex
 
 The `failedTestCount` argument for `CTEST_RUN_TEST_SUITE` is optional. If specified, the number of failed tests will be summed up in the `failedTestCount` variable, that is passed as argument.
 
+## Leak detection (VLD)
+
+When a test is compiled using [Visual Leak Detector](https://github.com/KindDragon/vld), `CTest` will check if there were any memory leaks and report them as test failures.
+
+This works by checking the number of allocations at the beginning of the test and then comparing it to the number of allocations that have not been freed at the end of the test.
+
+```c
+CTEST_RUN_TEST_SUITE_WITH_LEAK_CHECK_RETRIES(suiteName{,failedTestCount});
+```
+
+In case a test has some possible memory leaks that are cleaned up asynchronously, leak checks with retries can be enabled by using `CTEST_RUN_TEST_SUITE_WITH_LEAK_CHECK_RETRIES` instead.
+
+When this is used, the check for allocations that have not been freed is checked repeatedly at the end of the test until the count reaches the starting value (no leaks, success) or the leak count remains stable for 5 seconds (leaks detected, test fails).
+
 ## Fixtures
 
 ### CTEST_SUITE_INITIALIZE

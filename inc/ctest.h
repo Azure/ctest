@@ -14,6 +14,7 @@
 #define C_LINKAGE "C"
 #define C_LINKAGE_PREFIX extern "C"
 #else
+#include <stdbool.h>
 #include <stddef.h>
 #include <string.h>
 #include <stdio.h>
@@ -29,7 +30,7 @@
 #if defined _MSC_VER
 #include "ctest_windows.h"
 #define CTEST_USE_STDINT
-#if _MSC_VER < 1900 
+#if _MSC_VER < 1900
 /*https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/snprintf-snprintf-snprintf-l-snwprintf-snwprintf-l?view=vs-2019 says snprintf is C99 compliant since VS 2015*/
 /*https://docs.microsoft.com/en-us/cpp/preprocessor/predefined-macros?view=vs-2019 says VS 2015 is 1900*/
 /*so for all the "old" VSes use _snprintf*/
@@ -162,7 +163,14 @@ extern jmp_buf g_ExceptionJump;
 do \
 { \
     extern C_LINKAGE const TEST_FUNCTION_DATA MU_C2(TestListHead_,FIRST_ARG(__VA_ARGS__)); \
-    MU_IF(MU_DIV2(MU_COUNT_ARG(__VA_ARGS__)),MU_FOR_EACH_1_COUNTED(PRINT_SECOND_ARG, __VA_ARGS__),) RunTests(&MU_C2(TestListHead_, FIRST_ARG(__VA_ARGS__)), MU_TOSTRING(FIRST_ARG(__VA_ARGS__))); \
+    MU_IF(MU_DIV2(MU_COUNT_ARG(__VA_ARGS__)),MU_FOR_EACH_1_COUNTED(PRINT_SECOND_ARG, __VA_ARGS__),) RunTests(&MU_C2(TestListHead_, FIRST_ARG(__VA_ARGS__)), MU_TOSTRING(FIRST_ARG(__VA_ARGS__)), false); \
+} while ((void)0,0)
+
+#define CTEST_RUN_TEST_SUITE_WITH_LEAK_CHECK_RETRIES(...) \
+do \
+{ \
+    extern C_LINKAGE const TEST_FUNCTION_DATA MU_C2(TestListHead_,FIRST_ARG(__VA_ARGS__)); \
+    MU_IF(MU_DIV2(MU_COUNT_ARG(__VA_ARGS__)),MU_FOR_EACH_1_COUNTED(PRINT_SECOND_ARG, __VA_ARGS__),) RunTests(&MU_C2(TestListHead_, FIRST_ARG(__VA_ARGS__)), MU_TOSTRING(FIRST_ARG(__VA_ARGS__)), true); \
 } while ((void)0,0)
 
 typedef const char* char_ptr;
@@ -365,7 +373,7 @@ static int MU_C2(enum_name, _Compare)(enum_name left, enum_name right) \
     return left != right; \
 }
 
-extern C_LINKAGE size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName);
+extern C_LINKAGE size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName, bool useLeakCheckRetries);
 
 #ifdef __cplusplus
 }
