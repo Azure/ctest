@@ -273,6 +273,8 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
         }
     }
     failedTestCount = (failedTestCount > 0) ? failedTestCount : (size_t)(-(int)(VLDGetLeaksCount() - initial_leak_count));
+#else
+    (void)useLeakCheckRetries;
 #endif
 
     return failedTestCount;
