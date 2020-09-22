@@ -345,7 +345,6 @@ do \
     ctest_sprintf_free(ctest_message); \
     if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
     do_jump(&g_ExceptionJump, (void*)"nothing expected, 100% fail", (void*)"nothing actual, 100% fail"); \
-    ctest_sprintf_free(ctest_message); \
 } \
 while(0)
 
