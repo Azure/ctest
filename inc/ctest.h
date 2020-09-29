@@ -149,7 +149,7 @@ extern jmp_buf g_ExceptionJump;
 #define PRINT_MY_ARG_1(A) \
     A +=
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && defined(_MSVC_TRADITIONAL) && _MSVC_TRADITIONAL
 #define PRINT_SECOND_ARG(argCount, B) \
     MU_C2(PRINT_MY_ARG_,argCount) MU_LPAREN B )
 #else
@@ -345,7 +345,6 @@ do \
     ctest_sprintf_free(ctest_message); \
     if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
     do_jump(&g_ExceptionJump, (void*)"nothing expected, 100% fail", (void*)"nothing actual, 100% fail"); \
-    ctest_sprintf_free(ctest_message); \
 } \
 while(0)
 
