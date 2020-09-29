@@ -137,7 +137,6 @@ jobs:
       testAssemblyVer2: |
           **\*test*.dll
           !**\obj\**
-      vsTestVersion: 15.0
       runTestsInIsolation: true
 
 - job: windowsx86debug
