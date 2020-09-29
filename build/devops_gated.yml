@@ -6,7 +6,7 @@ jobs:
 - job: windowsx64debug
   displayName: 'Build Windows x64 Debug'
   pool:
-    name: Hosted VS2017
+    name: Azure-MessagingStore
     demands:
     - Cmd
     - msbuild
@@ -55,14 +55,14 @@ jobs:
   - task: BatchScript@1
     displayName: 'Setup VS Vars'
     inputs:
-      filename: '"c:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\Tools\VsDevCmd.bat"'
+      filename: '"c:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\Tools\VsDevCmd.bat"'
       modifyEnvironment: true
 
   - task: CMake@1
-    displayName: 'CMake .. -Drun_unittests:bool=ON -Drun_int_tests:bool=ON -Duse_cppunittest:bool=OFF -Drun_e2e_tests:bool=OFF -G "Visual Studio 15 2017 Win64"'
+    displayName: 'CMake .. -Drun_unittests:bool=ON -Drun_int_tests:bool=ON -Duse_cppunittest:bool=OFF -Drun_e2e_tests:bool=OFF -G "Visual Studio 16 2019" -A x64'
     inputs:
       workingDirectory: 'build_x64'
-      cmakeArgs: '.. -Drun_unittests:bool=ON -Drun_int_tests:bool=ON -Duse_cppunittest:bool=OFF -Drun_e2e_tests:bool=OFF -G "Visual Studio 15 2017 Win64"'
+      cmakeArgs: '.. -Drun_unittests:bool=ON -Drun_int_tests:bool=ON -Duse_cppunittest:bool=OFF -Drun_e2e_tests:bool=OFF -G "Visual Studio 16 2019" -A x64'
 
   - task: VSBuild@1
     displayName: 'Build solution build_x64\*.sln'
@@ -81,10 +81,10 @@ jobs:
       workingFolder: 'build_x64'
 
 
-- job: windowsx64relwithdebinfo
+- job: windowsx86relwithdebinfo
   displayName: 'Build Windows x86 RelWithDebInfo'
   pool:
-    name: Hosted VS2017
+    name: Azure-MessagingStore
     demands:
     - Cmd
     - msbuild
@@ -113,14 +113,14 @@ jobs:
   - task: BatchScript@1
     displayName: 'Setup VS Vars'
     inputs:
-      filename: '"c:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\Tools\VsDevCmd.bat"'
+      filename: '"c:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\Tools\VsDevCmd.bat"'
       modifyEnvironment: true
 
   - task: CMake@1
     displayName: 'CMake ..'
     inputs:
       workingDirectory: 'build_x86'
-      cmakeArgs: '.. -Drun_unittests:bool=ON -Drun_int_tests:bool=ON -Drun_e2e_tests:bool=ON -Duse_cppunittest:bool=ON'
+      cmakeArgs: '.. -Drun_unittests:bool=ON -Drun_int_tests:bool=ON -Drun_e2e_tests:bool=ON -Duse_cppunittest:bool=ON -G "Visual Studio 16 2019" -A Win32'
 
   - task: VSBuild@1
     displayName: 'Build solution build_x86\*.sln'
@@ -143,7 +143,7 @@ jobs:
 - job: windowsx86debug
   displayName: 'Build Windows x86 Debug'
   pool:
-    name: Hosted VS2017
+    name: Azure-MessagingStore
     demands:
     - Cmd
     - msbuild
@@ -192,14 +192,14 @@ jobs:
   - task: BatchScript@1
     displayName: 'Setup VS Vars'
     inputs:
-      filename: '"c:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\Tools\VsDevCmd.bat"'
+      filename: '"c:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\Tools\VsDevCmd.bat"'
       modifyEnvironment: true
 
   - task: CMake@1
     displayName: CMake
     inputs:
       workingDirectory: 'build_x86'
-      cmakeArgs: '.. -Drun_unittests:bool=ON -Drun_int_tests:bool=ON -Drun_e2e_tests:bool=ON'
+      cmakeArgs: '.. -Drun_unittests:bool=ON -Drun_int_tests:bool=ON -Drun_e2e_tests:bool=ON -G "Visual Studio 16 2019" -A Win32'
 
   - task: VSBuild@1
     displayName: 'Build solution build_x86\*.sln'
@@ -220,7 +220,10 @@ jobs:
 - job: linuxubuntu
   displayName: 'Build Linux Ubuntu 16.04'
   pool:
-    name: Hosted Ubuntu 1604
+    name: Azure-MessagingStore
+    demands:
+    - linux
+    
   steps:
   - bash: |
       sudo apt-get update
