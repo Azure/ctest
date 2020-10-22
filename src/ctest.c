@@ -221,7 +221,13 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
         }
 
         /* print results */
-        LogInfo("%s%d tests ran, %d failed, %d succeeded." CTEST_ANSI_COLOR_RESET, (failedTestCount > 0) ? (CTEST_ANSI_COLOR_RED) : (CTEST_ANSI_COLOR_GREEN), (int)totalTestCount, (int)failedTestCount, (int)(totalTestCount - failedTestCount));
+        /* This will print as a warning in Azure devops when 0 tests ran and an error when anything failed */
+        LogInfo("%s%s%d tests ran, %d failed, %d succeeded." CTEST_ANSI_COLOR_RESET,
+            (failedTestCount > 0) ? (CTEST_ANSI_COLOR_RED) : (CTEST_ANSI_COLOR_GREEN),
+            (failedTestCount != 0) ? "##[error]" : ((totalTestCount == 0) ? "##[warning]" : ""),
+            (int)totalTestCount,
+            (int)failedTestCount,
+            (int)(totalTestCount - failedTestCount));
     }
 
 #if defined _MSC_VER && !defined(WINCE)
