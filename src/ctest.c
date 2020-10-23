@@ -223,8 +223,8 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
         /* print results */
         /* This will print as a warning in Azure devops when 0 tests ran and an error when anything failed */
         LogInfo("%s%s%d tests ran, %d failed, %d succeeded." CTEST_ANSI_COLOR_RESET,
-            (failedTestCount > 0) ? (CTEST_ANSI_COLOR_RED) : (CTEST_ANSI_COLOR_GREEN),
             (failedTestCount != 0) ? "##[error]" : ((totalTestCount == 0) ? "##[warning]" : ""),
+            (failedTestCount > 0) ? (CTEST_ANSI_COLOR_RED) : (CTEST_ANSI_COLOR_GREEN),
             (int)totalTestCount,
             (int)failedTestCount,
             (int)(totalTestCount - failedTestCount));
@@ -594,6 +594,7 @@ void do_jump(jmp_buf *exceptionJump, const volatile void* expected, const volati
     (void)actual;
 #if CTEST_ABORT_ON_FAIL
     (void)exceptionJump;
+    Sleep(100);
     abort();
 #else
     longjmp(*exceptionJump, 0xca1e4);
