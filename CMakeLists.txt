@@ -3,10 +3,10 @@
 
 cmake_minimum_required(VERSION 2.8.11)
 
-# canon way of using azure-ctest from another repo is below. It assumes the using repo has placed azure-ctest in "deps"
+# canon way of using ctest from another repo is below. It assumes the using repo has placed ctest in "deps"
 
-#if ((NOT TARGET ctest) AND (EXISTS ${CMAKE_CURRENT_LIST_DIR}/deps/azure-ctest/CMakeLists.txt))
-#    add_subdirectory(deps/azure-ctest)
+#if ((NOT TARGET ctest) AND (EXISTS ${CMAKE_CURRENT_LIST_DIR}/deps/ctest/CMakeLists.txt))
+#    add_subdirectory(deps/ctest)
 #    include_directories(${CTEST_INC_FOLDER})
 #endif() 
 

@@ -2,14 +2,14 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 
 # ctest
 
-azure-ctest is a simple portable C test runner.
+ctest is a simple portable C test runner.
 
 ## Setup
 
-1. Clone **azure-ctest** by:
+1. Clone **ctest** by:
 
 ```
-git clone https://github.com/Azure/azure-ctest
+git clone https://github.com/Azure/ctest
 ```
 
 2. Create a folder called *cmake* (or any name of your choice).
