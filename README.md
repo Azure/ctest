@@ -28,7 +28,7 @@ cmake --build .
 ```
 
 ### Installation and Use
-Optionally, you may choose to install azure-ctest on your machine:
+Optionally, you may choose to install ctest on your machine:
 
 1. Switch to the *cmake* folder and run
     ```

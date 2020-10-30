@@ -4,7 +4,7 @@
 #ifndef CTEST_WINDOWS_H
 #define CTEST_WINDOWS_H
 
-#include "azure_macro_utils/macro_utils.h"
+#include "macro_utils/macro_utils.h"
 
 #ifdef __cplusplus
 #include <cstddef>

@@ -1,9 +1,9 @@
-[submodule "deps/azure-macro-utils-c"]
-	path = deps/azure-macro-utils-c
-	url = https://github.com/Azure/azure-macro-utils-c.git
-[submodule "deps/azure-c-logging"]
-	path = deps/azure-c-logging
-	url = https://github.com/Azure/azure-c-logging.git
-[submodule "deps/azure-c-build-tools"]
-	path = deps/azure-c-build-tools
-	url = https://github.com/Azure/azure-c-build-tools.git
+[submodule "deps/c-build-tools"]
+	path = deps/c-build-tools
+	url = https://github.com/Azure/c-build-tools
+[submodule "deps/macro-utils-c"]
+	path = deps/macro-utils-c
+	url = https://github.com/Azure/macro-utils-c
+[submodule "deps/c-logging"]
+	path = deps/c-logging
+	url = https://github.com/Azure/c-logging
