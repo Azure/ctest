@@ -24,8 +24,8 @@
 #define C_LINKAGE_PREFIX
 #endif
 
-#include "azure_macro_utils/macro_utils.h"
-#include "azure_c_logging/xlogging.h"
+#include "macro_utils/macro_utils.h"
+#include "c_logging/xlogging.h"
 
 #if defined _MSC_VER
 #include "ctest_windows.h"

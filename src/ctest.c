@@ -10,7 +10,7 @@
 #include <wchar.h>
 
 #include "ctest.h"
-#include "azure_c_logging/xlogging.h"
+#include "c_logging/xlogging.h"
 
 #if defined _MSC_VER && !defined(WINCE)
 #include "windows.h"

@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <inttypes.h>
 
-#include "azure_macro_utils/macro_utils.h"
+#include "macro_utils/macro_utils.h"
 #include "ctest_windows.h"
 #include "windows.h"
 #include "psapi.h"
