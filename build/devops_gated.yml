@@ -31,27 +31,6 @@ jobs:
       filename: 'C:\Program Files\Git\bin\git.exe'
       arguments: 'clean -xdff'
 
-  - powershell: |
-     $url = "https://github.com/KindDragon/vld/releases/download/v2.5.1/vld-2.5.1-setup.exe"
-     $outpath = "$(System.ArtifactsDirectory)/vld-2.5.1-setup.exe"
-   
-     $wc = New-Object System.Net.WebClient
-     $wc.DownloadFile($url, $outpath)
-    displayName: 'Download VLD'
-
-  - task: BatchScript@1
-    displayName: 'Install VLD'
-    inputs:
-      filename: '$(System.ArtifactsDirectory)/vld-2.5.1-setup.exe'
-      arguments: '/suppressmsgboxes /verysilent /norestart'
-      modifyEnvironment: true
-
-  - task: BatchScript@1
-    displayName: 'Set VLD path'
-    inputs:
-      filename: 'set_vld_vars.bat'
-      modifyEnvironment: true
-
   - task: BatchScript@1
     displayName: 'Setup VS Vars'
     inputs:
@@ -166,27 +145,6 @@ jobs:
     inputs:
       filename: 'C:\Program Files\Git\bin\git.exe'
       arguments: 'clean -xdff'
-
-  - powershell: |
-     $url = "https://github.com/KindDragon/vld/releases/download/v2.5.1/vld-2.5.1-setup.exe"
-     $outpath = "$(System.ArtifactsDirectory)/vld-2.5.1-setup.exe"
-     
-     $wc = New-Object System.Net.WebClient
-     $wc.DownloadFile($url, $outpath)
-    displayName: 'Download VLD'
-
-  - task: BatchScript@1
-    displayName: 'Install VLD copy'
-    inputs:
-      filename: '$(System.ArtifactsDirectory)/vld-2.5.1-setup.exe'
-      arguments: '/suppressmsgboxes /verysilent /norestart'
-      modifyEnvironment: true
-
-  - task: BatchScript@1
-    displayName: 'Set VLD path'
-    inputs:
-      filename: 'set_vld_vars.bat'
-      modifyEnvironment: true
 
   - task: BatchScript@1
     displayName: 'Setup VS Vars'
