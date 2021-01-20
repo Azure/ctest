@@ -45,19 +45,19 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
     DWORD console_mode_initial = 0;
     if (std_out_handle == INVALID_HANDLE_VALUE)
     {
-        LogWarning("Error getting console handle, no coloring available. GetLastError()=%" PRIx32 "", GetLastError());
+        LogWarning("Error getting console handle, no coloring available. GetLastError()=%" PRIx32 "", (uint32_t)GetLastError());
     }
     else
     {
         if (!GetConsoleMode(std_out_handle, &console_mode_initial))
         {
-            LogWarning("Error getting console mode, no coloring available. GetLastError()=%" PRIx32 "", GetLastError());
+            LogWarning("Error getting console mode, no coloring available. GetLastError()=%" PRIx32 "", (uint32_t)GetLastError());
         }
         else
         {
             if (!SetConsoleMode(std_out_handle, console_mode_initial | ENABLE_VIRTUAL_TERMINAL_PROCESSING))
             {
-                LogWarning("Error setting console mode, no coloring available. GetLastError()=%" PRIx32 "", GetLastError());
+                LogWarning("Error setting console mode, no coloring available. GetLastError()=%" PRIx32 "", (uint32_t)GetLastError());
             }
             else
             {
@@ -232,7 +232,7 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
             /*revert console to initial state*/
             if (!SetConsoleMode(std_out_handle, console_mode_initial))
             {
-                LogWarning("Error resetting console mode to initial value of %" PRIx32 ". GetLastError()=%" PRIx32 "", console_mode_initial, GetLastError());
+                LogWarning("Error resetting console mode to initial value of %lu. GetLastError()=%" PRIx32 "", console_mode_initial, (uint32_t)GetLastError());
             }
         }
     }
