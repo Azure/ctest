@@ -140,9 +140,7 @@ extern jmp_buf g_ExceptionJump;
     static void TestFunctionCleanup(void)
 
 #define CTEST_END_TEST_SUITE(testSuiteName) \
-    static const TEST_FUNCTION_DATA MU_C2(TestFunctionData, MU_C1(MU_INC(__COUNTER__))) = { NULL, NULL, NULL, NULL, CTEST_TEST_FUNCTION }; \
-    C_LINKAGE_PREFIX const TEST_FUNCTION_DATA TestListHead_##testSuiteName = { NULL, NULL, &MU_C2(TestFunctionData, MU_C1(MU_DEC(MU_DEC(__COUNTER__)))), NULL, CTEST_END_SUITE }; \
-    static const int* TestListHead_End_##testSuiteName = &TestListHead_Begin_##testSuiteName;
+    C_LINKAGE_PREFIX const TEST_FUNCTION_DATA TestListHead_##testSuiteName = { NULL, NULL, &MU_C2(TestFunctionData, MU_C1(MU_DEC(__COUNTER__))), NULL, CTEST_END_SUITE }; \
 
 #define PRINT_MY_ARG_2(A)
 
