@@ -3,8 +3,6 @@
 
 #include "windows.h"
 
-#include "macro_utils/macro_utils.h"
-
 #include "ctest_windows.h"
 #include "ctest.h"
 

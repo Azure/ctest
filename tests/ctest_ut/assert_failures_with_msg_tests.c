@@ -4,8 +4,6 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "macro_utils/macro_utils.h"
-
 #include "ctest.h"
 
 CTEST_BEGIN_TEST_SUITE(AssertFailureTestsWithPrintfLikeMsgs)
