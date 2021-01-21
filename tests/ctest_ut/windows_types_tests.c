@@ -1,6 +1,11 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+#include "windows.h"
+
+#include "macro_utils/macro_utils.h"
+
+#include "ctest_windows.h"
 #include "ctest.h"
 
 CTEST_BEGIN_TEST_SUITE(WindowsTypesTests)

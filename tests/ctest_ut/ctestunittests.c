@@ -20,6 +20,7 @@ int main()
     }
     CTEST_RUN_TEST_SUITE(SimpleTestSuiteOneTest, failedTests);
     CTEST_RUN_TEST_SUITE(SimpleTestSuiteTwoTests, failedTests);
+    CTEST_RUN_TEST_SUITE(SimpleTestSuiteOneTestCpp, failedTests);
     CTEST_RUN_TEST_SUITE(TestSuiteInitializeCleanupTests, failedTests);
     CTEST_RUN_TEST_SUITE(AssertSuccessTests, failedTests);
     {
