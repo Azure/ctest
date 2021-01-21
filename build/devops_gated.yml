@@ -110,14 +110,6 @@ jobs:
       configuration: RelWithDebInfo
       maximumCpuCount: true
 
-  - task: VSTest@2
-    displayName: 'VsTest - testAssemblies'
-    inputs:
-      testAssemblyVer2: |
-          **\*test*.dll
-          !**\obj\**
-      runTestsInIsolation: true
-
 - job: windowsx86debug
   displayName: 'Build Windows x86 Debug'
   pool:
