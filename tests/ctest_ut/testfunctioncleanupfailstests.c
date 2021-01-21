@@ -3,8 +3,6 @@
 
 #include <stddef.h>
 
-#include "macro_utils/macro_utils.h"
-
 #include "ctest.h"
 
 static size_t test_count;
