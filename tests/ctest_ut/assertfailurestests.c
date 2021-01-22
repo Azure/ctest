@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+#include <stdint.h>  // for int16_t, int32_t, int64_t, int8_t, uint16_t, uin...
+#include <stdio.h>   // for snprintf, NULL
+
 #include "ctest.h"
 
 CTEST_BEGIN_TEST_SUITE(AssertFailureTests)
