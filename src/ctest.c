@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
-#include <limits.h>
 #include <inttypes.h>
 #include <stdbool.h>
 #include <setjmp.h>
@@ -16,6 +15,7 @@
 #include "c_logging/xlogging.h"
 
 #if defined _MSC_VER && !defined(WINCE)
+#include <limits.h> // for SIZE_MAX
 #include "windows.h"
 #endif
 
