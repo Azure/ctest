@@ -106,39 +106,64 @@ typedef struct TEST_FUNCTION_DATA_TAG
 extern const TEST_FUNCTION_DATA* g_CurrentTestFunction;
 extern jmp_buf g_ExceptionJump;
 
+#ifndef CTEST_CUSTOM_TEST_SUITE_INITIALIZE_CODE
+#define CTEST_CUSTOM_TEST_SUITE_INITIALIZE_CODE(funcName)
+#endif
+
+#ifndef CTEST_CUSTOM_TEST_SUITE_CLEANUP_CODE
+#define CTEST_CUSTOM_TEST_SUITE_CLEANUP_CODE(funcName)
+#endif
+
+#ifndef CTEST_CUSTOM_TEST_FUNCTION_INITIALIZE_CODE
+#define CTEST_CUSTOM_TEST_FUNCTION_INITIALIZE_CODE(funcName)
+#endif
+
+#ifndef CTEST_CUSTOM_TEST_FUNCTION_CLEANUP_CODE
+#define CTEST_CUSTOM_TEST_FUNCTION_CLEANUP_CODE(funcName)
+#endif
+
+#ifndef CTEST_CUSTOM_TEST_FUNCTION_CODE
+#define CTEST_CUSTOM_TEST_FUNCTION_CODE(funcName)
+#endif
+
 #define CTEST_BEGIN_TEST_SUITE(testSuiteName) \
     C_LINKAGE_PREFIX const int TestListHead_Begin_##testSuiteName = 0; \
     static const TEST_FUNCTION_DATA MU_C2(TestFunctionData, MU_C1(__COUNTER__)) = { NULL, NULL, NULL, NULL, CTEST_BEGIN_SUITE }; \
 
-#define CTEST_FUNCTION(funcName)    \
+#define CTEST_FUNCTION(funcName) \
     static void funcName(void); \
     static TEST_RESULT funcName##_TestResult; \
     static const TEST_FUNCTION_DATA MU_C2(TestFunctionData, MU_C1(MU_INC(__COUNTER__))) = \
 { funcName, #funcName, &MU_C2(TestFunctionData, MU_C1(MU_DEC(MU_DEC(__COUNTER__)))), &funcName##_TestResult, CTEST_TEST_FUNCTION }; \
+    CTEST_CUSTOM_TEST_FUNCTION_CODE(funcName) \
     static void funcName(void)
 
-#define CTEST_SUITE_INITIALIZE()    \
+#define CTEST_SUITE_INITIALIZE(funcName) \
     static void TestSuiteInitialize(void); \
     static const TEST_FUNCTION_DATA MU_C2(TestFunctionData, MU_C1(MU_INC(__COUNTER__))) = \
 { TestSuiteInitialize, "TestSuiteInitialize", &MU_C2(TestFunctionData, MU_C1(MU_DEC(MU_DEC(__COUNTER__)))), NULL, CTEST_TEST_SUITE_INITIALIZE }; \
+    CTEST_CUSTOM_TEST_SUITE_INITIALIZE_CODE(funcName) \
     static void TestSuiteInitialize(void)
 
-#define CTEST_SUITE_CLEANUP()    \
+#define CTEST_SUITE_CLEANUP(funcName) \
     static void TestSuiteCleanup(void); \
     static const TEST_FUNCTION_DATA MU_C2(TestFunctionData, MU_C1(MU_INC(__COUNTER__))) = \
 { &TestSuiteCleanup, "TestSuiteCleanup", &MU_C2(TestFunctionData, MU_C1(MU_DEC(MU_DEC(__COUNTER__)))), NULL, CTEST_TEST_SUITE_CLEANUP }; \
+    CTEST_CUSTOM_TEST_SUITE_CLEANUP_CODE(funcName) \
     static void TestSuiteCleanup(void)
 
-#define CTEST_FUNCTION_INITIALIZE()    \
+#define CTEST_FUNCTION_INITIALIZE(funcName) \
     static void TestFunctionInitialize(void); \
     static const TEST_FUNCTION_DATA MU_C2(TestFunctionData, MU_C1(MU_INC(__COUNTER__))) = \
 { TestFunctionInitialize, "TestFunctionInitialize", &MU_C2(TestFunctionData, MU_C1(MU_DEC(MU_DEC(__COUNTER__)))), NULL, CTEST_TEST_FUNCTION_INITIALIZE }; \
+    CTEST_CUSTOM_TEST_FUNCTION_INITIALIZE_CODE(funcName) \
     static void TestFunctionInitialize(void)
 
-#define CTEST_FUNCTION_CLEANUP()    \
+#define CTEST_FUNCTION_CLEANUP(funcName) \
     static void TestFunctionCleanup(void); \
     static const TEST_FUNCTION_DATA MU_C2(TestFunctionData, MU_C1(MU_INC(__COUNTER__))) = \
 { &TestFunctionCleanup, "TestFunctionCleanup", &MU_C2(TestFunctionData, MU_C1(MU_DEC(MU_DEC(__COUNTER__)))), NULL, CTEST_TEST_FUNCTION_CLEANUP }; \
+    CTEST_CUSTOM_TEST_FUNCTION_CLEANUP_CODE(funcName) \
     static void TestFunctionCleanup(void)
 
 #define CTEST_END_TEST_SUITE(testSuiteName) \

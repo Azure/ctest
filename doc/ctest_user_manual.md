@@ -351,3 +351,25 @@ MU_DEFINE_ENUM_2(TEST_ENUM, TEST_ENUM_VALUES)
 MU_DEFINE_ENUM_STRINGS_2(TEST_ENUM, TEST_ENUM_VALUES)
 CTEST_DEFINE_ENUM_2_TYPE(TEST_ENUM, TEST_ENUM_VALUES)
 ```
+
+## Macro hooks for metadata generation
+
+In order to allow generating test functions and fixtures metadata that can be used by other tools, `CTest` provides the following macros:
+
+```
+#define CTEST_CUSTOM_TEST_SUITE_INITIALIZE_CODE(funcName) ...
+#define CTEST_CUSTOM_TEST_SUITE_CLEANUP_CODE(funcName) ...
+#define CTEST_CUSTOM_TEST_FUNCTION_INITIALIZE_CODE(funcName) ...
+#define CTEST_CUSTOM_TEST_FUNCTION_CLEANUP_CODE(funcName) ...
+#define CTEST_CUSTOM_TEST_FUNCTION_CODE(funcName) ...
+```
+
+If one of the macros in the above list is defined it will be expanded by `CTest` when the equivalent `CTest` macro is expanded.
+For example if `CTEST_CUSTOM_TEST_SUITE_INITIALIZE_CODE` is defined as:
+
+```
+#define CTEST_CUSTOM_TEST_SUITE_INITIALIZE_CODE(funcName) \
+    static int someVariable##funcName;
+```
+
+A variable will be defined for suite initialize expansion done by `CTest`.
