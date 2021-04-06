@@ -35,16 +35,11 @@ set(ctest_ut_h_files
 
 include_directories(${CTEST_INC_FOLDER})
 
-IF(WIN32)
-	#windows needs this define
-	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-ENDIF(WIN32)
-
 add_executable(ctest_ut ${ctest_ut_c_files} ${ctest_ut_cpp_files} ${ctest_ut_h_files})
 
 set_target_properties(ctest_ut
                PROPERTIES
-               FOLDER "tests/ctest_ut")
+               FOLDER "tests/ctest")
 
 target_link_libraries(ctest_ut ctest)
 
