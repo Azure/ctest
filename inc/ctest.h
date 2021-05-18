@@ -373,17 +373,29 @@ do \
 } \
 while(0)
 
-// this macro expands to the needed _ToString and _Compare functions for an enum,
-// while using the macro utils ENUM_TO_STRING
-#define CTEST_DEFINE_ENUM_TYPE(enum_name, ...) \
+#define CTEST_DEFINE_ENUM_TYPE_COMMON(enum_name, ...) \
 static void MU_C2(enum_name, _ToString)(char* dest, size_t bufferSize, enum_name enumValue) \
 { \
-    (void)snprintf(dest, bufferSize, "%s", MU_ENUM_TO_STRING(enum_name, enumValue)); \
+    (void)snprintf(dest, bufferSize, "%s", MU_ENUM_TO_STRING(MU_C2(enum_name,_for_ctest), enumValue)); \
 } \
 static int MU_C2(enum_name, _Compare)(enum_name left, enum_name right) \
 { \
     return left != right; \
 }
+
+// this macro expands to the needed _ToString and _Compare functions for an enum,
+// while using the macro utils ENUM_TO_STRING
+#define CTEST_DEFINE_ENUM_TYPE(enum_name, ...) \
+    typedef enum_name MU_C2(enum_name,_for_ctest); \
+    MU_DEFINE_ENUM_STRINGS(MU_C2(enum_name,_for_ctest), __VA_ARGS__); \
+    CTEST_DEFINE_ENUM_TYPE_COMMON(enum_name, __VA_ARGS__)
+
+// this macro expands to the needed _ToString and _Compare functions for an enum without INVALID entry,
+// while using the macro utils ENUM_TO_STRING
+#define CTEST_DEFINE_ENUM_TYPE_WITHOUT_INVALID(enum_name, ...) \
+    typedef enum_name MU_C2(enum_name,_for_ctest); \
+    MU_DEFINE_ENUM_STRINGS_WITHOUT_INVALID(MU_C2(enum_name,_for_ctest), __VA_ARGS__); \
+    CTEST_DEFINE_ENUM_TYPE_COMMON(enum_name, __VA_ARGS__)
 
 extern C_LINKAGE size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName, bool useLeakCheckRetries);
 
