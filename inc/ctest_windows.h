@@ -18,16 +18,17 @@
 extern "C" {
 #endif
 
-void ULONG_ToString(char* string, size_t bufferSize, ULONG val);
-int ULONG_Compare(ULONG left, ULONG right);
-void ULONG64_ToString(char* string, size_t bufferSize, ULONG64 val);
-int ULONG64_Compare(ULONG64 left, ULONG64 right);
-void LONG_ToString(char* string, size_t bufferSize, LONG val);
-int LONG_Compare(LONG left, LONG right);
-void LONG64_ToString(char* string, size_t bufferSize, LONG64 val);
-int LONG64_Compare(LONG64 left, LONG64 right);
-void HRESULT_ToString(char* string, size_t bufferSize, HRESULT val);
-int HRESULT_Compare(HRESULT left, HRESULT right);
+void ULONG64_AssertAreEqual(ULONG64 left, ULONG64 right, char* ctest_message);
+void ULONG_AssertAreEqual(ULONG left, ULONG right, char* ctest_message);
+void LONG_AssertAreEqual(LONG left, LONG right, char* ctest_message);
+void LONG64_AssertAreEqual(LONG64 left, LONG64 right, char* ctest_message);
+void HRESULT_AssertAreEqual(HRESULT left, HRESULT right, char* ctest_message);
+
+void ULONG64_AssertAreNotEqual(ULONG64 left, ULONG64 right, char* ctest_message);
+void ULONG_AssertAreNotEqual(ULONG left, ULONG right, char* ctest_message);
+void LONG_AssertAreNotEqual(LONG left, LONG right, char* ctest_message);
+void LONG64_AssertAreNotEqual(LONG64 left, LONG64 right, char* ctest_message);
+void HRESULT_AssertAreNotEqual(HRESULT left, HRESULT right, char* ctest_message);
 
 #ifdef __cplusplus
 }

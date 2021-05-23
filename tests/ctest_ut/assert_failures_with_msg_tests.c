@@ -23,6 +23,8 @@ CTEST_TO_STRING(mystruct_ptr, mystruct*, string, bufferSize, value)
     (void)snprintf(string, bufferSize, "{ %d }", (int)value->x);
 }
 
+CTEST_DEFINE_STATIC_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(mystruct_ptr)
+
 /* CTEST_ASSERT_FAIL */
 
 CTEST_FUNCTION(AssertFail_Fails)

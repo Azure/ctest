@@ -6,18 +6,18 @@
 #include <inttypes.h>
 
 #include "macro_utils/macro_utils.h"
-#include "ctest_windows.h"
+#include "ctest.h"
 #include "windows.h"
 #include "psapi.h"
 
 #define N_MAX_MODULES 100
 
 #define TO_STRING_AND_COMPARE_FOR_TYPE(type, format) \
-void MU_C2(type,_ToString)(char* string, size_t bufferSize, type val) \
+static void MU_C2(type,_ToString)(char* string, size_t bufferSize, type val) \
 { \
     (void)snprintf(string, bufferSize, format, val); \
 } \
-int MU_C2(type,_Compare)(type left, type right) \
+static int MU_C2(type,_Compare)(type left, type right) \
 { \
     return left != right; \
 }
@@ -31,7 +31,7 @@ TO_STRING_AND_COMPARE_FOR_TYPE(ULONG64, "%" PRIu64)
 TO_STRING_AND_COMPARE_FOR_TYPE(LONG, "%ld")
 TO_STRING_AND_COMPARE_FOR_TYPE(LONG64, "%" PRId64)
 
-void HRESULT_ToString(char* string, size_t bufferSize, HRESULT hr)
+static void HRESULT_ToString(char* string, size_t bufferSize, HRESULT hr)
 {
     /*see if the "system" can provide the code*/
     if (FormatMessageA(
@@ -105,7 +105,13 @@ void HRESULT_ToString(char* string, size_t bufferSize, HRESULT hr)
 allok:;
 }
 
-int HRESULT_Compare(HRESULT left, HRESULT right)
+static int HRESULT_Compare(HRESULT left, HRESULT right)
 {
     return left != right;
 }
+
+CTEST_DEFINE_EXTERN_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(ULONG)
+CTEST_DEFINE_EXTERN_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(ULONG64)
+CTEST_DEFINE_EXTERN_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(LONG)
+CTEST_DEFINE_EXTERN_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(LONG64)
+CTEST_DEFINE_EXTERN_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(HRESULT)

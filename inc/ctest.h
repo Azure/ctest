@@ -204,49 +204,6 @@ typedef void* void_ptr;
 typedef long double long_double;
 typedef unsigned long unsigned_long;
 
-extern C_LINKAGE void int_ToString(char* string, size_t bufferSize, int val);
-extern C_LINKAGE void char_ToString(char* string, size_t bufferSize, char val);
-extern C_LINKAGE void short_ToString(char* string, size_t bufferSize, short val);
-extern C_LINKAGE void long_ToString(char* string, size_t bufferSize, long val);
-extern C_LINKAGE void size_t_ToString(char* string, size_t bufferSize, size_t val);
-extern C_LINKAGE void float_ToString(char* string, size_t bufferSize, float val);
-extern C_LINKAGE void double_ToString(char* string, size_t bufferSize, double val);
-extern C_LINKAGE void long_double_ToString(char* string, size_t bufferSize, long double val);
-extern C_LINKAGE void char_ptr_ToString(char* string, size_t bufferSize, const char* val);
-extern C_LINKAGE void wchar_ptr_ToString(char* string, size_t bufferSize, const wchar_t* val);
-extern C_LINKAGE void void_ptr_ToString(char* string, size_t bufferSize, const void* val);
-extern C_LINKAGE void unsigned_long_ToString(char* string, size_t bufferSize, unsigned long val);
-extern C_LINKAGE int int_Compare(int left, int right);
-extern C_LINKAGE int char_Compare(char left, char right);
-extern C_LINKAGE int short_Compare(short left, short right);
-extern C_LINKAGE int long_Compare(long left, long right);
-extern C_LINKAGE int size_t_Compare(size_t left, size_t right);
-extern C_LINKAGE int float_Compare(float left, float right);
-extern C_LINKAGE int double_Compare(double left, double right);
-extern C_LINKAGE int long_double_Compare(long double left, long double right);
-extern C_LINKAGE int char_ptr_Compare(const char* left, const char* right);
-extern C_LINKAGE int wchar_ptr_Compare(const wchar_t* left, const wchar_t* right);
-extern C_LINKAGE int void_ptr_Compare(const void * left, const void* right);
-extern C_LINKAGE int unsigned_long_Compare(unsigned long left, unsigned long right);
-
-#if defined CTEST_USE_STDINT
-extern C_LINKAGE void uint8_t_ToString(char* string, size_t bufferSize, uint8_t val);
-extern C_LINKAGE void int8_t_ToString(char* string, size_t bufferSize, int8_t val);
-extern C_LINKAGE void uint16_t_ToString(char* string, size_t bufferSize, uint16_t val);
-extern C_LINKAGE void int16_t_ToString(char* string, size_t bufferSize, int16_t val);
-extern C_LINKAGE void uint32_t_ToString(char* string, size_t bufferSize, uint32_t val);
-extern C_LINKAGE void int32_t_ToString(char* string, size_t bufferSize, int32_t val);
-extern C_LINKAGE void uint64_t_ToString(char* string, size_t bufferSize, uint64_t val);
-extern C_LINKAGE void int64_t_ToString(char* string, size_t bufferSize, int64_t val);
-extern C_LINKAGE int uint8_t_Compare(uint8_t left, uint8_t right);
-extern C_LINKAGE int int8_t_Compare(int8_t left, int8_t right);
-extern C_LINKAGE int uint16_t_Compare(uint16_t left, uint16_t right);
-extern C_LINKAGE int int16_t_Compare(int16_t left, int16_t right);
-extern C_LINKAGE int uint32_t_Compare(uint32_t left, uint32_t right);
-extern C_LINKAGE int int32_t_Compare(int32_t left, int32_t right);
-extern C_LINKAGE int uint64_t_Compare(uint64_t left, uint64_t right);
-extern C_LINKAGE int int64_t_Compare(int64_t left, int64_t right);
-#endif
 
 extern C_LINKAGE char* ctest_sprintf_char(const char* format, ...);
 extern C_LINKAGE void ctest_sprintf_free(char* string);
@@ -272,39 +229,17 @@ static void MU_C2(toStringType,_ToString)(char* string, size_t bufferSize, cType
 void do_jump(jmp_buf *exceptionJump, const volatile void* expected, const volatile void* actual);
 
 #define CTEST_ASSERT_ARE_EQUAL(type, A, B, ...) \
-do { \
-    const type A_value = (const type)(A); \
-    const type B_value = (const type)(B); \
-    char expectedString[1024]; \
-    char actualString[1024]; \
-    MU_C2(type,_ToString)(expectedString, sizeof(expectedString), A_value); /*one evaluation per argument*/ \
-    MU_C2(type,_ToString)(actualString, sizeof(actualString), B_value);/*one evaluation per argument*/ \
-    if (MU_C2(type,_Compare)(A_value, B_value)) \
-    { \
-        char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
-        LogError("  Assert failed in line %d %s Expected: %s, Actual: %s\n", __LINE__, (ctest_message == NULL) ? "" : ctest_message, expectedString, actualString); \
-        ctest_sprintf_free(ctest_message); \
-        if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
-        do_jump(&g_ExceptionJump, expectedString, actualString); \
-    } \
+do \
+{ \
+    char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
+    MU_C2(type,_AssertAreEqual)((type)(A), (type)(B), ctest_message); \
 } while (0)
 
 #define CTEST_ASSERT_ARE_NOT_EQUAL(type, A, B, ...) \
-do { \
-    const type A_value = (const type)(A); \
-    const type B_value = (const type)(B); \
-    char expectedString[1024]; \
-    char actualString[1024]; \
-    MU_C2(type,_ToString)(expectedString, sizeof(expectedString), A_value); /*one evaluation per argument*/ \
-    MU_C2(type,_ToString)(actualString, sizeof(actualString), B_value);/*one evaluation per argument*/ \
-    if (!MU_C2(type,_Compare)(A_value, B_value)) \
-    { \
-        char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
-        LogError("  Assert failed in line %d: %s Expected: %s, Actual: %s\n", __LINE__, (ctest_message == NULL) ? "" : ctest_message, expectedString, actualString); \
-        ctest_sprintf_free(ctest_message); \
-        if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
-        do_jump(&g_ExceptionJump, "some expected string", actualString); \
-    } \
+do \
+{ \
+    char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
+    MU_C2(type,_AssertAreNotEqual)((type)(A), (type)(B), ctest_message); \
 } while (0)
 
 #define CTEST_ASSERT_IS_NULL(value, ...) \
@@ -373,6 +308,83 @@ do \
 } \
 while(0)
 
+#define CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(type) \
+extern C_LINKAGE void MU_C2(type,_AssertAreEqual)(type left, type right, char* ctest_message); \
+extern C_LINKAGE void MU_C2(type,_AssertAreNotEqual)(type left, type right, char* ctest_message);
+
+#define CTEST_ASSERT_ARE_EQUAL_IMPL_FOR_TYPE(type) \
+    char expectedString[1024]; \
+    char actualString[1024]; \
+    MU_C2(type,_ToString)(expectedString, sizeof(expectedString), left); \
+    MU_C2(type,_ToString)(actualString, sizeof(actualString), right); \
+    if (MU_C2(type,_Compare)(left, right)) \
+    { \
+        LogError("  Assert failed in line %d %s Expected: %s, Actual: %s\n", __LINE__, (ctest_message == NULL) ? "" : ctest_message, expectedString, actualString); \
+        ctest_sprintf_free(ctest_message); \
+        if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
+        do_jump(&g_ExceptionJump, expectedString, actualString); \
+    } \
+    ctest_sprintf_free(ctest_message);
+
+#define CTEST_ASSERT_ARE_NOT_EQUAL_IMPL_FOR_TYPE(type) \
+    char expectedString[1024]; \
+    char actualString[1024]; \
+    MU_C2(type,_ToString)(expectedString, sizeof(expectedString), left); \
+    MU_C2(type,_ToString)(actualString, sizeof(actualString), right); \
+    if (!MU_C2(type,_Compare)(left, right)) \
+    { \
+        LogError("  Assert failed in line %d %s Expected: %s, Actual: %s\n", __LINE__, (ctest_message == NULL) ? "" : ctest_message, expectedString, actualString); \
+        ctest_sprintf_free(ctest_message); \
+        if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
+        do_jump(&g_ExceptionJump, expectedString, actualString); \
+    } \
+    ctest_sprintf_free(ctest_message);
+
+#define CTEST_DEFINE_STATIC_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(type) \
+static void MU_C2(type,_AssertAreEqual)(type left, type right, char* ctest_message) \
+{ \
+    CTEST_ASSERT_ARE_EQUAL_IMPL_FOR_TYPE(type) \
+} \
+static void MU_C2(type,_AssertAreNotEqual)(type left, type right, char* ctest_message) \
+{ \
+    CTEST_ASSERT_ARE_NOT_EQUAL_IMPL_FOR_TYPE(type) \
+}
+
+#define CTEST_DEFINE_EXTERN_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(type) \
+void MU_C2(type,_AssertAreEqual)(type left, type right, char* ctest_message) \
+{ \
+    CTEST_ASSERT_ARE_EQUAL_IMPL_FOR_TYPE(type) \
+} \
+void MU_C2(type,_AssertAreNotEqual)(type left, type right, char* ctest_message) \
+{ \
+    CTEST_ASSERT_ARE_NOT_EQUAL_IMPL_FOR_TYPE(type) \
+}
+
+CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(bool)
+CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(int)
+CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(char)
+CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(short)
+CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(long)
+CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(size_t)
+CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(float)
+CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(double)
+CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(long_double)
+CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(char_ptr)
+CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(wchar_ptr)
+CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(void_ptr)
+CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(unsigned_long)
+
+#if defined CTEST_USE_STDINT
+CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(uint8_t)
+CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(int8_t)
+CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(uint16_t)
+CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(int16_t)
+CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(uint32_t)
+CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(int32_t)
+CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(uint64_t)
+CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(int64_t)
+#endif
+
 #define CTEST_DEFINE_ENUM_TYPE_COMMON(enum_name, ...) \
 static void MU_C2(enum_name, _ToString)(char* dest, size_t bufferSize, enum_name enumValue) \
 { \
@@ -381,7 +393,8 @@ static void MU_C2(enum_name, _ToString)(char* dest, size_t bufferSize, enum_name
 static int MU_C2(enum_name, _Compare)(enum_name left, enum_name right) \
 { \
     return left != right; \
-}
+} \
+CTEST_DEFINE_STATIC_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(enum_name)
 
 // this macro expands to the needed _ToString and _Compare functions for an enum,
 // while using the macro utils ENUM_TO_STRING
