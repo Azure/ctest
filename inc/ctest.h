@@ -208,8 +208,64 @@ typedef unsigned long unsigned_long;
 extern C_LINKAGE char* ctest_sprintf_char(const char* format, ...);
 extern C_LINKAGE void ctest_sprintf_free(char* string);
 
+#define CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(type) \
+extern C_LINKAGE void MU_C2(type,_AssertAreEqual)(type left, type right, char* ctest_message); \
+extern C_LINKAGE void MU_C2(type,_AssertAreNotEqual)(type left, type right, char* ctest_message);
+
+#define CTEST_ASSERT_ARE_EQUAL_IMPL_FOR_TYPE(type) \
+    char expectedString[1024]; \
+    char actualString[1024]; \
+    MU_C2(type,_ToString)(expectedString, sizeof(expectedString), left); \
+    MU_C2(type,_ToString)(actualString, sizeof(actualString), right); \
+    if (MU_C2(type,_Compare)(left, right)) \
+    { \
+        LogError("  Assert failed in line %d %s Expected: %s, Actual: %s\n", __LINE__, (ctest_message == NULL) ? "" : ctest_message, expectedString, actualString); \
+        ctest_sprintf_free(ctest_message); \
+        if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
+        do_jump(&g_ExceptionJump, expectedString, actualString); \
+    } \
+    ctest_sprintf_free(ctest_message);
+
+#define CTEST_ASSERT_ARE_NOT_EQUAL_IMPL_FOR_TYPE(type) \
+    char expectedString[1024]; \
+    char actualString[1024]; \
+    MU_C2(type,_ToString)(expectedString, sizeof(expectedString), left); \
+    MU_C2(type,_ToString)(actualString, sizeof(actualString), right); \
+    if (!MU_C2(type,_Compare)(left, right)) \
+    { \
+        LogError("  Assert failed in line %d %s Expected: %s, Actual: %s\n", __LINE__, (ctest_message == NULL) ? "" : ctest_message, expectedString, actualString); \
+        ctest_sprintf_free(ctest_message); \
+        if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
+        do_jump(&g_ExceptionJump, expectedString, actualString); \
+    } \
+    ctest_sprintf_free(ctest_message);
+
+#define CTEST_DEFINE_STATIC_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(type) \
+static void MU_C2(type,_AssertAreEqual)(type left, type right, char* ctest_message) \
+{ \
+    CTEST_ASSERT_ARE_EQUAL_IMPL_FOR_TYPE(type) \
+} \
+static void MU_C2(type,_AssertAreNotEqual)(type left, type right, char* ctest_message) \
+{ \
+    CTEST_ASSERT_ARE_NOT_EQUAL_IMPL_FOR_TYPE(type) \
+}
+
+#define CTEST_DEFINE_EXTERN_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(type) \
+void MU_C2(type,_AssertAreEqual)(type left, type right, char* ctest_message) \
+{ \
+    CTEST_ASSERT_ARE_EQUAL_IMPL_FOR_TYPE(type) \
+} \
+void MU_C2(type,_AssertAreNotEqual)(type left, type right, char* ctest_message) \
+{ \
+    CTEST_ASSERT_ARE_NOT_EQUAL_IMPL_FOR_TYPE(type) \
+}
+
+
 #define CTEST_COMPARE(toStringType, cType) \
     typedef cType toStringType; \
+    static int MU_C2(toStringType,_Compare)(toStringType left, toStringType right); \
+    static void MU_C2(toStringType,_ToString)(char* string, size_t bufferSize, cType value); \
+    CTEST_DEFINE_STATIC_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(toStringType) \
     static int MU_C2(toStringType,_Compare)(toStringType left, toStringType right)
 
 #define CTEST_TO_STRING(toStringType, cType, string, bufferSize, value) \
@@ -307,58 +363,6 @@ do \
     do_jump(&g_ExceptionJump, (void*)"nothing expected, 100% fail", (void*)"nothing actual, 100% fail"); \
 } \
 while(0)
-
-#define CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(type) \
-extern C_LINKAGE void MU_C2(type,_AssertAreEqual)(type left, type right, char* ctest_message); \
-extern C_LINKAGE void MU_C2(type,_AssertAreNotEqual)(type left, type right, char* ctest_message);
-
-#define CTEST_ASSERT_ARE_EQUAL_IMPL_FOR_TYPE(type) \
-    char expectedString[1024]; \
-    char actualString[1024]; \
-    MU_C2(type,_ToString)(expectedString, sizeof(expectedString), left); \
-    MU_C2(type,_ToString)(actualString, sizeof(actualString), right); \
-    if (MU_C2(type,_Compare)(left, right)) \
-    { \
-        LogError("  Assert failed in line %d %s Expected: %s, Actual: %s\n", __LINE__, (ctest_message == NULL) ? "" : ctest_message, expectedString, actualString); \
-        ctest_sprintf_free(ctest_message); \
-        if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
-        do_jump(&g_ExceptionJump, expectedString, actualString); \
-    } \
-    ctest_sprintf_free(ctest_message);
-
-#define CTEST_ASSERT_ARE_NOT_EQUAL_IMPL_FOR_TYPE(type) \
-    char expectedString[1024]; \
-    char actualString[1024]; \
-    MU_C2(type,_ToString)(expectedString, sizeof(expectedString), left); \
-    MU_C2(type,_ToString)(actualString, sizeof(actualString), right); \
-    if (!MU_C2(type,_Compare)(left, right)) \
-    { \
-        LogError("  Assert failed in line %d %s Expected: %s, Actual: %s\n", __LINE__, (ctest_message == NULL) ? "" : ctest_message, expectedString, actualString); \
-        ctest_sprintf_free(ctest_message); \
-        if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
-        do_jump(&g_ExceptionJump, expectedString, actualString); \
-    } \
-    ctest_sprintf_free(ctest_message);
-
-#define CTEST_DEFINE_STATIC_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(type) \
-static void MU_C2(type,_AssertAreEqual)(type left, type right, char* ctest_message) \
-{ \
-    CTEST_ASSERT_ARE_EQUAL_IMPL_FOR_TYPE(type) \
-} \
-static void MU_C2(type,_AssertAreNotEqual)(type left, type right, char* ctest_message) \
-{ \
-    CTEST_ASSERT_ARE_NOT_EQUAL_IMPL_FOR_TYPE(type) \
-}
-
-#define CTEST_DEFINE_EXTERN_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(type) \
-void MU_C2(type,_AssertAreEqual)(type left, type right, char* ctest_message) \
-{ \
-    CTEST_ASSERT_ARE_EQUAL_IMPL_FOR_TYPE(type) \
-} \
-void MU_C2(type,_AssertAreNotEqual)(type left, type right, char* ctest_message) \
-{ \
-    CTEST_ASSERT_ARE_NOT_EQUAL_IMPL_FOR_TYPE(type) \
-}
 
 extern C_LINKAGE void bool_AssertAreEqual(int left, int right, char* ctest_message);
 extern C_LINKAGE void _Bool_AssertAreEqual(int left, int right, char* ctest_message);
