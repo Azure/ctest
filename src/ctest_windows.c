@@ -5,8 +5,8 @@
 #include <stdio.h>
 #include <inttypes.h>
 
-#include "macro_utils/macro_utils.h"
 #include "ctest.h"
+#include "ctest_windows.h"
 #include "windows.h"
 #include "psapi.h"
 
@@ -100,7 +100,7 @@ static void HRESULT_ToString(char* string, size_t bufferSize, HRESULT hr)
     }
 
     // on error print the value as is
-    (void)snprintf(string, bufferSize, "0x%08x", hr);
+    (void)snprintf(string, bufferSize, "0x%08lx", hr);
 
 allok:;
 }
