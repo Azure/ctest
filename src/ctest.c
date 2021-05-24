@@ -283,11 +283,6 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
     return failedTestCount;
 }
 
-static void bool_ToString(char* string, size_t bufferSize, int val)
-{
-    (void)snprintf(string, bufferSize, "%s", val ? "true" : "false");
-}
-
 static void _Bool_ToString(char* string, size_t bufferSize, int val)
 {
     (void)snprintf(string, bufferSize, "%s", val ? "true" : "false");
@@ -351,11 +346,6 @@ static void void_ptr_ToString(char* string, size_t bufferSize, const void* val)
 static void unsigned_long_ToString(char* string, size_t bufferSize, unsigned long val)
 {
     (void)snprintf(string, bufferSize, "%lu", val);
-}
-
-static int bool_Compare(int left, int right)
-{
-    return left != right;
 }
 
 static int _Bool_Compare(int left, int right)
@@ -538,7 +528,26 @@ static int int64_t_Compare(int64_t left, int64_t right)
 
 #endif
 
-CTEST_DEFINE_EXTERN_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(bool)
+void bool_AssertAreEqual(int left, int right, char* ctest_message)
+{
+    CTEST_ASSERT_ARE_EQUAL_IMPL_FOR_TYPE(_Bool)
+}
+
+void _Bool_AssertAreEqual(int left, int right, char* ctest_message)
+{
+    CTEST_ASSERT_ARE_EQUAL_IMPL_FOR_TYPE(_Bool)
+}
+
+void bool_AssertAreNotEqual(int left, int right, char* ctest_message)
+{
+    CTEST_ASSERT_ARE_NOT_EQUAL_IMPL_FOR_TYPE(_Bool)
+}
+
+void _Bool_AssertAreNotEqual(int left, int right, char* ctest_message)
+{
+    CTEST_ASSERT_ARE_NOT_EQUAL_IMPL_FOR_TYPE(_Bool)
+}
+
 CTEST_DEFINE_EXTERN_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(int)
 CTEST_DEFINE_EXTERN_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(char)
 CTEST_DEFINE_EXTERN_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(short)

@@ -360,7 +360,11 @@ void MU_C2(type,_AssertAreNotEqual)(type left, type right, char* ctest_message) 
     CTEST_ASSERT_ARE_NOT_EQUAL_IMPL_FOR_TYPE(type) \
 }
 
-CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(bool)
+extern C_LINKAGE void bool_AssertAreEqual(int left, int right, char* ctest_message);
+extern C_LINKAGE void _Bool_AssertAreEqual(int left, int right, char* ctest_message);
+extern C_LINKAGE void bool_AssertAreNotEqual(int left, int right, char* ctest_message);
+extern C_LINKAGE void _Bool_AssertAreNotEqual(int left, int right, char* ctest_message);
+
 CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(int)
 CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(char)
 CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(short)
