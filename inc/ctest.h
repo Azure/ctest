@@ -217,7 +217,7 @@ extern C_LINKAGE void MU_C2(type,_AssertAreNotEqual)(type left, type right, char
     char actualString[1024]; \
     MU_C2(type,_ToString)(expectedString, sizeof(expectedString), left); \
     MU_C2(type,_ToString)(actualString, sizeof(actualString), right); \
-    if (MU_C2(type,_Compare)(left, right) == (int)check_for_is_equal) \
+    if (!!MU_C2(type,_Compare)(left, right) == check_for_is_equal) \
     { \
         LogError("  Assert failed in line %d %s Expected: %s, Actual: %s\n", __LINE__, (ctest_message == NULL) ? "" : ctest_message, expectedString, actualString); \
         ctest_sprintf_free(ctest_message); \
