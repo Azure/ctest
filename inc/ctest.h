@@ -200,7 +200,7 @@ do \
 
 typedef const char* char_ptr;
 typedef const wchar_t* wchar_ptr;
-typedef void* void_ptr;
+typedef const void* void_ptr;
 typedef long double long_double;
 typedef unsigned long unsigned_long;
 
@@ -212,12 +212,12 @@ extern C_LINKAGE void ctest_sprintf_free(char* string);
 extern C_LINKAGE void MU_C2(type,_AssertAreEqual)(type left, type right, char* ctest_message); \
 extern C_LINKAGE void MU_C2(type,_AssertAreNotEqual)(type left, type right, char* ctest_message);
 
-#define CTEST_ASSERT_ARE_EQUAL_IMPL_FOR_TYPE(type) \
+#define CTEST_EQUALITY_ASSERT_IMPL_FOR_TYPE(type, check_for_is_equal) \
     char expectedString[1024]; \
     char actualString[1024]; \
     MU_C2(type,_ToString)(expectedString, sizeof(expectedString), left); \
     MU_C2(type,_ToString)(actualString, sizeof(actualString), right); \
-    if (MU_C2(type,_Compare)(left, right)) \
+    if (MU_C2(type,_Compare)(left, right) == (int)check_for_is_equal) \
     { \
         LogError("  Assert failed in line %d %s Expected: %s, Actual: %s\n", __LINE__, (ctest_message == NULL) ? "" : ctest_message, expectedString, actualString); \
         ctest_sprintf_free(ctest_message); \
@@ -226,46 +226,28 @@ extern C_LINKAGE void MU_C2(type,_AssertAreNotEqual)(type left, type right, char
     } \
     ctest_sprintf_free(ctest_message);
 
-#define CTEST_ASSERT_ARE_NOT_EQUAL_IMPL_FOR_TYPE(type) \
-    char expectedString[1024]; \
-    char actualString[1024]; \
-    MU_C2(type,_ToString)(expectedString, sizeof(expectedString), left); \
-    MU_C2(type,_ToString)(actualString, sizeof(actualString), right); \
-    if (!MU_C2(type,_Compare)(left, right)) \
-    { \
-        LogError("  Assert failed in line %d %s Expected: %s, Actual: %s\n", __LINE__, (ctest_message == NULL) ? "" : ctest_message, expectedString, actualString); \
-        ctest_sprintf_free(ctest_message); \
-        if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
-        do_jump(&g_ExceptionJump, expectedString, actualString); \
-    } \
-    ctest_sprintf_free(ctest_message);
-
-#define CTEST_DEFINE_STATIC_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(type) \
-static void MU_C2(type,_AssertAreEqual)(type left, type right, char* ctest_message) \
+#define CTEST_DEFINE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(type, qualifier) \
+qualifier void MU_C2(type,_AssertAreEqual)(type left, type right, char* ctest_message) \
 { \
-    CTEST_ASSERT_ARE_EQUAL_IMPL_FOR_TYPE(type) \
+    CTEST_EQUALITY_ASSERT_IMPL_FOR_TYPE(type, true) \
 } \
-static void MU_C2(type,_AssertAreNotEqual)(type left, type right, char* ctest_message) \
+qualifier void MU_C2(type,_AssertAreNotEqual)(type left, type right, char* ctest_message) \
 { \
-    CTEST_ASSERT_ARE_NOT_EQUAL_IMPL_FOR_TYPE(type) \
+    CTEST_EQUALITY_ASSERT_IMPL_FOR_TYPE(type, false) \
 }
 
-#define CTEST_DEFINE_EXTERN_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(type) \
-void MU_C2(type,_AssertAreEqual)(type left, type right, char* ctest_message) \
-{ \
-    CTEST_ASSERT_ARE_EQUAL_IMPL_FOR_TYPE(type) \
-} \
-void MU_C2(type,_AssertAreNotEqual)(type left, type right, char* ctest_message) \
-{ \
-    CTEST_ASSERT_ARE_NOT_EQUAL_IMPL_FOR_TYPE(type) \
-}
-
-
+// This macro expands the function signature for the user type's
+// custom Compare function. It also defines the AssertAreEqual
+// and AssertAreNotEqual functions for this type to avoid requiring
+// the user to manually call CTEST_DEFINE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE.
+// Forward declarations for the Compare and ToString functions are
+// added because the assertion function calls them and their declarations
+// need to exist.
 #define CTEST_COMPARE(toStringType, cType) \
     typedef cType toStringType; \
     static int MU_C2(toStringType,_Compare)(toStringType left, toStringType right); \
     static void MU_C2(toStringType,_ToString)(char* string, size_t bufferSize, cType value); \
-    CTEST_DEFINE_STATIC_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(toStringType) \
+    CTEST_DEFINE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(toStringType, static) \
     static int MU_C2(toStringType,_Compare)(toStringType left, toStringType right)
 
 #define CTEST_TO_STRING(toStringType, cType, string, bufferSize, value) \
@@ -288,14 +270,14 @@ void do_jump(jmp_buf *exceptionJump, const volatile void* expected, const volati
 do \
 { \
     char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
-    MU_C2(type,_AssertAreEqual)((type)(A), (type)(B), ctest_message); \
+    MU_C2(type,_AssertAreEqual)((A), (B), ctest_message); \
 } while (0)
 
 #define CTEST_ASSERT_ARE_NOT_EQUAL(type, A, B, ...) \
 do \
 { \
     char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
-    MU_C2(type,_AssertAreNotEqual)((type)(A), (type)(B), ctest_message); \
+    MU_C2(type,_AssertAreNotEqual)((A), (B), ctest_message); \
 } while (0)
 
 #define CTEST_ASSERT_IS_NULL(value, ...) \
@@ -402,7 +384,7 @@ static int MU_C2(enum_name, _Compare)(enum_name left, enum_name right) \
 { \
     return left != right; \
 } \
-CTEST_DEFINE_STATIC_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(enum_name)
+CTEST_DEFINE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(enum_name, static)
 
 // this macro expands to the needed _ToString and _Compare functions for an enum,
 // while using the macro utils ENUM_TO_STRING

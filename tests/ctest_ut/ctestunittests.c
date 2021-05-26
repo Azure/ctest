@@ -25,6 +25,7 @@ int main()
     CTEST_RUN_TEST_SUITE(SimpleTestSuiteOneTestCpp, failedTests);
     CTEST_RUN_TEST_SUITE(TestSuiteInitializeCleanupTests, failedTests);
     CTEST_RUN_TEST_SUITE(AssertSuccessTests, failedTests);
+    CTEST_RUN_TEST_SUITE(AssertSuccessTestsCpp, failedTests);
     {
         // tests with regular assert failures, no special messages
         size_t temp_failed_tests = 0;
