@@ -42,7 +42,7 @@ CTEST_TO_STRING(MyStruct_ref, MyStruct&, string, bufferSize, value)
     (void)snprintf(string, bufferSize, "{ %d }", (int)value.x);
 }
 
-// Make sur bool also works in C++ since boolean
+// Make sure bool also works in C++ since boolean
 // types have subtle variations between C and C++.
 
 CTEST_FUNCTION(Assert_Are_Equal_2_Bools_Succeeds)
