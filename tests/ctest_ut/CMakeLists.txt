@@ -27,6 +27,7 @@ set(ctest_ut_c_files
 endif()
 
 set(ctest_ut_cpp_files
+    assertsuccesstestscpp.cpp
     simpletestsuiteonetestcpp.cpp
 )
 

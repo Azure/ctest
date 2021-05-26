@@ -2,6 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #include <stdint.h>  // for int16_t, int32_t, int64_t, int8_t, uint16_t, uin...
+#include <stdbool.h>  // for true, bool, false
+#include <wchar.h>    // for wchar_t
 #include <stdio.h>   // for snprintf, NULL
 
 #include "ctest.h"
@@ -24,6 +26,11 @@ CTEST_TO_STRING(mystruct_ptr, mystruct*, string, bufferSize, value)
 }
 
 /* CTEST_ASSERT_ARE_EQUAL */
+
+CTEST_FUNCTION(Assert_Are_Equal_2_Bools_Succeeds)
+{
+    CTEST_ASSERT_ARE_EQUAL(bool, true, true);
+}
 
 CTEST_FUNCTION(Assert_Are_Equal_2_Ints_Succeeds)
 {
@@ -207,6 +214,11 @@ CTEST_FUNCTION(Assert_Are_Equal_With_Msg_2_Structures_Succeeds)
 }
 
 /* CTEST_ASSERT_ARE_NOT_EQUAL */
+
+CTEST_FUNCTION(Assert_Are_Not_Equal_2_Bools_Succeeds)
+{
+    CTEST_ASSERT_ARE_NOT_EQUAL(bool, true, false);
+}
 
 CTEST_FUNCTION(Assert_Are_Not_Equal_2_Ints_Succeeds)
 {
@@ -466,6 +478,26 @@ CTEST_FUNCTION(Assert_Are_Not_Equal_with_defined_type_succeeds)
 {
     my_type tested_value = 0;
     CTEST_ASSERT_ARE_NOT_EQUAL(my_type, 1, tested_value);
+}
+
+/* Const pointer compatibility */
+
+CTEST_FUNCTION(Assert_Are_Equal_Const_Char_Ptr)
+{
+    const char* my_const_ptr = "Some string";
+    CTEST_ASSERT_ARE_EQUAL(char_ptr, my_const_ptr, my_const_ptr);
+}
+
+CTEST_FUNCTION(Assert_Are_Equal_Const_WChar_Ptr)
+{
+    const wchar_t* my_const_ptr = L"Some string";
+    CTEST_ASSERT_ARE_EQUAL(wchar_ptr, my_const_ptr, my_const_ptr);
+}
+
+CTEST_FUNCTION(Assert_Are_Equal_Const_Void_Ptr)
+{
+    const char* my_const_ptr = "Some string";
+    CTEST_ASSERT_ARE_EQUAL(void_ptr, my_const_ptr, my_const_ptr);
 }
 
 CTEST_END_TEST_SUITE(AssertSuccessTests)
