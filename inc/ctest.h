@@ -227,6 +227,7 @@ extern C_LINKAGE void MU_C2(type,_AssertAreNotEqual)(type left, type right, char
     ctest_sprintf_free(ctest_message);
 
 #define CTEST_DEFINE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(type, qualifier) \
+MU_SUPPRESS_WARNING(4505) \
 qualifier void MU_C2(type,_AssertAreEqual)(type left, type right, char* ctest_message) \
 { \
     CTEST_EQUALITY_ASSERT_IMPL_FOR_TYPE(type, true) \
@@ -270,14 +271,14 @@ void do_jump(jmp_buf *exceptionJump, const volatile void* expected, const volati
 do \
 { \
     char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
-    MU_C2(type,_AssertAreEqual)((A), (B), ctest_message); \
+    MU_C2(type,_AssertAreEqual)((type)(A), (type)(B), ctest_message); \
 } while (0)
 
 #define CTEST_ASSERT_ARE_NOT_EQUAL(type, A, B, ...) \
 do \
 { \
     char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
-    MU_C2(type,_AssertAreNotEqual)((A), (B), ctest_message); \
+    MU_C2(type,_AssertAreNotEqual)((type)(A), (type)(B), ctest_message); \
 } while (0)
 
 #define CTEST_ASSERT_IS_NULL(value, ...) \
