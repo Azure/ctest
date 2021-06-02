@@ -198,9 +198,9 @@ do \
     MU_IF(MU_DIV2(MU_COUNT_ARG(__VA_ARGS__)),MU_FOR_EACH_1_COUNTED(PRINT_SECOND_ARG, __VA_ARGS__),) RunTests(&MU_C2(TestListHead_, FIRST_ARG(__VA_ARGS__)), MU_TOSTRING(FIRST_ARG(__VA_ARGS__)), true); \
 } while ((void)0,0)
 
-typedef const char* char_ptr;
-typedef const wchar_t* wchar_ptr;
-typedef const void* void_ptr;
+typedef char* char_ptr;
+typedef wchar_t* wchar_ptr;
+typedef void* void_ptr;
 typedef long double long_double;
 typedef unsigned long unsigned_long;
 
@@ -271,14 +271,14 @@ void do_jump(jmp_buf *exceptionJump, const volatile void* expected, const volati
 do \
 { \
     char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
-    MU_C2(type,_AssertAreEqual)((A), (B), ctest_message); \
+    MU_C2(type,_AssertAreEqual)((type)(A), (type)(B), ctest_message); \
 } while (0)
 
 #define CTEST_ASSERT_ARE_NOT_EQUAL(type, A, B, ...) \
 do \
 { \
     char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
-    MU_C2(type,_AssertAreNotEqual)((A), (B), ctest_message); \
+    MU_C2(type,_AssertAreNotEqual)((type)(A), (type)(B), ctest_message); \
 } while (0)
 
 #define CTEST_ASSERT_IS_NULL(value, ...) \
