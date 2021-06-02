@@ -227,6 +227,7 @@ extern C_LINKAGE void MU_C2(type,_AssertAreNotEqual)(type left, type right, char
     ctest_sprintf_free(ctest_message);
 
 #define CTEST_DEFINE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(type, qualifier) \
+MU_SUPPRESS_WARNING(4505) /* warning C4505: 'xxx_AssertAreNotEqual': unreferenced local function has been removed */ \
 qualifier void MU_C2(type,_AssertAreEqual)(type left, type right, char* ctest_message) \
 { \
     CTEST_EQUALITY_ASSERT_IMPL_FOR_TYPE(type, true) \
