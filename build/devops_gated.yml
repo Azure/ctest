@@ -178,11 +178,6 @@ jobs:
 
   steps:
   - bash: |
-      sudo apt-get update
-      sudo apt-get install curl build-essential pkg-config libcurl4-openssl-dev git cmake libssl-dev uuid-dev valgrind
-    displayName: 'Bash Script'
-
-  - bash: |
      pushd $(Build.Repository.LocalPath)
      git submodule update --init
      git submodule foreach --recursive "git clean -xdff"
@@ -256,7 +251,6 @@ jobs:
       - linux
 
   steps:
-
   - bash: |
      pushd $(Build.Repository.LocalPath)
      git submodule update --init
