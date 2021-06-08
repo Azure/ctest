@@ -601,6 +601,7 @@ static char* ctest_vsprintf_char(const char* format, va_list va)
             }
         }
     }
+    va_end(va_clone);
     return result;
 }
 
