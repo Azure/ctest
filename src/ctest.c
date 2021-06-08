@@ -575,10 +575,12 @@ CTEST_DEFINE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(int64_t,)
 static char* ctest_vsprintf_char(const char* format, va_list va)
 {
     char* result;
-    int neededSize = vsnprintf(NULL, 0, format, va);
+    va_list va_clone;
+    va_copy(va_clone, va);  /*this is needed because "va" would be passed twice to a function that parses it with va_arg: once in vsnprintf(NULL, 0, format, va) and the second time in vsnprintf(result, neededSize + 1, format, va) yielding undefined behavior*/
+    int neededSize = vsnprintf(NULL, 0, format, va_clone);
     if (neededSize < 0)
     {
-        LogError("failure in vsnprintf");
+        LogError("failure in vsnprintf, format=%s, va_clone=%p);", format, (void*)va_clone);
         result = NULL;
     }
     else
@@ -593,7 +595,7 @@ static char* ctest_vsprintf_char(const char* format, va_list va)
         {
             if (vsnprintf(result, neededSize + 1, format, va) != neededSize)
             {
-                LogError("inconsistent vsnprintf behavior");
+                LogError("inconsistent vsnprintf behavior format, neededSize=%zu + 1, format=%s, va=%p", neededSize, format, (void*)va);
                 free(result);
                 result = NULL;
             }
