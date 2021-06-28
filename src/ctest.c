@@ -580,7 +580,7 @@ static char* ctest_vsprintf_char(const char* format, va_list va)
     int neededSize = vsnprintf(NULL, 0, format, va_clone);
     if (neededSize < 0)
     {
-        LogError("failure in vsnprintf, format=%s, va_clone=%p);", format, (void*)va_clone);
+        LogError("failure in vsnprintf, format=%s, va_clone=%p);", format, (void*)&va_clone);
         result = NULL;
     }
     else
@@ -595,7 +595,7 @@ static char* ctest_vsprintf_char(const char* format, va_list va)
         {
             if (vsnprintf(result, neededSize + 1, format, va) != neededSize)
             {
-                LogError("inconsistent vsnprintf behavior format, neededSize=%d + 1, format=%s, va=%p", neededSize, format, (void*)va);
+                LogError("inconsistent vsnprintf behavior format, neededSize=%d + 1, format=%s, va=%p", neededSize, format, (void*)&va);
                 free(result);
                 result = NULL;
             }
