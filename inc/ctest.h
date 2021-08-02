@@ -209,17 +209,17 @@ extern C_LINKAGE char* ctest_sprintf_char(const char* format, ...);
 extern C_LINKAGE void ctest_sprintf_free(char* string);
 
 #define CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(type) \
-extern C_LINKAGE void MU_C2(type,_AssertAreEqual)(type left, type right, char* ctest_message); \
-extern C_LINKAGE void MU_C2(type,_AssertAreNotEqual)(type left, type right, char* ctest_message);
+extern C_LINKAGE void MU_C2(type,_AssertAreEqual)(type left, type right, char* ctest_message, int line_no); \
+extern C_LINKAGE void MU_C2(type,_AssertAreNotEqual)(type left, type right, char* ctest_message, int line_no);
 
-#define CTEST_EQUALITY_ASSERT_IMPL_FOR_TYPE(type, check_for_is_equal) \
+#define CTEST_EQUALITY_ASSERT_IMPL_FOR_TYPE(type, check_for_is_equal, line_no) \
     char expectedString[1024]; \
     char actualString[1024]; \
     MU_C2(type,_ToString)(expectedString, sizeof(expectedString), left); \
     MU_C2(type,_ToString)(actualString, sizeof(actualString), right); \
     if (!!MU_C2(type,_Compare)(left, right) == check_for_is_equal) \
     { \
-        LogError("  Assert failed in line %d %s Expected: %s, Actual: %s\n", __LINE__, (ctest_message == NULL) ? "" : ctest_message, expectedString, actualString); \
+        LogError("  Assert failed in line %d %s Expected: %s, Actual: %s\n", line_no, (ctest_message == NULL) ? "" : ctest_message, expectedString, actualString); \
         ctest_sprintf_free(ctest_message); \
         if (g_CurrentTestFunction != NULL) *g_CurrentTestFunction->TestResult = TEST_FAILED; \
         do_jump(&g_ExceptionJump, expectedString, actualString); \
@@ -228,13 +228,13 @@ extern C_LINKAGE void MU_C2(type,_AssertAreNotEqual)(type left, type right, char
 
 #define CTEST_DEFINE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(type, qualifier) \
 MU_SUPPRESS_WARNING(4505) /* warning C4505: 'xxx_AssertAreNotEqual': unreferenced local function has been removed */ \
-qualifier void MU_C2(type,_AssertAreEqual)(type left, type right, char* ctest_message) \
+qualifier void MU_C2(type,_AssertAreEqual)(type left, type right, char* ctest_message, int line_no) \
 { \
-    CTEST_EQUALITY_ASSERT_IMPL_FOR_TYPE(type, true) \
+    CTEST_EQUALITY_ASSERT_IMPL_FOR_TYPE(type, true, line_no) \
 } \
-qualifier void MU_C2(type,_AssertAreNotEqual)(type left, type right, char* ctest_message) \
+qualifier void MU_C2(type,_AssertAreNotEqual)(type left, type right, char* ctest_message, int line_no) \
 { \
-    CTEST_EQUALITY_ASSERT_IMPL_FOR_TYPE(type, false) \
+    CTEST_EQUALITY_ASSERT_IMPL_FOR_TYPE(type, false, line_no) \
 }
 
 // This macro expands the function signature for the user type's
@@ -271,14 +271,14 @@ void do_jump(jmp_buf *exceptionJump, const volatile void* expected, const volati
 do \
 { \
     char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
-    MU_C2(type,_AssertAreEqual)((type)(A), (type)(B), ctest_message); \
+    MU_C2(type,_AssertAreEqual)((type)(A), (type)(B), ctest_message, __LINE__); \
 } while (0)
 
 #define CTEST_ASSERT_ARE_NOT_EQUAL(type, A, B, ...) \
 do \
 { \
     char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
-    MU_C2(type,_AssertAreNotEqual)((type)(A), (type)(B), ctest_message); \
+    MU_C2(type,_AssertAreNotEqual)((type)(A), (type)(B), ctest_message, __LINE__); \
 } while (0)
 
 #define CTEST_ASSERT_IS_NULL(value, ...) \
@@ -347,10 +347,10 @@ do \
 } \
 while(0)
 
-extern C_LINKAGE void bool_AssertAreEqual(int left, int right, char* ctest_message);
-extern C_LINKAGE void _Bool_AssertAreEqual(int left, int right, char* ctest_message);
-extern C_LINKAGE void bool_AssertAreNotEqual(int left, int right, char* ctest_message);
-extern C_LINKAGE void _Bool_AssertAreNotEqual(int left, int right, char* ctest_message);
+extern C_LINKAGE void bool_AssertAreEqual(int left, int right, char* ctest_message, int line_no);
+extern C_LINKAGE void _Bool_AssertAreEqual(int left, int right, char* ctest_message, int line_no);
+extern C_LINKAGE void bool_AssertAreNotEqual(int left, int right, char* ctest_message, int line_no);
+extern C_LINKAGE void _Bool_AssertAreNotEqual(int left, int right, char* ctest_message, int line_no);
 
 CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(int)
 CTEST_DECLARE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(char)
