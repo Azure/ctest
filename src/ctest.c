@@ -528,24 +528,24 @@ static int int64_t_Compare(int64_t left, int64_t right)
 
 #endif
 
-void bool_AssertAreEqual(int left, int right, char* ctest_message)
+void bool_AssertAreEqual(int left, int right, char* ctest_message, int line_no)
 {
-    CTEST_EQUALITY_ASSERT_IMPL_FOR_TYPE(_Bool, true)
+    CTEST_EQUALITY_ASSERT_IMPL_FOR_TYPE(_Bool, true, line_no)
 }
 
-void _Bool_AssertAreEqual(int left, int right, char* ctest_message)
+void _Bool_AssertAreEqual(int left, int right, char* ctest_message, int line_no)
 {
-    CTEST_EQUALITY_ASSERT_IMPL_FOR_TYPE(_Bool, true)
+    CTEST_EQUALITY_ASSERT_IMPL_FOR_TYPE(_Bool, true, line_no)
 }
 
-void bool_AssertAreNotEqual(int left, int right, char* ctest_message)
+void bool_AssertAreNotEqual(int left, int right, char* ctest_message, int line_no)
 {
-    CTEST_EQUALITY_ASSERT_IMPL_FOR_TYPE(_Bool, false)
+    CTEST_EQUALITY_ASSERT_IMPL_FOR_TYPE(_Bool, false, line_no)
 }
 
-void _Bool_AssertAreNotEqual(int left, int right, char* ctest_message)
+void _Bool_AssertAreNotEqual(int left, int right, char* ctest_message, int line_no)
 {
-    CTEST_EQUALITY_ASSERT_IMPL_FOR_TYPE(_Bool, false)
+    CTEST_EQUALITY_ASSERT_IMPL_FOR_TYPE(_Bool, false, line_no)
 }
 
 CTEST_DEFINE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(int,)
