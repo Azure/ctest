@@ -6,7 +6,7 @@ jobs:
 - job: windowsx64debug
   displayName: 'Build Windows x64 Debug'
   pool:
-    name: Azure-MessagingStore
+    name: Azure-MessagingStore-BuildMachinePool
     demands:
     - Build
     - Cmd
@@ -64,7 +64,7 @@ jobs:
 - job: windowsx86relwithdebinfo
   displayName: 'Build Windows x86 RelWithDebInfo'
   pool:
-    name: Azure-MessagingStore
+    name: Azure-MessagingStore-BuildMachinePool
     demands:
     - Build
     - Cmd
@@ -115,7 +115,7 @@ jobs:
 - job: windowsx86debug
   displayName: 'Build Windows x86 Debug'
   pool:
-    name: Azure-MessagingStore
+    name: Azure-MessagingStore-BuildMachinePool
     demands:
     - Build
     - Cmd
