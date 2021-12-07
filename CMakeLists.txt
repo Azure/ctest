@@ -20,6 +20,11 @@ project(ctest)
 
 set(CTEST_VERSION 1.1.19)
 
+include (CheckIncludeFiles)
+
+CHECK_INCLUDE_FILES(stdint.h HAVE_STDINT_H)
+CHECK_INCLUDE_FILES(stdbool.h HAVE_STDBOOL_H)
+
 #Use solution folders.
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -75,7 +80,6 @@ set(run_traceability ${original_run_traceability})
 set(run_reals_check ${original_run_reals_check})
 
 include (CTest)
-include (CheckIncludeFiles)
 
 if(${use_coloring})
     add_definitions(-DUSE_COLORING)
@@ -110,9 +114,6 @@ endif()
 set(CTEST_INC_FOLDER ${CMAKE_CURRENT_LIST_DIR}/inc CACHE INTERNAL "this is what needs to be included if using ctest lib" FORCE)
 
 include_directories(${CTEST_INC_FOLDER})
-
-CHECK_INCLUDE_FILES(stdint.h HAVE_STDINT_H)
-CHECK_INCLUDE_FILES(stdbool.h HAVE_STDBOOL_H)
 
 if ((NOT HAVE_STDINT_H) OR (NOT HAVE_STDBOOL_H))
     include_directories(${CTEST_INC_FOLDER}/aux_inc)
