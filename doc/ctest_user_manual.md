@@ -75,7 +75,7 @@ The `failedTestCount` argument for `CTEST_RUN_TEST_SUITE` is optional. If specif
 
 ## Leak detection (VLD)
 
-When a test is compiled using [Visual Leak Detector](https://github.com/KindDragon/vld), `CTest` will check if there were any memory leaks and report them as test failures.
+When a test is compiled using [Visual Leak Detector](https://github.com/Azure/vld), `CTest` will check if there were any memory leaks and report them as test failures.
 
 This works by checking the number of allocations at the beginning of the test and then comparing it to the number of allocations that have not been freed at the end of the test.
 
