@@ -622,25 +622,6 @@ void ctest_sprintf_free(char* string)
     free(string);
 }
 
-#if defined _MSC_VER
-#elif defined __cpluplus
-#elif defined __STDC_VERSION__
-#if ((__STDC_VERSION__  == 199901L) || (__STDC_VERSION__ == 201000L) || (__STDC_VERSION__ == 201112L))
-#else
-
-int snprintf(char * s, size_t n, const char * format, ...)
-{
-    int result;
-    va_list args;
-    va_start(args, format);
-    result = vsprintf(s, format, args);
-    va_end(args);
-    return result;
-}
-
-#endif
-#endif
-
 void do_jump(jmp_buf *exceptionJump, const volatile void* expected, const volatile void* actual)
 {
     /*setting a breakpoint here allows catching the jump before it happens*/
