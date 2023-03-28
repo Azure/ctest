@@ -3,7 +3,7 @@
 
 #include <stdio.h>  // for printf
 
-#include "macro_utils/macro_utils.h"
+#include "macro_utils/macro_utils.h" // IWYU pragma: keep
 
 #include "ctest.h"
 
