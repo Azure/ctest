@@ -45,5 +45,5 @@ set_target_properties(ctest_ut
 target_link_libraries(ctest_ut ctest)
 
 if(${run_unittests})
-	add_test(NAME ctest_ut COMMAND ctest_ut)
+    add_test(NAME ctest_ut COMMAND ctest_ut)
 endif()

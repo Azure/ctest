@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+#include <stdio.h>  // for printf
+
 #include "ctest.h"
 
 CTEST_BEGIN_TEST_SUITE(ctest_one_custom_fixture_ut)

@@ -23,5 +23,5 @@ set_target_properties(ctest_custom_fixtures_ut
 target_link_libraries(ctest_custom_fixtures_ut ctest)
 
 if(${run_unittests})
-	add_test(NAME ctest_custom_fixtures_ut COMMAND ctest_custom_fixtures_ut)
+    add_test(NAME ctest_custom_fixtures_ut COMMAND ctest_custom_fixtures_ut)
 endif()

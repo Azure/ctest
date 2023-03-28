@@ -108,12 +108,16 @@ These functions shall get called by the test runner before the `CTEST_SUITE_INIT
 
 Example usages:
 
+- No custom fixtures
+
 ```c
 CTEST_SUITE_INITIALIZE(suite_init)
 {
     /* Some init code */
 }
 ```
+
+- Using custom fixtures
 
 ```c
 static void my_suite_initialize_fixture(void)
@@ -146,12 +150,16 @@ These functions shall get called by the test runner after the `CTEST_SUITE_CLEAN
 
 Example usages:
 
+- No custom fixtures
+
 ```c
 CTEST_SUITE_CLEANUP(suite_cleanup)
 {
     /* Free resources allocated in CTEST_SUITE_INITIALIZE */
 }
 ```
+
+- Using custom fixtures
 
 ```c
 static void my_suite_cleanup_fixture(void)
@@ -184,12 +192,16 @@ These functions shall get called by the test runner before the `CTEST_FUNCTION_I
 
 Example usages:
 
+- No custom fixtures
+
 ```c
 CTEST_FUNCTION_INITIALIZE(function_initialize)
 {
     /* Initialize specific things for each test function */
 }
 ```
+
+- Using custom fixtures
 
 ```c
 static void my_function_initialize_fixture(void)
@@ -222,12 +234,16 @@ These functions shall get called by the test runner after the `CTEST_FUNCTION_CL
 
 Example usages:
 
+- No custom fixtures
+
 ```c
 CTEST_FUNCTION_CLEANUP(function_cleanup)
 {
     /* Free resources allocated in CTEST_FUNCTION_INITIALIZE */
 }
 ```
+
+- Using custom fixtures
 
 ```c
 static void my_function_cleanup_fixture(void)

@@ -21,5 +21,5 @@ set_target_properties(ctest_macro_hooks_ut
 target_link_libraries(ctest_macro_hooks_ut ctest)
 
 if(${run_unittests})
-	add_test(NAME ctest_macro_hooks_ut COMMAND ctest_macro_hooks_ut)
+    add_test(NAME ctest_macro_hooks_ut COMMAND ctest_macro_hooks_ut)
 endif()
