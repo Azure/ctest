@@ -94,7 +94,34 @@ When this is used, the check for allocations that have not been freed is checked
 This special fixture is executed before all the tests in the test suite. All resources allocated in `CTEST_SUITE_INITIALIZE` should be freed in `CTEST_SUITE_CLEANUP`.
 
 ```c
-CTEST_SUITE_INITIALIZE()
+#define CTEST_SUITE_INITIALIZE(funcName, ...) \
+    ...
+```
+
+The `...` argument is a list of 0 or more function names with the signature:
+
+```c
+void function(void)
+```
+
+These functions shall get called by the test runner before the `CTEST_SUITE_INITIALIZE` code is executed.
+
+Example usages:
+
+```c
+CTEST_SUITE_INITIALIZE(suite_init)
+{
+    /* Some init code */
+}
+```
+
+```c
+static void my_suite_initialize_fixture(void)
+{
+    // nothing interesting here
+}
+
+CTEST_SUITE_INITIALIZE(suite_init, my_suite_initialize_fixture)
 {
     /* Some init code */
 }
@@ -105,7 +132,34 @@ CTEST_SUITE_INITIALIZE()
 This special fixture is executed after all the tests in the test suite.
 
 ```c
-CTEST_SUITE_CLEANUP()
+#define CTEST_SUITE_CLEANUP(funcName, ...) \
+    ...
+```
+
+The `...` argument is a list of 0 or more function names with the signature:
+
+```c
+void function(void)
+```
+
+These functions shall get called by the test runner after the `CTEST_SUITE_CLEANUP` code is executed.
+
+Example usages:
+
+```c
+CTEST_SUITE_CLEANUP(suite_cleanup)
+{
+    /* Free resources allocated in CTEST_SUITE_INITIALIZE */
+}
+```
+
+```c
+static void my_suite_cleanup_fixture(void)
+{
+    // nothing interesting here
+}
+
+CTEST_SUITE_CLEANUP(suite_cleanup, my_suite_cleanup_fixture)
 {
     /* Free resources allocated in CTEST_SUITE_INITIALIZE */
 }
@@ -116,7 +170,34 @@ CTEST_SUITE_CLEANUP()
 This special fixture is executed before calling each test function in the test suite. All resources allocated in `CTEST_FUNCTION_INITIALIZE` should be freed in `CTEST_FUNCTION_CLEANUP`.
 
 ```c
-CTEST_FUNCTION_INITIALIZE()
+#define CTEST_FUNCTION_INITIALIZE(funcName, ...) \
+    ...
+```
+
+The `...` argument is a list of 0 or more function names with the signature:
+
+```c
+void function(void)
+```
+
+These functions shall get called by the test runner before the `CTEST_FUNCTION_INITIALIZE` code is executed.
+
+Example usages:
+
+```c
+CTEST_FUNCTION_INITIALIZE(function_initialize)
+{
+    /* Initialize specific things for each test function */
+}
+```
+
+```c
+static void my_function_initialize_fixture(void)
+{
+    // nothing interesting here
+}
+
+CTEST_FUNCTION_INITIALIZE(function_initialize, my_function_initialize_fixture)
 {
     /* Initialize specific things for each test function */
 }
@@ -127,7 +208,34 @@ CTEST_FUNCTION_INITIALIZE()
 This special fixture is executed after each test in the test suite.
 
 ```c
-CTEST_FUNCTION_CLEANUP()
+#define CTEST_FUNCTION_CLEANUP(funcName, ...) \
+    ...
+```
+
+The `...` argument is a list of 0 or more function names with the signature:
+
+```c
+void function(void)
+```
+
+These functions shall get called by the test runner after the `CTEST_FUNCTION_CLEANUP` code is executed.
+
+Example usages:
+
+```c
+CTEST_FUNCTION_CLEANUP(function_cleanup)
+{
+    /* Free resources allocated in CTEST_FUNCTION_INITIALIZE */
+}
+```
+
+```c
+static void my_function_cleanup_fixture(void)
+{
+    // nothing interesting here
+}
+
+CTEST_FUNCTION_CLEANUP(function_cleanup, my_function_cleanup_fixture)
 {
     /* Free resources allocated in CTEST_FUNCTION_INITIALIZE */
 }

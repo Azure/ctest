@@ -3,3 +3,4 @@
 
 add_subdirectory(ctest_ut)
 add_subdirectory(ctest_macro_hooks_ut)
+add_subdirectory(ctest_custom_fixtures_ut)

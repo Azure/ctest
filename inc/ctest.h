@@ -138,33 +138,60 @@ extern jmp_buf g_ExceptionJump;
     CTEST_CUSTOM_TEST_FUNCTION_CODE(funcName) \
     static void funcName(void)
 
-#define CTEST_SUITE_INITIALIZE(funcName) \
-    static void TestSuiteInitialize(void); \
-    static const TEST_FUNCTION_DATA MU_C2(TestFunctionData, MU_C1(MU_INC(__COUNTER__))) = \
-{ TestSuiteInitialize, "TestSuiteInitialize", &MU_C2(TestFunctionData, MU_C1(MU_DEC(MU_DEC(__COUNTER__)))), NULL, CTEST_TEST_SUITE_INITIALIZE }; \
-    CTEST_CUSTOM_TEST_SUITE_INITIALIZE_CODE(funcName) \
-    static void TestSuiteInitialize(void)
+#define CTEST_CALL_FIXTURE(A) \
+    A();
 
-#define CTEST_SUITE_CLEANUP(funcName) \
-    static void TestSuiteCleanup(void); \
-    static const TEST_FUNCTION_DATA MU_C2(TestFunctionData, MU_C1(MU_INC(__COUNTER__))) = \
-{ &TestSuiteCleanup, "TestSuiteCleanup", &MU_C2(TestFunctionData, MU_C1(MU_DEC(MU_DEC(__COUNTER__)))), NULL, CTEST_TEST_SUITE_CLEANUP }; \
-    CTEST_CUSTOM_TEST_SUITE_CLEANUP_CODE(funcName) \
-    static void TestSuiteCleanup(void)
+#define CTEST_SUITE_INITIALIZE(funcName, ...)                                                                                                           \
+    static void TestSuiteInitialize(void);                                                                                                              \
+    static const TEST_FUNCTION_DATA MU_C2(TestFunctionData, MU_C1(MU_INC(__COUNTER__))) =                                                               \
+{ TestSuiteInitialize, "TestSuiteInitialize", &MU_C2(TestFunctionData, MU_C1(MU_DEC(MU_DEC(__COUNTER__)))), NULL, CTEST_TEST_SUITE_INITIALIZE };        \
+    CTEST_CUSTOM_TEST_SUITE_INITIALIZE_CODE(funcName)                                                                                                   \
+    static void TestSuiteInitialize_user(void);                                                                                                         \
+    static void TestSuiteInitialize(void)                                                                                                               \
+    {                                                                                                                                                   \
+        MU_IF(MU_COUNT_ARG(__VA_ARGS__),MU_FOR_EACH_1(CTEST_CALL_FIXTURE, __VA_ARGS__),)                                                                \
+        TestSuiteInitialize_user();                                                                                                                     \
+    }                                                                                                                                                   \
+    static void TestSuiteInitialize_user(void)
 
-#define CTEST_FUNCTION_INITIALIZE(funcName) \
-    static void TestFunctionInitialize(void); \
-    static const TEST_FUNCTION_DATA MU_C2(TestFunctionData, MU_C1(MU_INC(__COUNTER__))) = \
-{ TestFunctionInitialize, "TestFunctionInitialize", &MU_C2(TestFunctionData, MU_C1(MU_DEC(MU_DEC(__COUNTER__)))), NULL, CTEST_TEST_FUNCTION_INITIALIZE }; \
-    CTEST_CUSTOM_TEST_FUNCTION_INITIALIZE_CODE(funcName) \
-    static void TestFunctionInitialize(void)
+#define CTEST_SUITE_CLEANUP(funcName, ...)                                                                                                              \
+    static void TestSuiteCleanup(void);                                                                                                                 \
+    static const TEST_FUNCTION_DATA MU_C2(TestFunctionData, MU_C1(MU_INC(__COUNTER__))) =                                                               \
+{ &TestSuiteCleanup, "TestSuiteCleanup", &MU_C2(TestFunctionData, MU_C1(MU_DEC(MU_DEC(__COUNTER__)))), NULL, CTEST_TEST_SUITE_CLEANUP };                \
+    CTEST_CUSTOM_TEST_SUITE_CLEANUP_CODE(funcName)                                                                                                      \
+    static void TestSuiteCleanup_user(void);                                                                                                            \
+    static void TestSuiteCleanup(void)                                                                                                                  \
+    {                                                                                                                                                   \
+        TestSuiteCleanup_user();                                                                                                                        \
+        MU_IF(MU_COUNT_ARG(__VA_ARGS__),MU_FOR_EACH_1(CTEST_CALL_FIXTURE, __VA_ARGS__),)                                                                \
+    }                                                                                                                                                   \
+    static void TestSuiteCleanup_user(void)
 
-#define CTEST_FUNCTION_CLEANUP(funcName) \
-    static void TestFunctionCleanup(void); \
-    static const TEST_FUNCTION_DATA MU_C2(TestFunctionData, MU_C1(MU_INC(__COUNTER__))) = \
-{ &TestFunctionCleanup, "TestFunctionCleanup", &MU_C2(TestFunctionData, MU_C1(MU_DEC(MU_DEC(__COUNTER__)))), NULL, CTEST_TEST_FUNCTION_CLEANUP }; \
-    CTEST_CUSTOM_TEST_FUNCTION_CLEANUP_CODE(funcName) \
-    static void TestFunctionCleanup(void)
+#define CTEST_FUNCTION_INITIALIZE(funcName, ...)                                                                                                            \
+    static void TestFunctionInitialize(void);                                                                                                               \
+    static const TEST_FUNCTION_DATA MU_C2(TestFunctionData, MU_C1(MU_INC(__COUNTER__))) =                                                                   \
+{ TestFunctionInitialize, "TestFunctionInitialize", &MU_C2(TestFunctionData, MU_C1(MU_DEC(MU_DEC(__COUNTER__)))), NULL, CTEST_TEST_FUNCTION_INITIALIZE };   \
+    CTEST_CUSTOM_TEST_FUNCTION_INITIALIZE_CODE(funcName)                                                                                                    \
+    static void TestFunctionInitialize_user(void);                                                                                                          \
+    static void TestFunctionInitialize(void)                                                                                                                \
+    {                                                                                                                                                       \
+        MU_IF(MU_COUNT_ARG(__VA_ARGS__),MU_FOR_EACH_1(CTEST_CALL_FIXTURE, __VA_ARGS__),)                                                                    \
+        TestFunctionInitialize_user();                                                                                                                      \
+    }                                                                                                                                                       \
+    static void TestFunctionInitialize_user(void)
+
+#define CTEST_FUNCTION_CLEANUP(funcName, ...)                                                                                                               \
+    static void TestFunctionCleanup(void);                                                                                                                  \
+    static const TEST_FUNCTION_DATA MU_C2(TestFunctionData, MU_C1(MU_INC(__COUNTER__))) =                                                                   \
+{ &TestFunctionCleanup, "TestFunctionCleanup", &MU_C2(TestFunctionData, MU_C1(MU_DEC(MU_DEC(__COUNTER__)))), NULL, CTEST_TEST_FUNCTION_CLEANUP };           \
+    CTEST_CUSTOM_TEST_FUNCTION_CLEANUP_CODE(funcName)                                                                                                       \
+    static void TestFunctionCleanup_user(void);                                                                                                             \
+    static void TestFunctionCleanup(void)                                                                                                                   \
+    {                                                                                                                                                       \
+        TestFunctionCleanup_user();                                                                                                                         \
+        MU_IF(MU_COUNT_ARG(__VA_ARGS__),MU_FOR_EACH_1(CTEST_CALL_FIXTURE, __VA_ARGS__),)                                                                    \
+    }                                                                                                                                                       \
+    static void TestFunctionCleanup_user(void)
 
 #define CTEST_END_TEST_SUITE(testSuiteName) \
     C_LINKAGE_PREFIX const TEST_FUNCTION_DATA TestListHead_##testSuiteName = { NULL, NULL, &MU_C2(TestFunctionData, MU_C1(MU_DEC(__COUNTER__))), NULL, CTEST_END_SUITE }; \
