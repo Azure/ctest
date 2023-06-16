@@ -129,7 +129,7 @@ target_include_directories(ctest
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-target_link_libraries(ctest PRIVATE c_logging)
+target_link_libraries(ctest PRIVATE c_logging PRIVATE c_logging_v2)
 
 set_target_properties(ctest
                PROPERTIES
