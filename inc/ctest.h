@@ -27,7 +27,7 @@
 // The pragma on the next line tells iwyu (https://github.com/include-what-you-use/include-what-you-use) to count symbols from macro_utils.h
 // as exported, so that when using the testrunnerswitcher APIs we do not get false positives
 #include "macro_utils/macro_utils.h" // IWYU pragma: export
-#include "c_logging/xlogging.h"
+#include "c_logging/logger.h"
 
 #if defined _MSC_VER
 #include "ctest_windows.h"
