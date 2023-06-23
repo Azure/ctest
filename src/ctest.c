@@ -12,7 +12,7 @@
 #include <string.h>
 
 #include "ctest.h"
-#include "c_logging/xlogging.h"
+#include "c_logging/logger.h"
 
 #if defined _MSC_VER && !defined(WINCE)
 #include <limits.h> // for SIZE_MAX

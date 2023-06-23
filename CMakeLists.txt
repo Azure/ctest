@@ -69,7 +69,7 @@ endif()
 
 if ((NOT TARGET c_logging) AND (EXISTS ${CMAKE_CURRENT_LIST_DIR}/deps/c-logging/CMakeLists.txt))
     add_subdirectory(deps/c-logging)
-    include_directories(deps/c-logging/inc)
+    include_directories(deps/c-logging/v2/inc)
 endif() 
 
 set(run_e2e_tests ${original_run_e2e_tests})
@@ -129,7 +129,7 @@ target_include_directories(ctest
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-target_link_libraries(ctest PRIVATE c_logging)
+target_link_libraries(ctest PRIVATE c_logging_v2)
 
 set_target_properties(ctest
                PROPERTIES
