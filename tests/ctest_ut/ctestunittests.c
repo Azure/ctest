@@ -3,11 +3,15 @@
 
 #include <stddef.h>  // for size_t
 
+#include "c_logging/logger.h"
+
 #include "ctest.h"
 
 int main()
 {
     size_t failedTests = 0;
+
+    (void)logger_init();
 
     /* This first suite is ran without counting failed tests to prove that the argument is optional. */
     CTEST_RUN_TEST_SUITE(SimpleTestSuiteOneTest);
@@ -101,6 +105,8 @@ int main()
         }
     }
 #endif
+
+    logger_deinit();
 
     return failedTests;
 }
