@@ -6,11 +6,6 @@
 
 #include "macro_utils/macro_utils.h"
 
-// For gcc build that causes a false negative
-#ifdef __GNUC__
-#pragma GCC diagnostic ignored "-Wunused-variable"
-#endif
-
 #define CTEST_CUSTOM_TEST_SUITE_INITIALIZE_CODE(suiteName) \
     static int MU_C2(test_variable_suite_initialize_, suiteName) = 42;
 
@@ -24,6 +19,6 @@
     static int MU_C2(test_variable_function_cleanup_, funcName) = 45;
 
 #define CTEST_CUSTOM_TEST_FUNCTION_CODE(funcName) \
-    static int MU_C2(test_variable_function_, funcName) = 46;
+    static int MU_UNUSED_VAR MU_C2(test_variable_function_, funcName) = 46;
 
 #endif /* CTEST_TEST_HOOKS_H */
