@@ -1,7 +1,13 @@
 name: $(BuildID)_$(BuildDefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 resources:
-- repo: self
-  clean: true
+  repositories:
+  - repository: self
+    clean: true
+  - repository: c_build_tools
+    type: github
+    name: azure/c-build-tools
+    endpoint: github.com_azure
+    ref: refs/heads/master
 jobs:
 - job: windowsx64debug
   displayName: 'Build Windows x64 Debug'
@@ -246,6 +252,8 @@ jobs:
       filePath: './build/linux/build_linux.sh'
       arguments: '$(Build.Repository.LocalPath)'
       workingDirectory: '$(Build.Repository.LocalPath)'
+
+- template: /pipeline_templates/codeql3000_default.yml@c_build_tools
 
 # Will be re-enabled at a later time
 #- job: iwyu
