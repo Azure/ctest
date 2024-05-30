@@ -30,14 +30,14 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
 #ifdef VLD_OPT_REPORT_TO_STDOUT
     VLD_UINT initial_leak_count = VLDGetLeaksCount();
 #endif
-    size_t totalTestCount = 0;
-    size_t failedTestCount = 0;
-    const TEST_FUNCTION_DATA* currentTestFunction = (const TEST_FUNCTION_DATA*)testListHead->NextTestFunctionData;
-    const TEST_FUNCTION_DATA* testSuiteInitialize = NULL;
-    const TEST_FUNCTION_DATA* testSuiteCleanup = NULL;
-    const TEST_FUNCTION_DATA* testFunctionInitialize = NULL;
-    const TEST_FUNCTION_DATA* testFunctionCleanup = NULL;
-    int testSuiteInitializeFailed = 0;
+    volatile size_t totalTestCount = 0;
+    volatile size_t failedTestCount = 0;
+    const TEST_FUNCTION_DATA* volatile currentTestFunction = (const TEST_FUNCTION_DATA*)testListHead->NextTestFunctionData;
+    const TEST_FUNCTION_DATA* volatile testSuiteInitialize = NULL;
+    const TEST_FUNCTION_DATA* volatile testSuiteCleanup = NULL;
+    const TEST_FUNCTION_DATA* volatile testFunctionInitialize = NULL;
+    const TEST_FUNCTION_DATA* volatile testFunctionCleanup = NULL;
+    volatile int testSuiteInitializeFailed = 0;
 
 #if defined _MSC_VER && !defined(WINCE)
     _set_abort_behavior(_CALL_REPORTFAULT, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
@@ -121,7 +121,7 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
     }
     else
     {
-        unsigned int is_test_runner_ok = 1;
+        volatile unsigned int is_test_runner_ok = 1;
 
         currentTestFunction = (const TEST_FUNCTION_DATA*)testListHead->NextTestFunctionData;
         while (currentTestFunction->TestFunction != NULL)
