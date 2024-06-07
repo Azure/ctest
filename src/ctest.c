@@ -276,6 +276,12 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
         }
     }
     failedTestCount = (failedTestCount > 0) ? failedTestCount : (size_t)(-(int)(VLDGetLeaksCount() - initial_leak_count));
+    if (failedTestCount < 0)
+    {
+        // Sometimes the leak count isn't reported at the time of process termination, log it explicitly here
+        LogWarning("Leaks detected in test, attempt to dump from VLD");
+        VLDReportLeaks();
+    }
 #else
     (void)useLeakCheckRetries;
 #endif
