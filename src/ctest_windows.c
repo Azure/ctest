@@ -22,7 +22,7 @@ static int MU_C2(type,_Compare)(type left, type right) \
     return left != right; \
 }
 
-#ifdef VLD_OPT_REPORT_TO_STDOUT
+#ifdef USE_VLD
 #include "vld.h"
 #endif
 
