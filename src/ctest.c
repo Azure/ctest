@@ -19,7 +19,7 @@
 #include "windows.h"
 #endif
 
-#ifdef VLD_OPT_REPORT_TO_STDOUT
+#ifdef USE_VLD
 #include "vld.h"
 #endif
 
@@ -27,7 +27,7 @@ const TEST_FUNCTION_DATA* g_CurrentTestFunction;
 jmp_buf g_ExceptionJump;
 size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName, bool useLeakCheckRetries)
 {
-#ifdef VLD_OPT_REPORT_TO_STDOUT
+#ifdef USE_VLD
     VLD_UINT initial_leak_count = VLDGetLeaksCount();
 #endif
     size_t totalTestCount = 0;
@@ -241,7 +241,7 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
     }
 #endif
 
-#ifdef VLD_OPT_REPORT_TO_STDOUT
+#ifdef USE_VLD
     if (useLeakCheckRetries)
     {
         if (failedTestCount == 0)
