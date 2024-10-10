@@ -34,8 +34,6 @@ set(ctest_ut_cpp_files
 set(ctest_ut_h_files
 )
 
-include_directories(${CTEST_INC_FOLDER})
-
 add_executable(ctest_ut ${ctest_ut_c_files} ${ctest_ut_cpp_files} ${ctest_ut_h_files})
 
 set_target_properties(ctest_ut

@@ -9,8 +9,7 @@ endif()
 
 #if ((NOT TARGET ctest) AND (EXISTS ${CMAKE_CURRENT_LIST_DIR}/deps/ctest/CMakeLists.txt))
 #    add_subdirectory(deps/ctest)
-#    include_directories(${CTEST_INC_FOLDER})
-#endif() 
+#endif()
 
 if(TARGET ctest)
     RETURN()
@@ -60,17 +59,16 @@ set(run_reals_check OFF)
 if ((NOT TARGET c_build_tools) AND (EXISTS ${CMAKE_CURRENT_LIST_DIR}/deps/c-build-tools/CMakeLists.txt))
     add_subdirectory(deps/c-build-tools)
     set_default_build_options()
-endif() 
+endif()
 
 if ((NOT TARGET macro_utils_c) AND (EXISTS ${CMAKE_CURRENT_LIST_DIR}/deps/macro-utils-c/CMakeLists.txt))
     add_subdirectory(deps/macro-utils-c)
-    include_directories(${MACRO_UTILS_INC_FOLDER})
-endif() 
+endif()
 
 if ((NOT TARGET c_logging) AND (EXISTS ${CMAKE_CURRENT_LIST_DIR}/deps/c-logging/CMakeLists.txt))
     add_subdirectory(deps/c-logging)
     include_directories(deps/c-logging/v2/inc)
-endif() 
+endif()
 
 set(run_e2e_tests ${original_run_e2e_tests})
 set(run_int_tests ${original_run_int_tests})
@@ -109,16 +107,6 @@ set(ctest_h_files
 )
 endif()
 
-#these are the include folders
-#the following "set" statetement exports across the project a global variable called CTEST_INC_FOLDER that expands to whatever needs to included when using ctest library
-set(CTEST_INC_FOLDER ${CMAKE_CURRENT_LIST_DIR}/inc CACHE INTERNAL "this is what needs to be included if using ctest lib" FORCE)
-
-include_directories(${CTEST_INC_FOLDER})
-
-if ((NOT HAVE_STDINT_H) OR (NOT HAVE_STDBOOL_H))
-    include_directories(${CTEST_INC_FOLDER}/aux_inc)
-endif()
-
 add_library(
 ctest ${ctest_c_files} ${ctest_h_files}
 )
@@ -129,7 +117,7 @@ target_include_directories(ctest
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-target_link_libraries(ctest PRIVATE c_logging_v2)
+target_link_libraries(ctest c_logging_v2 macro_utils_c)
 
 set_target_properties(ctest
                PROPERTIES
