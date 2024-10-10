@@ -10,8 +10,6 @@ set(ctest_macro_hooks_ut_h_files
     ctest_test_hooks.h
 )
 
-include_directories(${CTEST_INC_FOLDER})
-
 add_executable(ctest_macro_hooks_ut ${ctest_macro_hooks_ut_c_files} ${ctest_macro_hooks_ut_h_files})
 
 set_target_properties(ctest_macro_hooks_ut

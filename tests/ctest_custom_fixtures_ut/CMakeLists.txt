@@ -12,8 +12,6 @@ set(ctest_custom_fixtures_ut_h_files
     ctest_multiple_custom_fixtures_ut.h
 )
 
-include_directories(${CTEST_INC_FOLDER})
-
 add_executable(ctest_custom_fixtures_ut ${ctest_custom_fixtures_ut_c_files} ${ctest_custom_fixtures_ut_h_files})
 
 set_target_properties(ctest_custom_fixtures_ut
