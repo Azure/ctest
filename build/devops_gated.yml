@@ -17,6 +17,9 @@ jobs:
 
 - job: linuxubuntu
   displayName: 'Build Linux Ubuntu'
+  variables:
+    #Codeql does not play nice with valgrind
+    Codeql.Enabled: false
   pool:
     name: Azure-MsgStore-Linux2204BuildMachinePool
     demands:
