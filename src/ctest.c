@@ -20,7 +20,6 @@
 #endif
 
 #ifdef USE_VLD
-#include "vld.h"
 #endif
 
 const TEST_FUNCTION_DATA* g_CurrentTestFunction;

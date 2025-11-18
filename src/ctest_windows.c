@@ -23,7 +23,6 @@ static int MU_C2(type,_Compare)(type left, type right) \
 }
 
 #ifdef USE_VLD
-#include "vld.h"
 #endif
 
 TO_STRING_AND_COMPARE_FOR_TYPE(ULONG, "%lu")
