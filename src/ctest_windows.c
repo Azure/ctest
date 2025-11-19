@@ -22,9 +22,6 @@ static int MU_C2(type,_Compare)(type left, type right) \
     return left != right; \
 }
 
-#ifdef USE_VLD
-#endif
-
 TO_STRING_AND_COMPARE_FOR_TYPE(ULONG, "%lu")
 TO_STRING_AND_COMPARE_FOR_TYPE(ULONG64, "%" PRIu64)
 TO_STRING_AND_COMPARE_FOR_TYPE(LONG, "%ld")
