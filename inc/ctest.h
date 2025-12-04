@@ -307,7 +307,7 @@ do \
 { \
     char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
     /*vld.h MU_C2(type,_AssertAreNotEqual)((type)(A), (type)(B), ctest_message, __LINE__); \*/\
-    MU_C2(type,_AssertAreNotEqual)((A), (B), ctest_message, __LINE__);
+    MU_C2(type,_AssertAreNotEqual)((A), (B), ctest_message, __LINE__); \
 } while (0)
 
 #define CTEST_ASSERT_IS_NULL(value, ...) \
