@@ -15,6 +15,16 @@ typedef struct mystruct_tag
     unsigned char x;
 } mystruct;
 
+CTEST_COMPARE(mystruct, mystruct)
+{
+    return (left.x != right.x);
+}
+
+CTEST_TO_STRING(mystruct, mystruct, string, bufferSize, value)
+{
+    (void)snprintf(string, bufferSize, "{ %d }", (int)value.x);
+}
+
 CTEST_COMPARE(mystruct_ptr, mystruct*)
 {
     return (left->x != right->x);
@@ -205,12 +215,20 @@ CTEST_FUNCTION(Assert_Are_Equal_With_Msg_2_void_ptr_same_address_Succeeds)
     CTEST_ASSERT_ARE_EQUAL(void_ptr, &c1, &c1, "Test message");
 }
 
-CTEST_FUNCTION(Assert_Are_Equal_With_Msg_2_Structures_Succeeds)
+CTEST_FUNCTION(Assert_Are_Equal_With_Msg_2_ptrStructures_Succeeds)
 {
     mystruct a = { 1 };
     mystruct b = { 1 };
 
     CTEST_ASSERT_ARE_EQUAL(mystruct_ptr, &a, &b, "Test message");
+}
+
+CTEST_FUNCTION(Assert_Are_Equal_With_Msg_2_Structures_Succeeds)
+{
+    mystruct a = { 1 };
+    mystruct b = { 1 };
+
+    CTEST_ASSERT_ARE_EQUAL(mystruct, a, b, "Test message");
 }
 
 /* CTEST_ASSERT_ARE_NOT_EQUAL */

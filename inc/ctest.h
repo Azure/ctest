@@ -298,14 +298,16 @@ void do_jump(jmp_buf *exceptionJump, const volatile void* expected, const volati
 do \
 { \
     char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
-    MU_C2(type,_AssertAreEqual)((type)(A), (type)(B), ctest_message, __LINE__); \
+    /*vld.hMU_C2(type,_AssertAreEqual)((type)(A), (type)(B), ctest_message, __LINE__);*/ \
+    MU_C2(type,_AssertAreEqual)((A), (B), ctest_message, __LINE__); \
 } while (0)
 
 #define CTEST_ASSERT_ARE_NOT_EQUAL(type, A, B, ...) \
 do \
 { \
     char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
-    MU_C2(type,_AssertAreNotEqual)((type)(A), (type)(B), ctest_message, __LINE__); \
+    /*vld.h MU_C2(type,_AssertAreNotEqual)((type)(A), (type)(B), ctest_message, __LINE__); \*/\
+    MU_C2(type,_AssertAreNotEqual)((A), (B), ctest_message, __LINE__);
 } while (0)
 
 #define CTEST_ASSERT_IS_NULL(value, ...) \
