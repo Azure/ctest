@@ -15,6 +15,9 @@ typedef struct mystruct_tag
     unsigned char x;
 } mystruct;
 
+/*defining the below macro marks "mystruct" type as a non-castable type (like structs are).*/
+#define CTEST_TYPE_IS_CASTABLE_mystruct 0
+
 CTEST_COMPARE(mystruct, mystruct)
 {
     return (left.x != right.x);
@@ -122,7 +125,6 @@ CTEST_FUNCTION(Assert_Are_Equal_2_strings_With_Same_Address_Succeeds)
     char c1;
     CTEST_ASSERT_ARE_EQUAL(void_ptr, &c1, &c1);
 }
-
 
 CTEST_FUNCTION(Assert_Are_Equal_2_Structures_Succeeds)
 {
@@ -503,7 +505,9 @@ CTEST_FUNCTION(Assert_Are_Not_Equal_with_defined_type_succeeds)
 CTEST_FUNCTION(Assert_Are_Equal_Const_Char_Ptr)
 {
     const char* my_const_ptr = "Some string";
+    /*QWQWQW*/
     CTEST_ASSERT_ARE_EQUAL(char_ptr, my_const_ptr, my_const_ptr);
+    /*WEWEWE*/
 }
 
 CTEST_FUNCTION(Assert_Are_Equal_Const_WChar_Ptr)
