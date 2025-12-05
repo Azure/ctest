@@ -295,7 +295,7 @@ static void MU_C2(toStringType,_ToString)(char* string, size_t bufferSize, cType
 void do_jump(jmp_buf *exceptionJump, const volatile void* expected, const volatile void* actual);
 
 /*CTEST_ASSERT_ARE_EQUAL do a cast to (type) to remove type qualifiers from the arguments.*/
-/*all nice except structs. Structs cannot be cast (at all). See C23's chapter 6.5.5 (basically needs to be scalar or void type).
+/*all nice except structs. Structs cannot be cast (at all). See C23's chapter 6.5.5 (basically needs to be scalar or void type).*/
 /*structs are obviously not scalars or void, so the cast needs to be remove from the casts (type)(A)*/
 
 /*following macro CTEST_TYPE_CAST(type) expands to :
