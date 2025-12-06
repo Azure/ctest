@@ -505,9 +505,7 @@ CTEST_FUNCTION(Assert_Are_Not_Equal_with_defined_type_succeeds)
 CTEST_FUNCTION(Assert_Are_Equal_Const_Char_Ptr)
 {
     const char* my_const_ptr = "Some string";
-    /*QWQWQW*/
     CTEST_ASSERT_ARE_EQUAL(char_ptr, my_const_ptr, my_const_ptr);
-    /*WEWEWE*/
 }
 
 CTEST_FUNCTION(Assert_Are_Equal_Const_WChar_Ptr)
