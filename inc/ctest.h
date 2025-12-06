@@ -294,18 +294,29 @@ static void MU_C2(toStringType,_ToString)(char* string, size_t bufferSize, cType
 
 void do_jump(jmp_buf *exceptionJump, const volatile void* expected, const volatile void* actual);
 
+/*CTEST_ASSERT_ARE_EQUAL do a cast to (type) to remove type qualifiers from the arguments.*/
+/*all nice except structs. Structs cannot be cast (at all). See C23's chapter 6.5.5 (basically needs to be scalar or void type).*/
+/*structs are obviously not scalars or void, so the cast needs to be remove from the casts (type)(A)*/
+
+/*following macro CTEST_TYPE_CAST(type) expands to :
+    - nothing if the macro CTEST_TYPE_IS_CASTABLE_{type} expands to 0
+    - (type) otherwise (when it doesn't exist or expands to 42)
+Note: C++ as opposed to C, supports casting a struct to its own type*/
+
+#define CTEST_TYPE_CAST(type) MU_IF(MU_C2(CTEST_TYPE_IS_CASTABLE_,type), (type) , )
+
 #define CTEST_ASSERT_ARE_EQUAL(type, A, B, ...) \
 do \
 { \
     char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
-    MU_C2(type,_AssertAreEqual)((type)(A), (type)(B), ctest_message, __LINE__); \
+    MU_C2(type,_AssertAreEqual)(CTEST_TYPE_CAST(type)(A), CTEST_TYPE_CAST(type)(B), ctest_message, __LINE__); \
 } while (0)
 
 #define CTEST_ASSERT_ARE_NOT_EQUAL(type, A, B, ...) \
 do \
 { \
     char* ctest_message = GET_MESSAGE(__VA_ARGS__); \
-    MU_C2(type,_AssertAreNotEqual)((type)(A), (type)(B), ctest_message, __LINE__); \
+    MU_C2(type,_AssertAreNotEqual)(CTEST_TYPE_CAST(type)(A), CTEST_TYPE_CAST(type)(B), ctest_message, __LINE__); \
 } while (0)
 
 #define CTEST_ASSERT_IS_NULL(value, ...) \
