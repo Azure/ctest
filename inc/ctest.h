@@ -196,10 +196,24 @@ extern jmp_buf g_ExceptionJump;
 #define CTEST_END_TEST_SUITE(testSuiteName) \
     C_LINKAGE_PREFIX const TEST_FUNCTION_DATA TestListHead_##testSuiteName = { NULL, NULL, &MU_C2(TestFunctionData, MU_DEC(__COUNTER__)), NULL, CTEST_END_SUITE }; \
 
+/* PRINT_MY_ARG macros for accumulating failed test count
+   The counting goes in reverse order (last arg is 1, second to last is 2, etc.)
+   For 1 arg: suite name only - MU_DIV2(1)=0 so FOR_EACH doesn't run
+   For 2 args: failedCount is arg 2 (count 1), suite name is arg 1 (count 2)
+             -> PRINT_MY_ARG_1 should accumulate (failedCount), PRINT_MY_ARG_2 should do nothing (suite name)
+   For 3 args: filter is arg 3 (count 1), failedCount is arg 2 (count 2), suite name is arg 1 (count 3)
+             -> PRINT_MY_ARG_1 should do nothing (filter), PRINT_MY_ARG_2 should accumulate (failedCount), PRINT_MY_ARG_3 should do nothing (suite name)
+   The problem: we can't have PRINT_MY_ARG_1 and PRINT_MY_ARG_2 behave differently based on total arg count.
+   Solution: Separate macro paths for 2-arg vs 3-arg cases
+*/
+
 #define PRINT_MY_ARG_2(A)
 
 #define PRINT_MY_ARG_1(A) \
     A +=
+
+/* PRINT_MY_ARG_3 handles the suite name when there are 3 arguments */
+#define PRINT_MY_ARG_3(A)
 
 #if defined(_MSC_VER) && defined(_MSVC_TRADITIONAL) && _MSVC_TRADITIONAL
 #define PRINT_SECOND_ARG(argCount, B) \
@@ -210,19 +224,35 @@ extern jmp_buf g_ExceptionJump;
 #endif
 
 #define FIRST_ARG(A, ...) A
+#define SECOND_ARG(A, B, ...) B
+
+/* Helper macros to extract the third argument (test name filter) if provided */
+#define CTEST_GET_THIRD_ARG_0(...) NULL
+#define CTEST_GET_THIRD_ARG_1(A, B, C, ...) C
+#define CTEST_GET_THIRD_ARG_IMPL(N, ...) MU_C2(CTEST_GET_THIRD_ARG_, N)(__VA_ARGS__, NULL, NULL)
+
+/* Check if we have 3 or more args: count >= 3 means we have a filter */
+#define CTEST_HAS_THIRD_ARG(...) MU_IF(MU_COUNT_ARG(__VA_ARGS__), MU_IF(MU_DIV2(MU_COUNT_ARG(__VA_ARGS__)), MU_IF(MU_DIV2(MU_DEC(MU_COUNT_ARG(__VA_ARGS__))), 1, 0), 0), 0)
+#define CTEST_GET_THIRD_ARG(...) CTEST_GET_THIRD_ARG_IMPL(CTEST_HAS_THIRD_ARG(__VA_ARGS__), __VA_ARGS__)
+
+/* Macro to accumulate failed tests: for 2 args use the existing FOR_EACH, for 3 args extract the second arg directly */
+#define CTEST_ACCUMULATE_FAILED_2(...) MU_FOR_EACH_1_COUNTED(PRINT_SECOND_ARG, __VA_ARGS__)
+#define CTEST_ACCUMULATE_FAILED_3(...) SECOND_ARG(__VA_ARGS__, dummy) +=
+#define CTEST_ACCUMULATE_FAILED_IMPL(argCount, ...) MU_C2(CTEST_ACCUMULATE_FAILED_, argCount)(__VA_ARGS__)
+#define CTEST_ACCUMULATE_FAILED(...) CTEST_ACCUMULATE_FAILED_IMPL(MU_COUNT_ARG(__VA_ARGS__), __VA_ARGS__)
 
 #define CTEST_RUN_TEST_SUITE(...) \
 do \
 { \
     extern C_LINKAGE const TEST_FUNCTION_DATA MU_C2(TestListHead_,FIRST_ARG(__VA_ARGS__)); \
-    MU_IF(MU_DIV2(MU_COUNT_ARG(__VA_ARGS__)),MU_FOR_EACH_1_COUNTED(PRINT_SECOND_ARG, __VA_ARGS__),) RunTests(&MU_C2(TestListHead_, FIRST_ARG(__VA_ARGS__)), MU_TOSTRING(FIRST_ARG(__VA_ARGS__)), false); \
+    MU_IF(MU_DIV2(MU_COUNT_ARG(__VA_ARGS__)),CTEST_ACCUMULATE_FAILED(__VA_ARGS__),) RunTests(&MU_C2(TestListHead_, FIRST_ARG(__VA_ARGS__)), MU_TOSTRING(FIRST_ARG(__VA_ARGS__)), false, CTEST_GET_THIRD_ARG(__VA_ARGS__)); \
 } while ((void)0,0)
 
 #define CTEST_RUN_TEST_SUITE_WITH_LEAK_CHECK_RETRIES(...) \
 do \
 { \
     extern C_LINKAGE const TEST_FUNCTION_DATA MU_C2(TestListHead_,FIRST_ARG(__VA_ARGS__)); \
-    MU_IF(MU_DIV2(MU_COUNT_ARG(__VA_ARGS__)),MU_FOR_EACH_1_COUNTED(PRINT_SECOND_ARG, __VA_ARGS__),) RunTests(&MU_C2(TestListHead_, FIRST_ARG(__VA_ARGS__)), MU_TOSTRING(FIRST_ARG(__VA_ARGS__)), true); \
+    MU_IF(MU_DIV2(MU_COUNT_ARG(__VA_ARGS__)),CTEST_ACCUMULATE_FAILED(__VA_ARGS__),) RunTests(&MU_C2(TestListHead_, FIRST_ARG(__VA_ARGS__)), MU_TOSTRING(FIRST_ARG(__VA_ARGS__)), true, CTEST_GET_THIRD_ARG(__VA_ARGS__)); \
 } while ((void)0,0)
 
 typedef char* char_ptr;
@@ -439,7 +469,7 @@ CTEST_DEFINE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(enum_name, static)
     MU_DEFINE_ENUM_STRINGS_WITHOUT_INVALID(MU_C2(enum_name,_for_ctest), __VA_ARGS__); \
     CTEST_DEFINE_ENUM_TYPE_COMMON(enum_name, __VA_ARGS__)
 
-extern C_LINKAGE size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName, bool useLeakCheckRetries);
+extern C_LINKAGE size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName, bool useLeakCheckRetries, const char* testNameFilter);
 
 #ifdef __cplusplus
 }

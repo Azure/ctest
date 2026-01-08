@@ -11,6 +11,7 @@ set(ctest_ut_c_files
     simpletestsuitetwotests.c
     testfunctioncleanuptests.c
     testfunctioninitializetests.c
+    testnamefiltertests.c
     testsuiteinitializecleanuptests.c
     whentestsuiteinitializefailstests.c
     whentestfunctioninitializefailstests.c

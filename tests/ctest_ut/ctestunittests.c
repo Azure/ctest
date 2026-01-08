@@ -7,6 +7,8 @@
 
 #include "ctest.h"
 
+#include "testnamefiltertests.h"
+
 int main()
 {
     size_t failedTests = 0;
@@ -105,6 +107,91 @@ int main()
         }
     }
 #endif
+
+    /* Test name filter tests */
+    {
+        /* Test: Run all tests without a filter (NULL) */
+        size_t temp_failed_tests = 0;
+        FilterTestSuite_ResetExecutionTracking();
+        CTEST_RUN_TEST_SUITE(FilterTestSuite, temp_failed_tests);
+        if (temp_failed_tests != 0)
+        {
+            LogError("FilterTestSuite without filter failed");
+            failedTests++;
+        }
+        if (FilterTestSuite_WasTest1Executed() != 1 ||
+            FilterTestSuite_WasTest2Executed() != 1 ||
+            FilterTestSuite_WasTest3Executed() != 1)
+        {
+            LogError("FilterTestSuite without filter did not run all tests");
+            failedTests++;
+        }
+    }
+
+    {
+        /* Test: Run only FilterTest2 using the filter */
+        size_t temp_failed_tests = 0;
+        FilterTestSuite_ResetExecutionTracking();
+        CTEST_RUN_TEST_SUITE(FilterTestSuite, temp_failed_tests, "FilterTest2");
+        if (temp_failed_tests != 0)
+        {
+            LogError("FilterTestSuite with filter failed");
+            failedTests++;
+        }
+        if (FilterTestSuite_WasTest1Executed() != 0)
+        {
+            LogError("FilterTestSuite with filter: FilterTest1 should NOT have been executed");
+            failedTests++;
+        }
+        if (FilterTestSuite_WasTest2Executed() != 1)
+        {
+            LogError("FilterTestSuite with filter: FilterTest2 should have been executed");
+            failedTests++;
+        }
+        if (FilterTestSuite_WasTest3Executed() != 0)
+        {
+            LogError("FilterTestSuite with filter: FilterTest3 should NOT have been executed");
+            failedTests++;
+        }
+    }
+
+    {
+        /* Test: Run with empty string filter (should run all tests) */
+        size_t temp_failed_tests = 0;
+        FilterTestSuite_ResetExecutionTracking();
+        CTEST_RUN_TEST_SUITE(FilterTestSuite, temp_failed_tests, "");
+        if (temp_failed_tests != 0)
+        {
+            LogError("FilterTestSuite with empty filter failed");
+            failedTests++;
+        }
+        if (FilterTestSuite_WasTest1Executed() != 1 ||
+            FilterTestSuite_WasTest2Executed() != 1 ||
+            FilterTestSuite_WasTest3Executed() != 1)
+        {
+            LogError("FilterTestSuite with empty filter did not run all tests");
+            failedTests++;
+        }
+    }
+
+    {
+        /* Test: Run with filter for non-existent test (should run no tests) */
+        size_t temp_failed_tests = 0;
+        FilterTestSuite_ResetExecutionTracking();
+        CTEST_RUN_TEST_SUITE(FilterTestSuite, temp_failed_tests, "NonExistentTest");
+        if (temp_failed_tests != 0)
+        {
+            LogError("FilterTestSuite with non-existent filter failed");
+            failedTests++;
+        }
+        if (FilterTestSuite_WasTest1Executed() != 0 ||
+            FilterTestSuite_WasTest2Executed() != 0 ||
+            FilterTestSuite_WasTest3Executed() != 0)
+        {
+            LogError("FilterTestSuite with non-existent filter should not run any tests");
+            failedTests++;
+        }
+    }
 
     logger_deinit();
 
