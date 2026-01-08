@@ -66,12 +66,40 @@ The end of a test suite is marked by the macro `CTEST_END_TEST_SUITE(suiteName)`
 To run all the tests in a test suite the following macro can be used:
 
 ```c
-CTEST_RUN_TEST_SUITE(suiteName{,failedTestCount});
+CTEST_RUN_TEST_SUITE(suiteName{,failedTestCount}{,testNameFilter});
 ```
 
 The execution order of the tests in a test suite is not guaranteed. Tests are executed sequentially.
 
 The `failedTestCount` argument for `CTEST_RUN_TEST_SUITE` is optional. If specified, the number of failed tests will be summed up in the `failedTestCount` variable, that is passed as argument.
+
+The `testNameFilter` argument is optional. If specified (and not NULL or empty), only tests whose function name exactly matches the filter will be executed. Other tests will be skipped and reported in the final summary.
+
+## Test name filtering
+
+To run only a specific test by name, pass the test function name as the third argument:
+
+```c
+#include "CTest.h"
+
+int main(int argc, char* argv[])
+{
+    size_t failedTests = 0;
+    
+    // Run only Test1 from the suite
+    CTEST_RUN_TEST_SUITE(SimpleTestSuiteOneTest, failedTests, "Test1");
+
+    return 0;
+}
+```
+
+When filtering is active, the final output will report how many tests were skipped:
+
+```
+1 tests ran, 0 failed, 1 succeeded, 3 skipped by filter.
+```
+
+This feature is useful for debugging or re-running a specific failing test.
 
 ## Leak detection (VLD)
 
@@ -80,12 +108,14 @@ When a test is compiled using [Visual Leak Detector](https://github.com/Azure/vl
 This works by checking the number of allocations at the beginning of the test and then comparing it to the number of allocations that have not been freed at the end of the test.
 
 ```c
-CTEST_RUN_TEST_SUITE_WITH_LEAK_CHECK_RETRIES(suiteName{,failedTestCount});
+CTEST_RUN_TEST_SUITE_WITH_LEAK_CHECK_RETRIES(suiteName{,failedTestCount}{,testNameFilter});
 ```
 
 In case a test has some possible memory leaks that are cleaned up asynchronously, leak checks with retries can be enabled by using `CTEST_RUN_TEST_SUITE_WITH_LEAK_CHECK_RETRIES` instead.
 
 When this is used, the check for allocations that have not been freed is checked repeatedly at the end of the test until the count reaches the starting value (no leaks, success) or the leak count remains stable for 5 seconds (leaks detected, test fails).
+
+The `testNameFilter` argument is also supported for this macro to run only a specific test by name.
 
 ## Fixtures
 

@@ -25,13 +25,14 @@
 
 const TEST_FUNCTION_DATA* g_CurrentTestFunction;
 jmp_buf g_ExceptionJump;
-size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName, bool useLeakCheckRetries)
+size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName, bool useLeakCheckRetries, const char* testNameFilter)
 {
 #ifdef USE_VLD
     VLD_UINT initial_leak_count = VLDGetLeaksCount();
 #endif
     size_t totalTestCount = 0;
     size_t failedTestCount = 0;
+    size_t skippedByFilterCount = 0;
     const TEST_FUNCTION_DATA* currentTestFunction = (const TEST_FUNCTION_DATA*)testListHead->NextTestFunctionData;
     const TEST_FUNCTION_DATA* testSuiteInitialize = NULL;
     const TEST_FUNCTION_DATA* testSuiteCleanup = NULL;
@@ -128,7 +129,13 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
         {
             if (currentTestFunction->FunctionType == CTEST_TEST_FUNCTION)
             {
-                if (is_test_runner_ok == 1)
+                /* Check if test should be filtered out */
+                if ((testNameFilter != NULL) && (testNameFilter[0] != '\0') && (strcmp(currentTestFunction->TestFunctionName, testNameFilter) != 0))
+                {
+                    /* Test does not match filter, skip it */
+                    skippedByFilterCount++;
+                }
+                else if (is_test_runner_ok == 1)
                 {
                     int testFunctionInitializeFailed = 0;
 
@@ -224,7 +231,14 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
         }
 
         /* print results */
-        LogInfo("%s%d tests ran, %d failed, %d succeeded." CTEST_ANSI_COLOR_RESET, (failedTestCount > 0) ? (CTEST_ANSI_COLOR_RED) : (CTEST_ANSI_COLOR_GREEN), (int)totalTestCount, (int)failedTestCount, (int)(totalTestCount - failedTestCount));
+        if (skippedByFilterCount > 0)
+        {
+            LogInfo("%s%d tests ran, %d failed, %d succeeded, %d skipped by filter." CTEST_ANSI_COLOR_RESET "", (failedTestCount > 0) ? (CTEST_ANSI_COLOR_RED) : (CTEST_ANSI_COLOR_GREEN), (int)totalTestCount, (int)failedTestCount, (int)(totalTestCount - failedTestCount), (int)skippedByFilterCount);
+        }
+        else
+        {
+            LogInfo("%s%d tests ran, %d failed, %d succeeded." CTEST_ANSI_COLOR_RESET "", (failedTestCount > 0) ? (CTEST_ANSI_COLOR_RED) : (CTEST_ANSI_COLOR_GREEN), (int)totalTestCount, (int)failedTestCount, (int)(totalTestCount - failedTestCount));
+        }
     }
 
 #if defined _MSC_VER && !defined(WINCE)
