@@ -133,6 +133,7 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
                 if ((testNameFilter != NULL) && (testNameFilter[0] != '\0') && (strcmp(currentTestFunction->TestFunctionName, testNameFilter) != 0))
                 {
                     /* Test does not match filter, skip it */
+                    *currentTestFunction->TestResult = TEST_SKIPPED_FILTER;
                     skippedByFilterCount++;
                 }
                 else if (is_test_runner_ok == 1)
@@ -204,6 +205,10 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
                 {
                     failedTestCount++;
                     LogInfo(CTEST_ANSI_COLOR_YELLOW "Test %s ... SKIPPED due to a failure in test function cleanup. " CTEST_ANSI_COLOR_RESET, currentTestFunction->TestFunctionName);
+                }
+                else if (*currentTestFunction->TestResult == TEST_SKIPPED_FILTER)
+                {
+                    LogVerbose(CTEST_ANSI_COLOR_YELLOW "Test %s ... SKIPPED due to filter." CTEST_ANSI_COLOR_RESET, currentTestFunction->TestFunctionName);
                 }
                 else
                 {
