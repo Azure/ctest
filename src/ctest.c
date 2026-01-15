@@ -166,6 +166,9 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
                     {
                         LogInfo("Executing test %s ...", currentTestFunction->TestFunctionName);
 
+                        // Assume test succeeds
+                        *currentTestFunction->TestResult = TEST_SUCCESS;
+
                         g_CurrentTestFunction = currentTestFunction;
 
                         if (setjmp(g_ExceptionJump) == 0)
@@ -186,8 +189,6 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
                             {
                                 testFunctionCleanup->TestFunction();
                             }
-
-                            *currentTestFunction->TestResult = TEST_SUCCESS;
                         }
                         else
                         {
