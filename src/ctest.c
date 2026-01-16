@@ -245,7 +245,7 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
         /* print results */
         if (skippedByFilterCount > 0)
         {
-            LogInfo("%s%d tests ran, %d failed, %d succeeded, %d skipped by filter." CTEST_ANSI_COLOR_RESET "", (failedTestCount > 0) ? (CTEST_ANSI_COLOR_RED) : (CTEST_ANSI_COLOR_GREEN), (int)totalTestCount, (int)failedTestCount, (int)(totalTestCount - failedTestCount), (int)skippedByFilterCount);
+            LogInfo("%s%d tests ran, %d failed, %d succeeded, %d skipped by filter." CTEST_ANSI_COLOR_RESET "", (failedTestCount > 0) ? (CTEST_ANSI_COLOR_RED) : (CTEST_ANSI_COLOR_GREEN), (int)(totalTestCount - skippedByFilterCount), (int)failedTestCount, (int)(totalTestCount - skippedByFilterCount - failedTestCount), (int)skippedByFilterCount);
         }
         else
         {
