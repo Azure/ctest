@@ -23,6 +23,7 @@ int main()
         CTEST_RUN_TEST_SUITE(enum_define_tests, temp_failed_tests);
         if (temp_failed_tests != 2) // 2 expected failing tests
         {
+            LogError("CTEST TEST FAILED !!! enum_define_tests");
             failedTests++;
         }
     }
@@ -38,6 +39,7 @@ int main()
         CTEST_RUN_TEST_SUITE(AssertFailureTests, temp_failed_tests);
         if (temp_failed_tests != 75)
         {
+            LogError("CTEST TEST FAILED !!! AssertFailureTests");
             failedTests ++;
         }
     }
@@ -47,6 +49,7 @@ int main()
         CTEST_RUN_TEST_SUITE(AssertFailureTestsWithPrintfLikeMsgs, temp_failed_tests);
         if (temp_failed_tests != 38)
         {
+            LogError("CTEST TEST FAILED !!! AssertFailureTestsWithPrintfLikeMsgs");
             failedTests++;
         }
     }
@@ -58,6 +61,7 @@ int main()
         CTEST_RUN_TEST_SUITE(whentestfunctioninitializefailstests, temp_failed_tests);
         if (temp_failed_tests != 2)
         {
+            LogError("CTEST TEST FAILED !!! whentestfunctioninitializefailstests");
             failedTests ++;
         }
     }
@@ -66,6 +70,7 @@ int main()
         CTEST_RUN_TEST_SUITE(whentestsuiteinitializefailstests, temp_failed_tests);
         if (temp_failed_tests != 1)
         {
+            LogError("CTEST TEST FAILED !!! whentestsuiteinitializefailstests");
             failedTests ++;
         }
     }
@@ -75,6 +80,7 @@ int main()
         CTEST_RUN_TEST_SUITE(testfunctioncleanupfailstests, temp_failed_tests);
         if (temp_failed_tests != 2)
         {
+            LogError("CTEST TEST FAILED !!! testfunctioncleanupfailstests");
             failedTests ++;
         }
     }
@@ -84,6 +90,7 @@ int main()
         CTEST_RUN_TEST_SUITE(TestSuiteCleanupTests, temp_failed_tests);
         if (temp_failed_tests == 0) /*the tests in TestSuiteCleanupTests HAVE to fail*/
         {
+            LogError("CTEST TEST FAILED !!! TestSuiteCleanupTests");
             failedTests++;
         }
     }
@@ -93,6 +100,7 @@ int main()
         CTEST_RUN_TEST_SUITE(TestSuiteCleanupTests2, temp_failed_tests);
         if (temp_failed_tests == 0) /*the tests in TestSuiteCleanupTests HAVE to fail*/
         {
+            LogError("CTEST TEST FAILED !!! TestSuiteCleanupTests2");
             failedTests++;
         }
     }
@@ -103,6 +111,7 @@ int main()
         CTEST_RUN_TEST_SUITE(WindowsTypesTests, temp_failed_tests);
         if (temp_failed_tests != 5) // 5 expected failing tests
         {
+            LogError("CTEST TEST FAILED !!! WindowsTypesTests");
             failedTests++;
         }
     }
@@ -116,14 +125,14 @@ int main()
         CTEST_RUN_TEST_SUITE(FilterTestSuite, temp_failed_tests);
         if (temp_failed_tests != 0)
         {
-            LogError("FilterTestSuite without filter failed");
+            LogError("CTEST TEST FAILED !!! FilterTestSuite without filter");
             failedTests++;
         }
         if (FilterTestSuite_WasTest1Executed() != 1 ||
             FilterTestSuite_WasTest2Executed() != 1 ||
             FilterTestSuite_WasTest3Executed() != 1)
         {
-            LogError("FilterTestSuite without filter did not run all tests");
+            LogError("CTEST TEST FAILED !!! FilterTestSuite without filter did not run all tests");
             failedTests++;
         }
     }
@@ -135,22 +144,22 @@ int main()
         CTEST_RUN_TEST_SUITE(FilterTestSuite, temp_failed_tests, "FilterTest2");
         if (temp_failed_tests != 0)
         {
-            LogError("FilterTestSuite with filter failed");
+            LogError("CTEST TEST FAILED !!! FilterTestSuite with filter failed");
             failedTests++;
         }
         if (FilterTestSuite_WasTest1Executed() != 0)
         {
-            LogError("FilterTestSuite with filter: FilterTest1 should NOT have been executed");
+            LogError("CTEST TEST FAILED !!! FilterTestSuite with filter: FilterTest1 should NOT have been executed");
             failedTests++;
         }
         if (FilterTestSuite_WasTest2Executed() != 1)
         {
-            LogError("FilterTestSuite with filter: FilterTest2 should have been executed");
+            LogError("CTEST TEST FAILED !!! FilterTestSuite with filter: FilterTest2 should have been executed");
             failedTests++;
         }
         if (FilterTestSuite_WasTest3Executed() != 0)
         {
-            LogError("FilterTestSuite with filter: FilterTest3 should NOT have been executed");
+            LogError("CTEST TEST FAILED !!! FilterTestSuite with filter: FilterTest3 should NOT have been executed");
             failedTests++;
         }
     }
@@ -162,14 +171,14 @@ int main()
         CTEST_RUN_TEST_SUITE(FilterTestSuite, temp_failed_tests, "");
         if (temp_failed_tests != 0)
         {
-            LogError("FilterTestSuite with empty filter failed");
+            LogError("CTEST TEST FAILED !!! FilterTestSuite with empty filter");
             failedTests++;
         }
         if (FilterTestSuite_WasTest1Executed() != 1 ||
             FilterTestSuite_WasTest2Executed() != 1 ||
             FilterTestSuite_WasTest3Executed() != 1)
         {
-            LogError("FilterTestSuite with empty filter did not run all tests");
+            LogError("CTEST TEST FAILED !!! FilterTestSuite with empty filter did not run all tests");
             failedTests++;
         }
     }
@@ -181,14 +190,14 @@ int main()
         CTEST_RUN_TEST_SUITE(FilterTestSuite, temp_failed_tests, "NonExistentTest");
         if (temp_failed_tests != 0)
         {
-            LogError("FilterTestSuite with non-existent filter failed");
+            LogError("CTEST TEST FAILED !!! FilterTestSuite with non-existent filter");
             failedTests++;
         }
         if (FilterTestSuite_WasTest1Executed() != 0 ||
             FilterTestSuite_WasTest2Executed() != 0 ||
             FilterTestSuite_WasTest3Executed() != 0)
         {
-            LogError("FilterTestSuite with non-existent filter should not run any tests");
+            LogError("CTEST TEST FAILED !!! FilterTestSuite with non-existent filter should not run any tests");
             failedTests++;
         }
     }

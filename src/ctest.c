@@ -75,6 +75,10 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
     g_CurrentTestFunction = NULL;
 
     LogInfo(" === Executing test suite %s ===", testSuiteName);
+    if (testNameFilter != NULL && testNameFilter[0] != '\0')
+    {
+        LogInfo(" ### Test Filter = %s", testNameFilter);
+    }
 
     while (currentTestFunction->TestFunction != NULL)
     {
@@ -133,6 +137,7 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
                 if ((testNameFilter != NULL) && (testNameFilter[0] != '\0') && (strcmp(currentTestFunction->TestFunctionName, testNameFilter) != 0))
                 {
                     /* Test does not match filter, skip it */
+                    *currentTestFunction->TestResult = TEST_SKIPPED_FILTER;
                     skippedByFilterCount++;
                 }
                 else if (is_test_runner_ok == 1)
@@ -160,6 +165,9 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
                     else
                     {
                         LogInfo("Executing test %s ...", currentTestFunction->TestFunctionName);
+
+                        // Assume test succeeds
+                        *currentTestFunction->TestResult = TEST_SUCCESS;
 
                         g_CurrentTestFunction = currentTestFunction;
 
@@ -198,16 +206,20 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
                 if (*currentTestFunction->TestResult == TEST_FAILED)
                 {
                     failedTestCount++;
-                    LogInfo(CTEST_ANSI_COLOR_RED "Test %s result = !!! FAILED !!!" CTEST_ANSI_COLOR_RESET, currentTestFunction->TestFunctionName);
+                    LogInfo(CTEST_ANSI_COLOR_RED "Test %s result = !!! FAILED !!!" CTEST_ANSI_COLOR_RESET "", currentTestFunction->TestFunctionName);
                 }
                 else if (*currentTestFunction->TestResult == TEST_NOT_EXECUTED)
                 {
                     failedTestCount++;
-                    LogInfo(CTEST_ANSI_COLOR_YELLOW "Test %s ... SKIPPED due to a failure in test function cleanup. " CTEST_ANSI_COLOR_RESET, currentTestFunction->TestFunctionName);
+                    LogInfo(CTEST_ANSI_COLOR_YELLOW "Test %s ... SKIPPED due to a failure in test function cleanup. " CTEST_ANSI_COLOR_RESET "", currentTestFunction->TestFunctionName);
+                }
+                else if (*currentTestFunction->TestResult == TEST_SKIPPED_FILTER)
+                {
+                    LogVerbose(CTEST_ANSI_COLOR_YELLOW "Test %s ... SKIPPED due to filter (%s)." CTEST_ANSI_COLOR_RESET "", currentTestFunction->TestFunctionName, MU_P_OR_NULL(testNameFilter));
                 }
                 else
                 {
-                    LogInfo(CTEST_ANSI_COLOR_GREEN "Test %s result = Succeeded." CTEST_ANSI_COLOR_RESET, currentTestFunction->TestFunctionName);
+                    LogInfo(CTEST_ANSI_COLOR_GREEN "Test %s result = Succeeded." CTEST_ANSI_COLOR_RESET "", currentTestFunction->TestFunctionName);
                 }
                 totalTestCount++;
             }
@@ -226,7 +238,7 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
         {
             /*only get here when testSuiteCleanup did asserted*/
             /*should fail the tests*/
-            LogInfo(CTEST_ANSI_COLOR_RED "TEST_SUITE_CLEANUP failed - all tests are marked as failed" CTEST_ANSI_COLOR_RESET);
+            LogInfo(CTEST_ANSI_COLOR_RED "TEST_SUITE_CLEANUP failed - all tests are marked as failed" CTEST_ANSI_COLOR_RESET "");
             failedTestCount = (totalTestCount > 0) ? totalTestCount : SIZE_MAX;
         }
 
