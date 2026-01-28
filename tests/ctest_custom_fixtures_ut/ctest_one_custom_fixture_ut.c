@@ -64,8 +64,10 @@ CTEST_FUNCTION(ctest_function_initialize_and_cleanuip_custom_fixtures_gets_execu
 {
     // arrange
 
+    // act - done implicitly by the test framework calling the fixture hooks
+
     // assert
-    // 2 test functions have been executed at this point, so the variable was incremented twice 
+    // 2 test functions have been executed at this point, so the variable was incremented twice
     CTEST_ASSERT_ARE_EQUAL(int, 2, times_function_initialize_called);
     // 1 cleanup has been executed by this time
     CTEST_ASSERT_ARE_EQUAL(int, 1, times_function_cleanup_called);

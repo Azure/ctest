@@ -125,6 +125,8 @@ CTEST_FUNCTION(ctest_function_initialize_and_cleanuip_custom_fixtures_gets_execu
 {
     // arrange
 
+    // act - done implicitly by the test framework calling the fixture hooks
+
     // assert
     FIXTURE_CALL_TYPE expected_calls[] = {
     FIXTURE_CALL_CUSTOM_SUITE_INITIALIZE_1, FIXTURE_CALL_CUSTOM_SUITE_INITIALIZE_2,
