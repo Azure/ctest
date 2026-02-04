@@ -124,6 +124,7 @@ CTEST_FUNCTION_CLEANUP(d, function_cleanup_custom_fixture_1, function_cleanup_cu
 CTEST_FUNCTION(ctest_function_initialize_and_cleanuip_custom_fixtures_gets_executed)
 {
     // arrange
+    // act is done by the virtue of using the hooks
 
     // assert
     FIXTURE_CALL_TYPE expected_calls[] = {
