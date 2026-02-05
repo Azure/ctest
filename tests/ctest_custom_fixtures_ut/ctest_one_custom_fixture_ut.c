@@ -63,6 +63,7 @@ CTEST_FUNCTION_CLEANUP(d, function_cleanup_custom_fixture)
 CTEST_FUNCTION(ctest_function_initialize_and_cleanuip_custom_fixtures_gets_executed)
 {
     // arrange
+    // act is done by the virtue of using the hooks
 
     // assert
     // 2 test functions have been executed at this point, so the variable was incremented twice 
