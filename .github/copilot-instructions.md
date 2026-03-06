@@ -38,6 +38,12 @@ CTEST_END_TEST_SUITE(SuiteName)
 // Basic execution
 CTEST_RUN_TEST_SUITE(SuiteName);
 
+// With failed test count accumulation
+CTEST_RUN_TEST_SUITE(SuiteName, failedTests);
+
+// With test name filter (run only a specific test)
+CTEST_RUN_TEST_SUITE(SuiteName, failedTests, "specific_test_name");
+
 // With leak detection retries (VLD support)
 CTEST_RUN_TEST_SUITE_WITH_LEAK_CHECK_RETRIES(SuiteName);
 ```
@@ -81,6 +87,30 @@ CTEST_TO_STRING(my_type, MY_STRUCT, string, bufferSize, value)
 - **Force Fail**: `CTEST_ASSERT_FAIL(message...)`
 - **Optional Messages**: All assertions support `printf`-style format strings as final arguments
 
+### Parameterized Tests
+`CTEST_PARAMETERIZED_TEST_FUNCTION` generates multiple `CTEST_FUNCTION` wrappers from a single test body:
+```c
+CTEST_PARAMETERIZED_TEST_FUNCTION(test_addition,
+    ARGS(int, a, int, b, int, expected),
+    CASE((1, 2, 3), when_adding_1_and_2),
+    CASE((0, 0, 0), when_adding_zeros))
+{
+    CTEST_ASSERT_ARE_EQUAL(int, expected, a + b);
+}
+```
+- Each `CASE` creates a separate test function named `base_name_suffix` (e.g. `test_addition_when_adding_1_and_2`).
+- `ARGS(type, name, ...)` defines the parameter list; `CASE((values...), suffix)` provides values and a name suffix.
+- Fixtures and test name filtering apply to each generated test individually.
+
+### Test Name Filtering
+Run only a specific test by name using the optional third argument to `CTEST_RUN_TEST_SUITE`:
+```c
+CTEST_RUN_TEST_SUITE(SuiteName, failedTests, "specific_test_name");
+```
+- When the filter is provided and non-empty, only the test whose function name matches exactly will execute.
+- Skipped tests are reported in the summary (e.g. `3 skipped by filter`).
+- Also supported via `CTEST_RUN_TEST_SUITE_WITH_LEAK_CHECK_RETRIES`.
+
 ### Windows-Specific Features
 - **VLD Integration**: Automatic memory leak detection with `USE_VLD` compilation flag
 - **Console Coloring**: ANSI color support with `USE_COLORING` option
@@ -121,6 +151,7 @@ target_link_libraries(your_test_exe ctest)
 - **Unit Tests**: `tests/ctest_ut/` - Core functionality testing
 - **Macro Tests**: `tests/ctest_macro_hooks_ut/` - Testing macro expansion and hooks
 - **Custom Fixtures**: `tests/ctest_custom_fixtures_ut/` - Fixture system validation
+- **Parameterized Tests**: `tests/ctest_parameterized_ut/` - Parameterized test macro validation
 
 ## External Dependencies
 
