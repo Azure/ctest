@@ -151,7 +151,6 @@ target_link_libraries(your_test_exe ctest)
 - **Unit Tests**: `tests/ctest_ut/` - Core functionality testing
 - **Macro Tests**: `tests/ctest_macro_hooks_ut/` - Testing macro expansion and hooks
 - **Custom Fixtures**: `tests/ctest_custom_fixtures_ut/` - Fixture system validation
-- **Parameterized Tests**: `tests/ctest_parameterized_ut/` - Parameterized test macro validation
 
 ## External Dependencies
 
