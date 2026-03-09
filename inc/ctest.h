@@ -139,6 +139,74 @@ extern jmp_buf g_ExceptionJump;
     CTEST_CUSTOM_TEST_FUNCTION_CODE(funcName) \
     static void funcName(void)
 
+/*
+ * CTEST_PARAMETERIZED_TEST_FUNCTION - A macro for defining parameterized test functions
+ *
+ * Usage:
+ *   CTEST_PARAMETERIZED_TEST_FUNCTION(base_name,
+ *       ARGS(type1, param1, type2, param2),
+ *       CASE((value1, value2), suffix1),
+ *       CASE((value3, value4), suffix2))
+ *   {
+ *       // test code using param1, param2
+ *   }
+ *
+ * This expands to:
+ *   - A static function declaration
+ *   - Multiple CTEST_FUNCTION wrappers that call the static function with the specified arguments
+ *   - The static function definition with the test body
+ *
+ * Example:
+ *   CTEST_PARAMETERIZED_TEST_FUNCTION(test_addition,
+ *       ARGS(int, a, int, b, int, expected),
+ *       CASE((1, 2, 3), when_adding_1_and_2),
+ *       CASE((0, 0, 0), when_adding_zeros))
+ *   {
+ *       CTEST_ASSERT_ARE_EQUAL(int, expected, a + b);
+ *   }
+ */
+
+/* Strip parentheses: CTEST_PARAMETERIZED_TEST_STRIP_PARENS (a, b) => a, b */
+#define CTEST_PARAMETERIZED_TEST_STRIP_PARENS(...) __VA_ARGS__
+
+/* Token-paste trick: ARGS(type1, name1, ...) => type1, name1, ... without defining ARGS as a macro */
+#define CTEST_PARAMETERIZED_TEST_EXPAND_ARGS_ARGS(...) __VA_ARGS__
+
+/* Emit ", type name" for each pair after the first */
+#define CTEST_PARAMETERIZED_TEST_ARGS_COMMA(type, name) , type name
+
+/* Convert a flat type, name, ... list into parameter declarations: type1 name1, type2 name2, ... */
+#define CTEST_PARAMETERIZED_TEST_ARGS_DECL_IMPL(t1, n1, ...) t1 n1 __VA_OPT__(MU_FOR_EACH_2(CTEST_PARAMETERIZED_TEST_ARGS_COMMA, __VA_ARGS__))
+
+/* Expand ARGS(...) via token paste then forward to IMPL */
+#define CTEST_PARAMETERIZED_TEST_ARGS_DECL_EXPAND(...) CTEST_PARAMETERIZED_TEST_ARGS_DECL_IMPL(__VA_ARGS__)
+#define CTEST_PARAMETERIZED_TEST_ARGS_DECL(args) CTEST_PARAMETERIZED_TEST_ARGS_DECL_EXPAND(MU_C2B(CTEST_PARAMETERIZED_TEST_EXPAND_ARGS_, args))
+
+/* Indirection to force full expansion of funcName before CTEST_FUNCTION applies ## */
+#define CTEST_PARAMETERIZED_TEST_CALL_CTEST_FUNCTION(funcName) CTEST_FUNCTION(funcName)
+
+/* Generate a single CTEST_FUNCTION wrapper for one CASE */
+#define CTEST_PARAMETERIZED_TEST_WRAPPER_IMPL(base_name, values, suffix) \
+    CTEST_PARAMETERIZED_TEST_CALL_CTEST_FUNCTION(MU_C3(base_name, _, suffix)) \
+    { \
+        MU_C2(base_name, _impl)(CTEST_PARAMETERIZED_TEST_STRIP_PARENS values); \
+    }
+
+/* Force argument re-parsing after CASE expansion */
+#define CTEST_PARAMETERIZED_TEST_WRAPPER_CALL(base_name, ...) CTEST_PARAMETERIZED_TEST_WRAPPER_IMPL(base_name, __VA_ARGS__)
+
+/* Token-paste trick: CASE(values, suffix) becomes values, suffix without defining CASE as a macro */
+#define CTEST_PARAMETERIZED_TEST_EXPAND_CASE_CASE(values, suffix) values, suffix
+
+/* Called by MU_FOR_EACH_1_KEEP_1 with (base_name, CASE((vals), suffix)) */
+#define CTEST_PARAMETERIZED_TEST_WRAPPER(base_name, case_item) CTEST_PARAMETERIZED_TEST_WRAPPER_CALL(base_name, MU_C2B(CTEST_PARAMETERIZED_TEST_EXPAND_CASE_, case_item))
+
+/* Main macro: declares impl, generates CTEST_FUNCTION wrappers for each CASE, then defines impl */
+#define CTEST_PARAMETERIZED_TEST_FUNCTION(base_name, args, ...) \
+    static void MU_C2(base_name, _impl)(CTEST_PARAMETERIZED_TEST_ARGS_DECL(args)); \
+    MU_FOR_EACH_1_KEEP_1(CTEST_PARAMETERIZED_TEST_WRAPPER, base_name, __VA_ARGS__) \
+    static void MU_C2(base_name, _impl)(CTEST_PARAMETERIZED_TEST_ARGS_DECL(args))
+
 #define CTEST_CALL_FIXTURE(A) \
     A();
 
