@@ -101,6 +101,61 @@ When filtering is active, the final output will report how many tests were skipp
 
 This feature is useful for debugging or re-running a specific failing test.
 
+## Parameterized tests
+
+`CTEST_PARAMETERIZED_TEST_FUNCTION` allows defining a single test body that is automatically instantiated with different sets of arguments. Each `CASE` generates a separate `CTEST_FUNCTION` wrapper, so every combination appears as an individual test in the output and can be filtered independently.
+
+### Syntax
+
+```c
+CTEST_PARAMETERIZED_TEST_FUNCTION(base_name,
+    ARGS(type1, param1, type2, param2, ...),
+    CASE((value1, value2, ...), suffix1),
+    CASE((value3, value4, ...), suffix2),
+    ...)
+{
+    // test body using param1, param2, ...
+}
+```
+
+- **`base_name`** – A base identifier for the test. Each case generates a test function named `base_name_suffix`.
+- **`ARGS(...)`** – A flat list of `type, name` pairs that become the parameters of the shared implementation function.
+- **`CASE((values...), suffix)`** – One test instance. `values` are the arguments passed to the implementation function, and `suffix` is appended to `base_name` to form the test function name.
+
+### How it expands
+
+The macro expands to:
+
+1. A `static` implementation function: `base_name_impl(type1 param1, type2 param2, ...)`.
+2. One `CTEST_FUNCTION(base_name_suffix)` per `CASE`, each calling the implementation function with the case's values.
+3. The test body you write becomes the body of the implementation function.
+
+### Example
+
+```c
+CTEST_PARAMETERIZED_TEST_FUNCTION(test_addition,
+    ARGS(int, a, int, b, int, expected),
+    CASE((1, 2, 3), when_adding_1_and_2),
+    CASE((0, 0, 0), when_adding_zeros),
+    CASE((-1, 1, 0), with_negative_and_positive))
+{
+    // arrange / act
+    int result = a + b;
+
+    // assert
+    CTEST_ASSERT_ARE_EQUAL(int, expected, result);
+}
+```
+
+This produces three individual test functions: `test_addition_when_adding_1_and_2`, `test_addition_when_adding_zeros`, and `test_addition_with_negative_and_positive`. Each one appears separately in the test output and contributes independently to the pass/fail count.
+
+### Notes
+
+- Every `CASE` suffix must be a valid C identifier fragment; the final test name is `base_name_suffix`.
+- The `ARGS` and `CASE` keywords are not standalone macros – they are parsed via token-paste helpers inside the `CTEST_PARAMETERIZED_TEST_FUNCTION` expansion.
+- Suite-level and function-level fixtures (`CTEST_SUITE_INITIALIZE`, `CTEST_FUNCTION_INITIALIZE`, etc.) run normally around each generated test function.
+- Test name filtering works on the generated names (e.g., `"test_addition_when_adding_1_and_2"`).
+
 ## Leak detection (VLD)
 
 When a test is compiled using [Visual Leak Detector](https://github.com/Azure/vld), `CTest` will check if there were any memory leaks and report them as test failures.
