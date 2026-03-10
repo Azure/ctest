@@ -1,4 +1,19 @@
 name: $(BuildID)_$(BuildDefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+
+parameters:
+  - name: pool_name_windows_x64
+    displayName: 'Windows x64 Pool'
+    type: string
+    default: 'Azure-MessagingStore-WinBuildPoolVS2022_0'
+  - name: pool_name_windows_arm64
+    displayName: 'Windows ARM64 Pool'
+    type: string
+    default: 'Azure-MessagingStore-WinBuildPool-ARM64-v24'
+  - name: pool_name_linux
+    displayName: 'Linux Pool'
+    type: string
+    default: 'Azure-MsgStore-Linux2204BuildMachinePool'
+
 resources:
   repositories:
   - repository: self
@@ -12,12 +27,20 @@ jobs:
 - template: /pipeline_templates/build_all_flavors.yml@c_build_tools
   parameters:
     failOnMinTestsNotRun: false
+    pool_name_x64: ${{ parameters.pool_name_windows_x64 }}
+    pool_name_arm64: ${{ parameters.pool_name_windows_arm64 }}
 
 - template: /pipeline_templates/run_master_check.yml@c_build_tools
+  parameters:
+    pool_name: ${{ parameters.pool_name_windows_x64 }}
 
 - template: /pipeline_templates/codeql3000_default.yml@c_build_tools
+  parameters:
+    pool_name: ${{ parameters.pool_name_windows_x64 }}
 
 - template: /pipeline_templates/build_linux.yml@c_build_tools
+  parameters:
+    pool_name: ${{ parameters.pool_name_linux }}
 
 # Will be re-enabled at a later time
 #- job: iwyu
