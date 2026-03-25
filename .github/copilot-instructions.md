@@ -4,9 +4,10 @@
 ctest is a portable C test runner for Azure C libraries. **Not related to CMake's ctest**. It provides macro-based test suites with comprehensive assertion support, Windows-specific features, and integration with Azure DevOps pipelines.
 
 ## External Dependencies and Standards
-All code must follow the comprehensive coding standards defined in #file:../deps/c-build-tools/.github/general_coding_instructions.md. For detailed patterns and conventions, refer to dependency-specific instructions:
+All code must follow the comprehensive coding standards defined in #file:../deps/azure-messaging-ai-context/.github/general_coding_instructions.md. For detailed patterns and conventions, refer to dependency-specific instructions:
 
 - **Build Infrastructure**: #file:../deps/c-build-tools/.github/copilot-instructions.md
+- **AI Context & Coding Standards**: #file:../deps/azure-messaging-ai-context/.github/copilot-instructions.md (git conventions, terminal rules, agent skills)
 - **Macro Utilities**: #file:../deps/macro-utils-c/.github/copilot-instructions.md
 - **Logging Framework**: #file:../deps/c-logging/.github/copilot-instructions.md
 
@@ -180,7 +181,7 @@ For comprehensive coding standards and build conventions, refer to:
 - [c-build-tools Copilot Instructions](../deps/c-build-tools/.github/copilot-instructions.md)
 - [c-logging Copilot Instructions](../deps/c-logging/.github/copilot-instructions.md)  
 - [macro-utils-c Copilot Instructions](../deps/macro-utils-c/.github/copilot-instructions.md)
-- [General Coding Instructions](../deps/c-build-tools/.github/general_coding_instructions.md)
+- [General Coding Instructions](../deps/azure-messaging-ai-context/.github/general_coding_instructions.md)
 
 ---
-**All code changes must strictly follow the general coding guidelines in #file:../deps/c-build-tools/.github/general_coding_instructions.md.**
+**All code changes must strictly follow the general coding guidelines in #file:../deps/azure-messaging-ai-context/.github/general_coding_instructions.md.**
