@@ -60,7 +60,7 @@ CTEST_FUNCTION_CLEANUP(d, function_cleanup_custom_fixture)
     expected_times_function_cleanup_called++;
 }
 
-CTEST_FUNCTION(ctest_function_initialize_and_cleanuip_custom_fixtures_gets_executed)
+CTEST_FUNCTION(ctest_function_initialize_and_cleanuip_custom_fixtures_gets_executed) // no-srs
 {
     // arrange
     // act is done by the virtue of using the hooks
@@ -72,7 +72,7 @@ CTEST_FUNCTION(ctest_function_initialize_and_cleanuip_custom_fixtures_gets_execu
     CTEST_ASSERT_ARE_EQUAL(int, 1, times_function_cleanup_called);
 }
 
-CTEST_FUNCTION(ctest_function_cleanup_custom_fixture_gets_executed)
+CTEST_FUNCTION(ctest_function_cleanup_custom_fixture_gets_executed) // no-srs
 {
     // arrange
     // act is done by the virtue of using the hooks
