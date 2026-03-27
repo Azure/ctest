@@ -540,6 +540,10 @@ CTEST_DEFINE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(enum_name, static)
 
 extern C_LINKAGE size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName, bool useLeakCheckRetries, const char* testNameFilter);
 
+/* Special return code when zero tests were executed (all filtered out or no tests exist).
+   Distinct from normal failure counts and VLD leak negative counts. */
+#define CTEST_RETURN_CODE_NO_TESTS_RAN ((size_t)0xFFFFFFFE)
+
 #ifdef __cplusplus
 }
 #endif
