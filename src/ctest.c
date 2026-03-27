@@ -258,7 +258,7 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
             LogError(CTEST_ANSI_COLOR_RED "FAILED: zero tests were executed (totalTestCount=%d, skippedByFilter=%d). "
                 "If a test name filter is active, verify it matches at least one test." CTEST_ANSI_COLOR_RESET "",
                 (int)totalTestCount, (int)skippedByFilterCount);
-            failedTestCount = (failedTestCount > 0) ? failedTestCount : 1;
+            failedTestCount = (failedTestCount > 0) ? failedTestCount : CTEST_RETURN_CODE_NO_TESTS_RAN;
         }
     }
 

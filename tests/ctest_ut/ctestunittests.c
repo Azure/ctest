@@ -184,13 +184,13 @@ int main()
     }
 
     {
-        /* Test: Run with filter for non-existent test (should fail because zero tests ran) */
+        /* Test: Run with filter for non-existent test (should return CTEST_RETURN_CODE_NO_TESTS_RAN) */
         size_t temp_failed_tests = 0;
         FilterTestSuite_ResetExecutionTracking();
         CTEST_RUN_TEST_SUITE(FilterTestSuite, temp_failed_tests, "NonExistentTest");
-        if (temp_failed_tests == 0)
+        if (temp_failed_tests != CTEST_RETURN_CODE_NO_TESTS_RAN)
         {
-            LogError("CTEST TEST FAILED !!! FilterTestSuite with non-existent filter should report failure (zero tests ran)");
+            LogError("CTEST TEST FAILED !!! FilterTestSuite with non-existent filter should return CTEST_RETURN_CODE_NO_TESTS_RAN, got %zu", temp_failed_tests);
             failedTests++;
         }
         if (FilterTestSuite_WasTest1Executed() != 0 ||
