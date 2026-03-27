@@ -184,13 +184,13 @@ int main()
     }
 
     {
-        /* Test: Run with filter for non-existent test (should run no tests) */
+        /* Test: Run with filter for non-existent test (should fail because zero tests ran) */
         size_t temp_failed_tests = 0;
         FilterTestSuite_ResetExecutionTracking();
         CTEST_RUN_TEST_SUITE(FilterTestSuite, temp_failed_tests, "NonExistentTest");
-        if (temp_failed_tests != 0)
+        if (temp_failed_tests == 0)
         {
-            LogError("CTEST TEST FAILED !!! FilterTestSuite with non-existent filter");
+            LogError("CTEST TEST FAILED !!! FilterTestSuite with non-existent filter should report failure (zero tests ran)");
             failedTests++;
         }
         if (FilterTestSuite_WasTest1Executed() != 0 ||

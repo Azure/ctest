@@ -251,6 +251,15 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
         {
             LogInfo("%s%d tests ran, %d failed, %d succeeded." CTEST_ANSI_COLOR_RESET "", (failedTestCount > 0) ? (CTEST_ANSI_COLOR_RED) : (CTEST_ANSI_COLOR_GREEN), (int)totalTestCount, (int)failedTestCount, (int)(totalTestCount - failedTestCount));
         }
+
+        /* fail if zero tests actually ran (all were skipped by filter or no tests exist) */
+        if (totalTestCount - skippedByFilterCount == 0)
+        {
+            LogError(CTEST_ANSI_COLOR_RED "FAILED: zero tests were executed (totalTestCount=%d, skippedByFilter=%d). "
+                "If a test name filter is active, verify it matches at least one test." CTEST_ANSI_COLOR_RESET "",
+                (int)totalTestCount, (int)skippedByFilterCount);
+            failedTestCount = (failedTestCount > 0) ? failedTestCount : 1;
+        }
     }
 
 #if defined _MSC_VER && !defined(WINCE)
