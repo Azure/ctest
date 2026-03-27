@@ -121,7 +121,7 @@ CTEST_FUNCTION_CLEANUP(d, function_cleanup_custom_fixture_1, function_cleanup_cu
     add_call(FIXTURE_CALL_USER_FUNCTION_CLEANUP);
 }
 
-CTEST_FUNCTION(ctest_function_initialize_and_cleanup_custom_fixtures_gets_executed)
+CTEST_FUNCTION(ctest_function_initialize_and_cleanup_custom_fixtures_gets_executed) // no-srs
 {
     // arrange
     // act is done by the virtue of using the hooks
@@ -140,7 +140,7 @@ CTEST_FUNCTION(ctest_function_initialize_and_cleanup_custom_fixtures_gets_execut
     verify_expected_calls(expected_calls, MU_COUNT_ARRAY_ITEMS(expected_calls));
 }
 
-CTEST_FUNCTION(ctest_function_cleanup_custom_fixture_gets_executed)
+CTEST_FUNCTION(ctest_function_cleanup_custom_fixture_gets_executed) // no-srs
 {
     // arrange
     // act is done by the virtue of using the hooks

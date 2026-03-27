@@ -57,7 +57,7 @@ CTEST_FUNCTION_CLEANUP(test_cleanup)
  * Verification test: records global state to prove each CASE is executed with correct parameters.
  * main.c validates that all 4 cases ran and produced the expected accumulated sum.
  */
-CTEST_PARAMETERIZED_TEST_FUNCTION(test_verify_calls,
+CTEST_PARAMETERIZED_TEST_FUNCTION(test_verify_calls, // no-srs
     ARGS(int, a, int, b),
     CASE((1, 10), case_1_10),
     CASE((2, 20), case_2_20),
@@ -76,7 +76,7 @@ CTEST_PARAMETERIZED_TEST_FUNCTION(test_verify_calls,
     CTEST_ASSERT_IS_TRUE(b >= 10, "Expected b >= 10, got %d", b);
 }
 
-CTEST_PARAMETERIZED_TEST_FUNCTION(test_addition,
+CTEST_PARAMETERIZED_TEST_FUNCTION(test_addition, // no-srs
     ARGS(int, a, int, b, int, expected),
     CASE((0, 0, 0), with_zeros),
     CASE((1, 2, 3), with_small_positive_numbers),
@@ -93,7 +93,7 @@ CTEST_PARAMETERIZED_TEST_FUNCTION(test_addition,
     CTEST_ASSERT_ARE_EQUAL(int, expected, result, "Expected %d + %d = %d, but got %d", a, b, expected, result);
 }
 
-CTEST_PARAMETERIZED_TEST_FUNCTION(test_multiplication,
+CTEST_PARAMETERIZED_TEST_FUNCTION(test_multiplication, // no-srs
     ARGS(int, x, int, y, int, expected_product),
     CASE((0, 5, 0), with_zero),
     CASE((1, 1, 1), with_ones),
@@ -110,7 +110,7 @@ CTEST_PARAMETERIZED_TEST_FUNCTION(test_multiplication,
     CTEST_ASSERT_ARE_EQUAL(int, expected_product, result);
 }
 
-CTEST_PARAMETERIZED_TEST_FUNCTION(test_is_positive,
+CTEST_PARAMETERIZED_TEST_FUNCTION(test_is_positive, // no-srs
     ARGS(int, value, int, expected_is_positive),
     CASE((1, 1), for_positive_one),
     CASE((100, 1), for_hundred),
