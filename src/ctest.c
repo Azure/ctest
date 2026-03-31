@@ -301,6 +301,14 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
             } while (1);
         }
     }
+    {
+        VLD_UINT final_leak_count = VLDGetLeaksCount();
+        if (final_leak_count > initial_leak_count)
+        {
+            LogError("VLD final check: %" PRIu32 " leaks detected at exit (initial=%" PRIu32 "). Dumping leak stacks:", (uint32_t)(final_leak_count - initial_leak_count), (uint32_t)initial_leak_count);
+            VLDReportLeaks();
+        }
+    }
     failedTestCount = (failedTestCount > 0) ? failedTestCount : (size_t)(-(int)(VLDGetLeaksCount() - initial_leak_count));
 #else
     (void)useLeakCheckRetries;
