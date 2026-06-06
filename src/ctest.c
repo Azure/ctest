@@ -14,8 +14,9 @@
 #include "ctest.h"
 #include "c_logging/logger.h"
 
+#include <limits.h> // for INT_MAX, SIZE_MAX
+
 #if defined _MSC_VER && !defined(WINCE)
-#include <limits.h> // for SIZE_MAX
 #include "windows.h"
 #endif
 
@@ -616,6 +617,11 @@ static char* ctest_vsprintf_char(const char* format, va_list va)
     if (neededSize < 0)
     {
         LogError("failure in vsnprintf, format=%s, va_clone=%p);", format, (void*)&va_clone);
+        result = NULL;
+    }
+    else if (neededSize == INT_MAX)
+    {
+        LogError("overflow in allocation size calculation, neededSize=INT_MAX");
         result = NULL;
     }
     else
