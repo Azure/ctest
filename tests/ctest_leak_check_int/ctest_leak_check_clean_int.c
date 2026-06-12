@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 // Integration test for ctest's at-exit VLD leak check (ctest_check_leaks_at_exit in src/ctest.c).
-// An allocation that is freed before the test ends is not a leak, so this process must exit 0.
+// An allocation freed before the test ends is not a leak, so this process exits 0.
 
 #include <stddef.h>
 #include <stdlib.h>

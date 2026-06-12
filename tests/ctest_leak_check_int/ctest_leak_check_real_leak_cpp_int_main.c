@@ -1,9 +1,8 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-// C runner for the C++ suite in ctest_leak_check_real_leak_cpp_int.cpp. The suite runner
-// (CTEST_RUN_TEST_SUITE) must live in a C translation unit because its expansion uses C linkage at
-// global scope, which is not permitted inside a C++ function body.
+// C runner for the C++ suite: CTEST_RUN_TEST_SUITE uses C linkage at global scope, so it cannot
+// live inside a C++ function body.
 
 #include <stddef.h>
 

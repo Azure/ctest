@@ -27,30 +27,20 @@ const TEST_FUNCTION_DATA* g_CurrentTestFunction;
 jmp_buf g_ExceptionJump;
 
 #ifdef USE_VLD
-// Process-start leak baseline, captured once at the first RunTests entry.
 static VLD_UINT g_initial_leak_count;
 
-// Registered once via atexit at the first RunTests entry. It runs at process exit, AFTER all C++
-// static destructors have run -- including function-local statics that were constructed during a
-// test (for example the process-lifetime lookup tables some third-party SDKs build lazily, such as
-// azure-core's Url::Encode character set). Sampling the VLD leak count here, rather than at the end
-// of RunTests, avoids counting those not-yet-destroyed statics as leaks (they are freed before this
-// point) while still catching allocations that genuinely survive teardown. The previous
-// end-of-RunTests sampling raced static initialization and produced false positives.
+// Runs at process exit, after C++ static destructors. Process-lifetime statics constructed during a
+// test (such as azure-core's Url::Encode lookup set) are freed by this point, so unlike sampling at
+// the end of RunTests they are not misreported as leaks, while genuine leaks are still caught.
 static void ctest_check_leaks_at_exit(void)
 {
     int real_leaks = (int)(VLDGetLeaksCount() - g_initial_leak_count);
     if (real_leaks > 0)
     {
-        // This runs at process exit, after main has returned. The logger may already have been
-        // deinitialized by the test executable (logger_log aborts when the logger is not
-        // initialized), so the diagnostic is written straight to stderr instead of via LogError.
+        // logger_log aborts when the logger is not initialized, which it may be by exit time.
         (void)fprintf(stderr, "ctest: memory leaks detected after teardown: %d leak(s)\n", real_leaks);
         VLDReportLeaks();
-        // The tests themselves have already returned; force a non-zero process exit so the runner
-        // fails the suite. The value is kept negative to preserve the historical convention that
-        // distinguishes a leak failure from a (positive) assertion-failure count. _exit (not exit)
-        // is used to avoid re-entering exit() from within an atexit handler.
+        // Negative preserves the historical leak-failure convention; _exit avoids re-entering exit().
         _exit(-real_leaks);
     }
 }
@@ -59,10 +49,6 @@ static void ctest_check_leaks_at_exit(void)
 size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName, bool useLeakCheckRetries, const char* testNameFilter)
 {
 #ifdef USE_VLD
-    // Capture the leak baseline and register the exit-time leak check once (see
-    // ctest_check_leaks_at_exit). The leak verdict is deliberately made at process exit, not here,
-    // so process-lifetime statics still alive at this point but freed during teardown are not
-    // misreported as leaks.
     static volatile LONG leak_check_registered = 0;
     if (InterlockedCompareExchange(&leak_check_registered, 1, 0) == 0)
     {
