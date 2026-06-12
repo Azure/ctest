@@ -42,7 +42,10 @@ static void ctest_check_leaks_at_exit(void)
     int real_leaks = (int)(VLDGetLeaksCount() - g_initial_leak_count);
     if (real_leaks > 0)
     {
-        LogError("Memory leaks detected after teardown: %d leak(s)", real_leaks);
+        // This runs at process exit, after main has returned. The logger may already have been
+        // deinitialized by the test executable (logger_log aborts when the logger is not
+        // initialized), so the diagnostic is written straight to stderr instead of via LogError.
+        (void)fprintf(stderr, "ctest: memory leaks detected after teardown: %d leak(s)\n", real_leaks);
         VLDReportLeaks();
         // The tests themselves have already returned; force a non-zero process exit so the runner
         // fails the suite. The value is kept negative to preserve the historical convention that

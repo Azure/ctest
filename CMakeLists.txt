@@ -123,7 +123,7 @@ set_target_properties(ctest
                PROPERTIES
                FOLDER "test_tools")
 
-if (${run_unittests})
+if (${run_unittests} OR ${run_int_tests})
      add_subdirectory(tests)
 endif()
 
