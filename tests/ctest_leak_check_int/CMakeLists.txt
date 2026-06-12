@@ -49,7 +49,7 @@ set_target_properties(ctest_leak_check_helper_dll_mt PROPERTIES
 # into an executable that already carries VLD). The /MT helper cannot be instrumented: use_vld pulls
 # the /MD CRT and conflicts with the static CRT (LNK4098), so leaks in a static-CRT DLL stay
 # invisible -- which the dll_mt_real_leak test documents.
-if(${use_vld})
+if(use_vld)
     add_use_vld_if_no_cs(ctest_leak_check_helper_dll)
 endif()
 
