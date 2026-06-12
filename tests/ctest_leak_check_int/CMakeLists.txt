@@ -21,14 +21,17 @@ add_executable(ctest_leak_check_real_leak_cpp_int ctest_leak_check_real_leak_cpp
 target_link_libraries(ctest_leak_check_real_leak_cpp_int ctest)
 set_target_properties(ctest_leak_check_real_leak_cpp_int PROPERTIES FOLDER "tests/ctest")
 
-# Register only under VLD; the at-exit leak check is compiled out otherwise.
+# Register only under VLD, and only for the Debug configuration: VLD's leak-counting API no-ops under
+# NDEBUG (RelWithDebInfo/Release), so leak detection -- and the WILL_FAIL real-leak cases in
+# particular -- is only meaningful with the debug CRT. CONFIGURATIONS keeps this correct for
+# multi-config generators, where the same configured tree runs both Debug and RelWithDebInfo.
 if((run_unittests OR run_int_tests) AND use_vld)
-    add_test(NAME ctest_leak_check_clean_int COMMAND ctest_leak_check_clean_int)
-    add_test(NAME ctest_leak_check_process_lifetime_static_int COMMAND ctest_leak_check_process_lifetime_static_int)
+    add_test(NAME ctest_leak_check_clean_int COMMAND ctest_leak_check_clean_int CONFIGURATIONS Debug)
+    add_test(NAME ctest_leak_check_process_lifetime_static_int COMMAND ctest_leak_check_process_lifetime_static_int CONFIGURATIONS Debug)
 
-    add_test(NAME ctest_leak_check_real_leak_int COMMAND ctest_leak_check_real_leak_int)
+    add_test(NAME ctest_leak_check_real_leak_int COMMAND ctest_leak_check_real_leak_int CONFIGURATIONS Debug)
     set_tests_properties(ctest_leak_check_real_leak_int PROPERTIES WILL_FAIL TRUE)
 
-    add_test(NAME ctest_leak_check_real_leak_cpp_int COMMAND ctest_leak_check_real_leak_cpp_int)
+    add_test(NAME ctest_leak_check_real_leak_cpp_int COMMAND ctest_leak_check_real_leak_cpp_int CONFIGURATIONS Debug)
     set_tests_properties(ctest_leak_check_real_leak_cpp_int PROPERTIES WILL_FAIL TRUE)
 endif()
