@@ -49,7 +49,7 @@ set_target_properties(ctest_leak_check_helper_dll_mt PROPERTIES
 # into an executable that already carries VLD). The /MT helper cannot be instrumented: use_vld pulls
 # the /MD CRT and conflicts with the static CRT (LNK4098), so leaks in a static-CRT DLL stay
 # invisible -- which the dll_mt_real_leak test documents.
-if(use_vld)
+if(${use_vld})
     add_use_vld_if_no_cs(ctest_leak_check_helper_dll)
 endif()
 
@@ -90,7 +90,7 @@ set_target_properties(ctest_leak_check_dll_mt_real_leak_int PROPERTIES FOLDER "t
 # NDEBUG (RelWithDebInfo/Release), so leak detection -- and the WILL_FAIL real-leak cases in
 # particular -- is only meaningful with the debug CRT. CONFIGURATIONS keeps this correct for
 # multi-config generators, where the same configured tree runs both Debug and RelWithDebInfo.
-if((run_unittests OR run_int_tests) AND use_vld)
+if((${run_unittests} OR ${run_int_tests}) AND ${use_vld})
     add_test(NAME ctest_leak_check_clean_int COMMAND ctest_leak_check_clean_int CONFIGURATIONS Debug)
     add_test(NAME ctest_leak_check_process_lifetime_static_int COMMAND ctest_leak_check_process_lifetime_static_int CONFIGURATIONS Debug)
 
