@@ -49,9 +49,12 @@ static void ctest_check_leaks_at_exit(void)
 size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName, bool useLeakCheckRetries, const char* testNameFilter)
 {
 #ifdef USE_VLD
-    static volatile LONG leak_check_registered = 0;
-    if (InterlockedCompareExchange(&leak_check_registered, 1, 0) == 0)
+    // RunTests is single-threaded (see the unguarded g_CurrentTestFunction/g_ExceptionJump globals)
+    // but is called once per suite, so register the exit-time leak check only on the first call.
+    static bool leak_check_registered = false;
+    if (!leak_check_registered)
     {
+        leak_check_registered = true;
         g_initial_leak_count = VLDGetLeaksCount();
         (void)atexit(ctest_check_leaks_at_exit);
     }
