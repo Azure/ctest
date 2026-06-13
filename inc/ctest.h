@@ -314,15 +314,13 @@ extern jmp_buf g_ExceptionJump;
 do \
 { \
     extern C_LINKAGE const TEST_FUNCTION_DATA MU_C2(TestListHead_,FIRST_ARG(__VA_ARGS__)); \
-    MU_IF(MU_DIV2(MU_COUNT_ARG(__VA_ARGS__)),CTEST_ACCUMULATE_FAILED(__VA_ARGS__),) RunTests(&MU_C2(TestListHead_, FIRST_ARG(__VA_ARGS__)), MU_TOSTRING(FIRST_ARG(__VA_ARGS__)), false, CTEST_GET_THIRD_ARG(__VA_ARGS__)); \
+    MU_IF(MU_DIV2(MU_COUNT_ARG(__VA_ARGS__)),CTEST_ACCUMULATE_FAILED(__VA_ARGS__),) RunTests(&MU_C2(TestListHead_, FIRST_ARG(__VA_ARGS__)), MU_TOSTRING(FIRST_ARG(__VA_ARGS__)), CTEST_GET_THIRD_ARG(__VA_ARGS__)); \
 } while ((void)0,0)
 
-#define CTEST_RUN_TEST_SUITE_WITH_LEAK_CHECK_RETRIES(...) \
-do \
-{ \
-    extern C_LINKAGE const TEST_FUNCTION_DATA MU_C2(TestListHead_,FIRST_ARG(__VA_ARGS__)); \
-    MU_IF(MU_DIV2(MU_COUNT_ARG(__VA_ARGS__)),CTEST_ACCUMULATE_FAILED(__VA_ARGS__),) RunTests(&MU_C2(TestListHead_, FIRST_ARG(__VA_ARGS__)), MU_TOSTRING(FIRST_ARG(__VA_ARGS__)), true, CTEST_GET_THIRD_ARG(__VA_ARGS__)); \
-} while ((void)0,0)
+/* Leak-check retries were removed: the leak check now runs once at process exit (see
+   ctest_check_leaks_at_exit in ctest.c), which catches asynchronously cleaned-up allocations without
+   re-running tests. This macro is kept as a backward-compatible alias for CTEST_RUN_TEST_SUITE. */
+#define CTEST_RUN_TEST_SUITE_WITH_LEAK_CHECK_RETRIES(...) CTEST_RUN_TEST_SUITE(__VA_ARGS__)
 
 typedef char* char_ptr;
 typedef wchar_t* wchar_ptr;
@@ -538,7 +536,7 @@ CTEST_DEFINE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(enum_name, static)
     MU_DEFINE_ENUM_STRINGS_WITHOUT_INVALID(MU_C2(enum_name,_for_ctest), __VA_ARGS__); \
     CTEST_DEFINE_ENUM_TYPE_COMMON(enum_name, __VA_ARGS__)
 
-extern C_LINKAGE size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName, bool useLeakCheckRetries, const char* testNameFilter);
+extern C_LINKAGE size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName, const char* testNameFilter);
 
 /* Special return code when zero tests were executed (all filtered out or no tests exist).
    Distinct from normal failure counts and VLD leak negative counts. */

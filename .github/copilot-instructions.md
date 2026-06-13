@@ -45,7 +45,8 @@ CTEST_RUN_TEST_SUITE(SuiteName, failedTests);
 // With test name filter (run only a specific test)
 CTEST_RUN_TEST_SUITE(SuiteName, failedTests, "specific_test_name");
 
-// With leak detection retries (VLD support)
+// Leak detection runs once at process exit under VLD; CTEST_RUN_TEST_SUITE_WITH_LEAK_CHECK_RETRIES
+// is a backward-compatible alias for CTEST_RUN_TEST_SUITE (retries were removed)
 CTEST_RUN_TEST_SUITE_WITH_LEAK_CHECK_RETRIES(SuiteName);
 ```
 
@@ -110,7 +111,7 @@ CTEST_RUN_TEST_SUITE(SuiteName, failedTests, "specific_test_name");
 ```
 - When the filter is provided and non-empty, only the test whose function name matches exactly will execute.
 - Skipped tests are reported in the summary (e.g. `3 skipped by filter`).
-- Also supported via `CTEST_RUN_TEST_SUITE_WITH_LEAK_CHECK_RETRIES`.
+- Also supported via `CTEST_RUN_TEST_SUITE_WITH_LEAK_CHECK_RETRIES`, which is now a backward-compatible alias for `CTEST_RUN_TEST_SUITE`.
 
 ### Windows-Specific Features
 - **VLD Integration**: Automatic memory leak detection with `USE_VLD` compilation flag

@@ -25,10 +25,39 @@
 
 const TEST_FUNCTION_DATA* g_CurrentTestFunction;
 jmp_buf g_ExceptionJump;
-size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName, bool useLeakCheckRetries, const char* testNameFilter)
+
+#ifdef USE_VLD
+static VLD_UINT g_initial_leak_count;
+
+// Runs at process exit, after C++ static destructors. Process-lifetime statics constructed during a
+// test (such as azure-core's Url::Encode lookup set) are freed by this point, so unlike sampling at
+// the end of RunTests they are not misreported as leaks, while genuine leaks are still caught.
+static void ctest_check_leaks_at_exit(void)
+{
+    int real_leaks = (int)(VLDGetLeaksCount() - g_initial_leak_count);
+    if (real_leaks > 0)
+    {
+        // logger_log aborts when the logger is not initialized, which it may be by exit time.
+        (void)fprintf(stderr, "ctest: memory leaks detected after teardown: %d leak(s)\n", real_leaks);
+        VLDReportLeaks();
+        // Negative preserves the historical leak-failure convention; _exit avoids re-entering exit().
+        _exit(-real_leaks);
+    }
+}
+#endif
+
+size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName, const char* testNameFilter)
 {
 #ifdef USE_VLD
-    VLD_UINT initial_leak_count = VLDGetLeaksCount();
+    // RunTests is single-threaded (see the unguarded g_CurrentTestFunction/g_ExceptionJump globals)
+    // but is called once per suite, so register the exit-time leak check only on the first call.
+    static bool leak_check_registered = false;
+    if (!leak_check_registered)
+    {
+        leak_check_registered = true;
+        g_initial_leak_count = VLDGetLeaksCount();
+        (void)atexit(ctest_check_leaks_at_exit);
+    }
 #endif
     size_t totalTestCount = 0;
     size_t failedTestCount = 0;
@@ -274,45 +303,6 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
             }
         }
     }
-#endif
-
-#ifdef USE_VLD
-    if (useLeakCheckRetries)
-    {
-        if (failedTestCount == 0)
-        {
-            VLD_UINT leaks_count = VLDGetLeaksCount();
-            do
-            {
-                if (leaks_count - initial_leak_count > 0)
-                {
-                    LogWarning("Leaks count is %u (initial count %u)", leaks_count, initial_leak_count);
-                    Sleep(5000);
-                    VLD_UINT new_leaks_count = VLDGetLeaksCount();
-
-                    if (new_leaks_count == leaks_count)
-                    {
-                        // Leaks are stable so there must be real leaks
-                        LogWarning("Leaks count has not changed...");
-                        break;
-                    }
-                    else
-                    {
-                        // Leaks have gone down, try again
-                        leaks_count = new_leaks_count;
-                    }
-                }
-                else
-                {
-                    // No leaks, we are done
-                    break;
-                }
-            } while (1);
-        }
-    }
-    failedTestCount = (failedTestCount > 0) ? failedTestCount : (size_t)(-(int)(VLDGetLeaksCount() - initial_leak_count));
-#else
-    (void)useLeakCheckRetries;
 #endif
 
     return failedTestCount;
