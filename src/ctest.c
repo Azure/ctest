@@ -46,7 +46,7 @@ static void ctest_check_leaks_at_exit(void)
 }
 #endif
 
-size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName, bool useLeakCheckRetries, const char* testNameFilter)
+size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName, const char* testNameFilter)
 {
 #ifdef USE_VLD
     // RunTests is single-threaded (see the unguarded g_CurrentTestFunction/g_ExceptionJump globals)
@@ -59,7 +59,6 @@ size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteNam
         (void)atexit(ctest_check_leaks_at_exit);
     }
 #endif
-    (void)useLeakCheckRetries;
     size_t totalTestCount = 0;
     size_t failedTestCount = 0;
     size_t skippedByFilterCount = 0;

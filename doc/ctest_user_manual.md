@@ -160,17 +160,13 @@ This produces three individual test functions: `test_addition_when_adding_1_and_
 
 When a test is compiled using [Visual Leak Detector](https://github.com/Azure/vld), `CTest` will check if there were any memory leaks and report them as test failures.
 
-This works by checking the number of allocations at the beginning of the test and then comparing it to the number of allocations that have not been freed at the end of the test.
+This works by capturing the number of live allocations when the run starts and comparing it, once at process exit, to the number of allocations that have not been freed. The check runs from an `atexit` handler, after C++ static destructors, so process-lifetime statics that are freed during teardown are not misreported, while allocations that genuinely survive teardown are reported and cause a non-zero exit code.
 
 ```c
-CTEST_RUN_TEST_SUITE_WITH_LEAK_CHECK_RETRIES(suiteName{,failedTestCount}{,testNameFilter});
+CTEST_RUN_TEST_SUITE(suiteName{,failedTestCount}{,testNameFilter});
 ```
 
-In case a test has some possible memory leaks that are cleaned up asynchronously, leak checks with retries can be enabled by using `CTEST_RUN_TEST_SUITE_WITH_LEAK_CHECK_RETRIES` instead.
-
-When this is used, the check for allocations that have not been freed is checked repeatedly at the end of the test until the count reaches the starting value (no leaks, success) or the leak count remains stable for 5 seconds (leaks detected, test fails).
-
-The `testNameFilter` argument is also supported for this macro to run only a specific test by name.
+Because the check is deferred to process exit, allocations that are cleaned up asynchronously after a test ends are no longer misreported, so no retry mechanism is needed. `CTEST_RUN_TEST_SUITE_WITH_LEAK_CHECK_RETRIES` is retained as a backward-compatible alias for `CTEST_RUN_TEST_SUITE`.
 
 ## Fixtures
 
