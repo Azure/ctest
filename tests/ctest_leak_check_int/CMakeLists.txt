@@ -3,24 +3,42 @@
 
 # Integration tests for ctest's at-exit VLD leak check (ctest_check_leaks_at_exit in src/ctest.c).
 # The verdict is the process exit code, so each scenario is a separate executable. They cover clean
-# allocations, process-lifetime globals (in the executable and in DLLs), and genuine leaks; the
-# executables that leak in a way the check can detect are registered WILL_FAIL.
+# allocations, process-lifetime globals (in the executable and in DLLs), and genuine leaks.
 
-add_executable(ctest_leak_check_clean_int ctest_leak_check_clean_int.c)
-target_link_libraries(ctest_leak_check_clean_int ctest)
-set_target_properties(ctest_leak_check_clean_int PROPERTIES FOLDER "tests/ctest")
+# Builds a leak-check test executable and, when the leak check is active, registers it. The
+# executable is always built so it gets compile coverage in every flavor; the test is registered only
+# when use_vld is enabled together with unit or integration tests, and only for the Debug
+# configuration, because VLD's leak-counting API is a no-op under NDEBUG (RelWithDebInfo/Release).
+# SOURCES defaults to <name>.c; extra link libraries and build-order dependencies are passed with
+# LIBS and DEPENDS. ctest_leak_check_passing_test expects the process to exit 0 (no leak reported);
+# ctest_leak_check_failing_test marks the test WILL_FAIL (a leak the check detects, so it must exit
+# non-zero).
+function(ctest_leak_check_test name will_fail)
+    cmake_parse_arguments(arg "" "" "SOURCES;LIBS;DEPENDS" ${ARGN})
+    if(NOT arg_SOURCES)
+        set(arg_SOURCES ${name}.c)
+    endif()
+    add_executable(${name} ${arg_SOURCES})
+    target_link_libraries(${name} ctest ${arg_LIBS})
+    if(arg_DEPENDS)
+        add_dependencies(${name} ${arg_DEPENDS})
+    endif()
+    set_target_properties(${name} PROPERTIES FOLDER "tests/ctest")
+    if((${run_unittests} OR ${run_int_tests}) AND ${use_vld})
+        add_test(NAME ${name} COMMAND ${name} CONFIGURATIONS Debug)
+        if(will_fail)
+            set_tests_properties(${name} PROPERTIES WILL_FAIL TRUE)
+        endif()
+    endif()
+endfunction()
 
-add_executable(ctest_leak_check_real_leak_int ctest_leak_check_real_leak_int.c)
-target_link_libraries(ctest_leak_check_real_leak_int ctest)
-set_target_properties(ctest_leak_check_real_leak_int PROPERTIES FOLDER "tests/ctest")
+function(ctest_leak_check_passing_test name)
+    ctest_leak_check_test(${name} FALSE ${ARGN})
+endfunction()
 
-add_executable(ctest_leak_check_process_lifetime_static_int ctest_leak_check_process_lifetime_static_int.cpp ctest_leak_check_process_lifetime_static_int_main.c)
-target_link_libraries(ctest_leak_check_process_lifetime_static_int ctest)
-set_target_properties(ctest_leak_check_process_lifetime_static_int PROPERTIES FOLDER "tests/ctest")
-
-add_executable(ctest_leak_check_real_leak_cpp_int ctest_leak_check_real_leak_cpp_int.cpp ctest_leak_check_real_leak_cpp_int_main.c)
-target_link_libraries(ctest_leak_check_real_leak_cpp_int ctest)
-set_target_properties(ctest_leak_check_real_leak_cpp_int PROPERTIES FOLDER "tests/ctest")
+function(ctest_leak_check_failing_test name)
+    ctest_leak_check_test(${name} TRUE ${ARGN})
+endfunction()
 
 # Helper modules for the global / DLL allocation variants. Each module instance owns one
 # process-lifetime global that allocates on construction and frees on destruction, plus an exported
@@ -53,70 +71,37 @@ if(${use_vld})
     add_use_vld_if_no_cs(ctest_leak_check_helper_dll)
 endif()
 
-add_executable(ctest_leak_check_namespace_global_int ctest_leak_check_namespace_global_int.cpp ctest_leak_check_namespace_global_int_main.c)
-target_link_libraries(ctest_leak_check_namespace_global_int ctest)
-set_target_properties(ctest_leak_check_namespace_global_int PROPERTIES FOLDER "tests/ctest")
+# Clean allocations and process-lifetime globals (in the executable and in VLD-instrumented DLLs,
+# whether load-time linked, LoadLibrary'd and freed, or LoadLibrary'd and never freed) are destroyed
+# during teardown and must not be reported: they exit 0.
+ctest_leak_check_passing_test(ctest_leak_check_clean_int)
+ctest_leak_check_passing_test(ctest_leak_check_process_lifetime_static_int
+    SOURCES ctest_leak_check_process_lifetime_static_int.cpp ctest_leak_check_process_lifetime_static_int_main.c)
+ctest_leak_check_passing_test(ctest_leak_check_namespace_global_int
+    SOURCES ctest_leak_check_namespace_global_int.cpp ctest_leak_check_namespace_global_int_main.c)
+ctest_leak_check_passing_test(ctest_leak_check_dll_global_loadtime_int
+    SOURCES ctest_leak_check_dll_global_loadtime_int.cpp ctest_leak_check_dll_global_loadtime_int_main.c
+    LIBS ctest_leak_check_helper_dll)
+ctest_leak_check_passing_test(ctest_leak_check_dll_global_loadlibrary_int
+    SOURCES ctest_leak_check_dll_global_loadlibrary_int.cpp ctest_leak_check_dll_global_loadlibrary_int_main.c
+    DEPENDS ctest_leak_check_helper_dll)
+ctest_leak_check_passing_test(ctest_leak_check_dll_global_never_freed_int
+    SOURCES ctest_leak_check_dll_global_never_freed_int.cpp ctest_leak_check_dll_global_never_freed_int_main.c
+    DEPENDS ctest_leak_check_helper_dll)
+# The dual-link case adds a statically linked copy plus a separately loaded static-CRT DLL.
+ctest_leak_check_passing_test(ctest_leak_check_dll_dual_link_int
+    SOURCES ctest_leak_check_dll_dual_link_int.cpp ctest_leak_check_dll_dual_link_int_main.c
+    LIBS ctest_leak_check_helper_static DEPENDS ctest_leak_check_helper_dll_mt)
+# A genuine leak in a static-CRT (/MT) DLL is NOT detected (that DLL cannot be VLD-instrumented), so
+# the leak is invisible and the test exits 0, documenting that limitation.
+ctest_leak_check_passing_test(ctest_leak_check_dll_mt_real_leak_int
+    SOURCES ctest_leak_check_dll_mt_real_leak_int.cpp ctest_leak_check_dll_mt_real_leak_int_main.c
+    DEPENDS ctest_leak_check_helper_dll_mt)
 
-add_executable(ctest_leak_check_dll_global_loadtime_int ctest_leak_check_dll_global_loadtime_int.cpp ctest_leak_check_dll_global_loadtime_int_main.c)
-target_link_libraries(ctest_leak_check_dll_global_loadtime_int ctest ctest_leak_check_helper_dll)
-set_target_properties(ctest_leak_check_dll_global_loadtime_int PROPERTIES FOLDER "tests/ctest")
-
-add_executable(ctest_leak_check_dll_global_loadlibrary_int ctest_leak_check_dll_global_loadlibrary_int.cpp ctest_leak_check_dll_global_loadlibrary_int_main.c)
-target_link_libraries(ctest_leak_check_dll_global_loadlibrary_int ctest)
-add_dependencies(ctest_leak_check_dll_global_loadlibrary_int ctest_leak_check_helper_dll)
-set_target_properties(ctest_leak_check_dll_global_loadlibrary_int PROPERTIES FOLDER "tests/ctest")
-
-add_executable(ctest_leak_check_dll_global_never_freed_int ctest_leak_check_dll_global_never_freed_int.cpp ctest_leak_check_dll_global_never_freed_int_main.c)
-target_link_libraries(ctest_leak_check_dll_global_never_freed_int ctest)
-add_dependencies(ctest_leak_check_dll_global_never_freed_int ctest_leak_check_helper_dll)
-set_target_properties(ctest_leak_check_dll_global_never_freed_int PROPERTIES FOLDER "tests/ctest")
-
-add_executable(ctest_leak_check_dll_dual_link_int ctest_leak_check_dll_dual_link_int.cpp ctest_leak_check_dll_dual_link_int_main.c)
-target_link_libraries(ctest_leak_check_dll_dual_link_int ctest ctest_leak_check_helper_static)
-add_dependencies(ctest_leak_check_dll_dual_link_int ctest_leak_check_helper_dll_mt)
-set_target_properties(ctest_leak_check_dll_dual_link_int PROPERTIES FOLDER "tests/ctest")
-
-add_executable(ctest_leak_check_dll_real_leak_int ctest_leak_check_dll_real_leak_int.cpp ctest_leak_check_dll_real_leak_int_main.c)
-target_link_libraries(ctest_leak_check_dll_real_leak_int ctest)
-add_dependencies(ctest_leak_check_dll_real_leak_int ctest_leak_check_helper_dll)
-set_target_properties(ctest_leak_check_dll_real_leak_int PROPERTIES FOLDER "tests/ctest")
-
-add_executable(ctest_leak_check_dll_mt_real_leak_int ctest_leak_check_dll_mt_real_leak_int.cpp ctest_leak_check_dll_mt_real_leak_int_main.c)
-target_link_libraries(ctest_leak_check_dll_mt_real_leak_int ctest)
-add_dependencies(ctest_leak_check_dll_mt_real_leak_int ctest_leak_check_helper_dll_mt)
-set_target_properties(ctest_leak_check_dll_mt_real_leak_int PROPERTIES FOLDER "tests/ctest")
-
-# Register only under VLD, and only for the Debug configuration: VLD's leak-counting API no-ops under
-# NDEBUG (RelWithDebInfo/Release), so leak detection -- and the WILL_FAIL real-leak cases in
-# particular -- is only meaningful with the debug CRT. CONFIGURATIONS keeps this correct for
-# multi-config generators, where the same configured tree runs both Debug and RelWithDebInfo.
-if((${run_unittests} OR ${run_int_tests}) AND ${use_vld})
-    add_test(NAME ctest_leak_check_clean_int COMMAND ctest_leak_check_clean_int CONFIGURATIONS Debug)
-    add_test(NAME ctest_leak_check_process_lifetime_static_int COMMAND ctest_leak_check_process_lifetime_static_int CONFIGURATIONS Debug)
-
-    add_test(NAME ctest_leak_check_real_leak_int COMMAND ctest_leak_check_real_leak_int CONFIGURATIONS Debug)
-    set_tests_properties(ctest_leak_check_real_leak_int PROPERTIES WILL_FAIL TRUE)
-
-    add_test(NAME ctest_leak_check_real_leak_cpp_int COMMAND ctest_leak_check_real_leak_cpp_int CONFIGURATIONS Debug)
-    set_tests_properties(ctest_leak_check_real_leak_cpp_int PROPERTIES WILL_FAIL TRUE)
-
-    # Process-lifetime allocations that survive to the at-exit check only because they are correctly
-    # destroyed during teardown (global in this executable, global in a VLD-instrumented DLL whether
-    # load-time linked, LoadLibrary'd and freed, or LoadLibrary'd and never freed) must not be
-    # reported. The dual-link case adds a statically linked copy plus a separately loaded static-CRT
-    # DLL. All exit 0.
-    add_test(NAME ctest_leak_check_namespace_global_int COMMAND ctest_leak_check_namespace_global_int CONFIGURATIONS Debug)
-    add_test(NAME ctest_leak_check_dll_global_loadtime_int COMMAND ctest_leak_check_dll_global_loadtime_int CONFIGURATIONS Debug)
-    add_test(NAME ctest_leak_check_dll_global_loadlibrary_int COMMAND ctest_leak_check_dll_global_loadlibrary_int CONFIGURATIONS Debug)
-    add_test(NAME ctest_leak_check_dll_global_never_freed_int COMMAND ctest_leak_check_dll_global_never_freed_int CONFIGURATIONS Debug)
-    add_test(NAME ctest_leak_check_dll_dual_link_int COMMAND ctest_leak_check_dll_dual_link_int CONFIGURATIONS Debug)
-
-    # A genuine leak in a VLD-instrumented (/MD) DLL is detected and fails the run.
-    add_test(NAME ctest_leak_check_dll_real_leak_int COMMAND ctest_leak_check_dll_real_leak_int CONFIGURATIONS Debug)
-    set_tests_properties(ctest_leak_check_dll_real_leak_int PROPERTIES WILL_FAIL TRUE)
-
-    # A genuine leak in a static-CRT (/MT) DLL is NOT detected: that DLL cannot be VLD-instrumented
-    # (use_vld pulls the /MD CRT and conflicts, LNK4098), so the allocation is invisible. This test
-    # documents that limitation, so it passes only while such leaks remain undetected (exit 0).
-    add_test(NAME ctest_leak_check_dll_mt_real_leak_int COMMAND ctest_leak_check_dll_mt_real_leak_int CONFIGURATIONS Debug)
-endif()
+# Genuine leaks the check can detect must fail the run.
+ctest_leak_check_failing_test(ctest_leak_check_real_leak_int)
+ctest_leak_check_failing_test(ctest_leak_check_real_leak_cpp_int
+    SOURCES ctest_leak_check_real_leak_cpp_int.cpp ctest_leak_check_real_leak_cpp_int_main.c)
+ctest_leak_check_failing_test(ctest_leak_check_dll_real_leak_int
+    SOURCES ctest_leak_check_dll_real_leak_int.cpp ctest_leak_check_dll_real_leak_int_main.c
+    DEPENDS ctest_leak_check_helper_dll)
