@@ -317,11 +317,6 @@ do \
     MU_IF(MU_DIV2(MU_COUNT_ARG(__VA_ARGS__)),CTEST_ACCUMULATE_FAILED(__VA_ARGS__),) RunTests(&MU_C2(TestListHead_, FIRST_ARG(__VA_ARGS__)), MU_TOSTRING(FIRST_ARG(__VA_ARGS__)), CTEST_GET_THIRD_ARG(__VA_ARGS__)); \
 } while ((void)0,0)
 
-/* Leak-check retries were removed: the leak check now runs once at process exit (see
-   ctest_check_leaks_at_exit in ctest.c), which catches asynchronously cleaned-up allocations without
-   re-running tests. This macro is kept as a backward-compatible alias for CTEST_RUN_TEST_SUITE. */
-#define CTEST_RUN_TEST_SUITE_WITH_LEAK_CHECK_RETRIES(...) CTEST_RUN_TEST_SUITE(__VA_ARGS__)
-
 typedef char* char_ptr;
 typedef wchar_t* wchar_ptr;
 typedef void* void_ptr;

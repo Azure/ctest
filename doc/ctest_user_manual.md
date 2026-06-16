@@ -166,7 +166,7 @@ This works by capturing the number of live allocations when the run starts and c
 CTEST_RUN_TEST_SUITE(suiteName{,failedTestCount}{,testNameFilter});
 ```
 
-Because the check is deferred to process exit, allocations that are cleaned up asynchronously after a test ends are no longer misreported, so no retry mechanism is needed. `CTEST_RUN_TEST_SUITE_WITH_LEAK_CHECK_RETRIES` is retained as a backward-compatible alias for `CTEST_RUN_TEST_SUITE`.
+Because the check is deferred to process exit, allocations that are cleaned up asynchronously after a test ends are no longer misreported, so no retry mechanism is needed.
 
 ## Fixtures
 
