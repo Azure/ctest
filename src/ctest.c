@@ -14,8 +14,9 @@
 #include "ctest.h"
 #include "c_logging/logger.h"
 
+#include <limits.h> // for INT_MAX, SIZE_MAX
+
 #if defined _MSC_VER && !defined(WINCE)
-#include <limits.h> // for SIZE_MAX
 #include "windows.h"
 #endif
 
@@ -608,9 +609,14 @@ static char* ctest_vsprintf_char(const char* format, va_list va)
         LogError("failure in vsnprintf, format=%s, va_clone=%p);", format, (void*)&va_clone);
         result = NULL;
     }
+    else if (neededSize == INT_MAX)
+    {
+        LogError("overflow in allocation size calculation, neededSize=INT_MAX");
+        result = NULL;
+    }
     else
     {
-        result = malloc(neededSize + 1);
+        result = malloc((size_t)neededSize + 1);
         if (result == NULL)
         {
             LogError("failure in malloc");
@@ -618,7 +624,7 @@ static char* ctest_vsprintf_char(const char* format, va_list va)
         }
         else
         {
-            if (vsnprintf(result, neededSize + 1, format, va) != neededSize)
+            if (vsnprintf(result, (size_t)neededSize + 1, format, va) != neededSize)
             {
                 LogError("inconsistent vsnprintf behavior format, neededSize=%d + 1, format=%s, va=%p", neededSize, format, (void*)&va);
                 free(result);
