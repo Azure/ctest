@@ -648,13 +648,33 @@ void ctest_sprintf_free(char* string)
 }
 
 #if defined _MSC_VER && !defined(WINCE)
-/* DIAGNOSTIC: on CTEST_ABORT_ON_FAIL, write a minidump right before abort() so the real
-   crash can be analyzed without a live debugger (which can mask timing-sensitive failures)
-   and without depending on the agent's WER policy. Dump dir defaults to C:\crashdumps,
-   overridable via the CTEST_CRASH_DUMP_DIR environment variable. Best-effort: failures
-   (e.g. under commit exhaustion) are ignored. */
-static void ctest_write_crash_minidump(void)
+#include <signal.h>
+
+/* DIAGNOSTIC (jemalloc 5.3.1 int-test crash): install process-wide crash handlers that write a
+   minidump for ANY hard failure -- abort()/__fastfail (0xc0000409) and structured exceptions such
+   as access violations -- independent of ctest's abort_on_fail setting and of the agent's WER
+   policy (WER is disabled on the int-test pool, which is why LocalDumps captured nothing). This
+   lets the REAL gate crash be analyzed offline without a live debugger (which can mask
+   timing-sensitive failures). Dump dir defaults to C:\crashdumps (override: CTEST_CRASH_DUMP_DIR). */
+
+/* layout-compatible with MINIDUMP_EXCEPTION_INFORMATION (avoids including dbghelp.h) */
+typedef struct CTEST_MDEI_TAG
 {
+    unsigned long ThreadId;
+    void* ExceptionPointers;
+    int ClientPointers;
+} CTEST_MDEI;
+
+static volatile long g_ctest_dumping = 0;
+
+static void ctest_write_crash_minidump(void* exceptionPointers)
+{
+    /* only dump once even if multiple threads fault simultaneously */
+    if (InterlockedCompareExchange(&g_ctest_dumping, 1, 0) != 0)
+    {
+        return;
+    }
+
     const char* dir = getenv("CTEST_CRASH_DUMP_DIR");
     if (dir == NULL || dir[0] == '\0')
     {
@@ -671,28 +691,72 @@ static void ctest_write_crash_minidump(void)
     base = (base != NULL) ? base + 1 : exePath;
 
     char path[MAX_PATH * 2];
-    (void)snprintf(path, sizeof(path), "%s\\%s.%lu.abort.dmp", dir, base, (unsigned long)GetCurrentProcessId());
+    (void)snprintf(path, sizeof(path), "%s\\%s.%lu.crash.dmp", dir, base, (unsigned long)GetCurrentProcessId());
 
     HANDLE hFile = CreateFileA(path, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-    if (hFile == INVALID_HANDLE_VALUE)
+    if (hFile != INVALID_HANDLE_VALUE)
     {
-        return;
-    }
-
-    HMODULE dbg = LoadLibraryA("dbghelp.dll");
-    if (dbg != NULL)
-    {
-        typedef int (WINAPI * MiniDumpWriteDump_t)(HANDLE, unsigned long, HANDLE, int, void*, void*, void*);
-        MiniDumpWriteDump_t pMiniDumpWriteDump = (MiniDumpWriteDump_t)(void*)GetProcAddress(dbg, "MiniDumpWriteDump");
-        if (pMiniDumpWriteDump != NULL)
+        HMODULE dbg = LoadLibraryA("dbghelp.dll");
+        if (dbg != NULL)
         {
-            /* MiniDumpWithThreadInfo(0x1000) | MiniDumpWithIndirectlyReferencedMemory(0x40)
-               captures all thread stacks + heap referenced by the stacks (error structs). */
-            (void)pMiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), hFile, 0x1040, NULL, NULL, NULL);
+            typedef int (WINAPI * MiniDumpWriteDump_t)(HANDLE, unsigned long, HANDLE, int, void*, void*, void*);
+            MiniDumpWriteDump_t pMiniDumpWriteDump = (MiniDumpWriteDump_t)(void*)GetProcAddress(dbg, "MiniDumpWriteDump");
+            if (pMiniDumpWriteDump != NULL)
+            {
+                CTEST_MDEI mdei;
+                void* pmdei = NULL;
+                if (exceptionPointers != NULL)
+                {
+                    mdei.ThreadId = GetCurrentThreadId();
+                    mdei.ExceptionPointers = exceptionPointers;
+                    mdei.ClientPointers = 0;
+                    pmdei = &mdei;
+                }
+                /* MiniDumpWithThreadInfo(0x1000) | MiniDumpWithIndirectlyReferencedMemory(0x40)
+                   captures all thread stacks + heap referenced by the stacks (error structs). */
+                int dumpOk = pMiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), hFile, 0x1040, pmdei, NULL, NULL);
+                if (dumpOk == 0 && pmdei != NULL)
+                {
+                    /* MiniDumpWriteDump can fail when passed exception info; retry without it so we
+                       still capture all thread stacks (the faulting thread's stack shows the crash). */
+                    (void)SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
+                    (void)SetEndOfFile(hFile);
+                    (void)pMiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), hFile, 0x1040, NULL, NULL, NULL);
+                }
+            }
         }
+        (void)CloseHandle(hFile);
     }
-    (void)CloseHandle(hFile);
 }
+
+static void ctest_sigabrt_handler(int sig)
+{
+    (void)sig;
+    ctest_write_crash_minidump(NULL);
+    (void)signal(SIGABRT, SIG_DFL);
+    _exit(3);
+}
+
+static LONG WINAPI ctest_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
+{
+    ctest_write_crash_minidump(ep);
+    return EXCEPTION_EXECUTE_HANDLER; /* terminate the process after dumping */
+}
+
+static void ctest_install_crash_handlers(void)
+{
+    /* abort() defaults to _CALL_REPORTFAULT, which __fastfail()s BEFORE raising SIGABRT; clear it so
+       our SIGABRT handler runs and can write the dump. */
+    (void)_set_abort_behavior(0, _CALL_REPORTFAULT);
+    (void)signal(SIGABRT, ctest_sigabrt_handler);
+    (void)SetUnhandledExceptionFilter(ctest_unhandled_exception_filter);
+}
+
+/* install automatically at process startup for every test that links ctest */
+#pragma section(".CRT$XCU", read)
+static void ctest_crash_ctor(void) { ctest_install_crash_handlers(); }
+__declspec(allocate(".CRT$XCU")) void (*ctest_crash_ctor_ptr)(void) = ctest_crash_ctor;
+#pragma comment(linker, "/include:ctest_crash_ctor_ptr")
 #endif
 
 void do_jump(jmp_buf *exceptionJump, const volatile void* expected, const volatile void* actual)
@@ -702,9 +766,6 @@ void do_jump(jmp_buf *exceptionJump, const volatile void* expected, const volati
     (void)actual;
 #if CTEST_ABORT_ON_FAIL
     (void)exceptionJump;
-#if defined _MSC_VER && !defined(WINCE)
-    ctest_write_crash_minidump();
-#endif
     abort();
 #else
     longjmp(*exceptionJump, 0xca1e4);
