@@ -647,6 +647,54 @@ void ctest_sprintf_free(char* string)
     free(string);
 }
 
+#if defined _MSC_VER && !defined(WINCE)
+/* DIAGNOSTIC: on CTEST_ABORT_ON_FAIL, write a minidump right before abort() so the real
+   crash can be analyzed without a live debugger (which can mask timing-sensitive failures)
+   and without depending on the agent's WER policy. Dump dir defaults to C:\crashdumps,
+   overridable via the CTEST_CRASH_DUMP_DIR environment variable. Best-effort: failures
+   (e.g. under commit exhaustion) are ignored. */
+static void ctest_write_crash_minidump(void)
+{
+    const char* dir = getenv("CTEST_CRASH_DUMP_DIR");
+    if (dir == NULL || dir[0] == '\0')
+    {
+        dir = "C:\\crashdumps";
+    }
+    (void)CreateDirectoryA(dir, NULL);
+
+    char exePath[MAX_PATH];
+    if (GetModuleFileNameA(NULL, exePath, MAX_PATH) == 0)
+    {
+        exePath[0] = '\0';
+    }
+    const char* base = strrchr(exePath, '\\');
+    base = (base != NULL) ? base + 1 : exePath;
+
+    char path[MAX_PATH * 2];
+    (void)snprintf(path, sizeof(path), "%s\\%s.%lu.abort.dmp", dir, base, (unsigned long)GetCurrentProcessId());
+
+    HANDLE hFile = CreateFileA(path, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (hFile == INVALID_HANDLE_VALUE)
+    {
+        return;
+    }
+
+    HMODULE dbg = LoadLibraryA("dbghelp.dll");
+    if (dbg != NULL)
+    {
+        typedef int (WINAPI * MiniDumpWriteDump_t)(HANDLE, unsigned long, HANDLE, int, void*, void*, void*);
+        MiniDumpWriteDump_t pMiniDumpWriteDump = (MiniDumpWriteDump_t)(void*)GetProcAddress(dbg, "MiniDumpWriteDump");
+        if (pMiniDumpWriteDump != NULL)
+        {
+            /* MiniDumpWithThreadInfo(0x1000) | MiniDumpWithIndirectlyReferencedMemory(0x40)
+               captures all thread stacks + heap referenced by the stacks (error structs). */
+            (void)pMiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), hFile, 0x1040, NULL, NULL, NULL);
+        }
+    }
+    (void)CloseHandle(hFile);
+}
+#endif
+
 void do_jump(jmp_buf *exceptionJump, const volatile void* expected, const volatile void* actual)
 {
     /*setting a breakpoint here allows catching the jump before it happens*/
@@ -654,6 +702,9 @@ void do_jump(jmp_buf *exceptionJump, const volatile void* expected, const volati
     (void)actual;
 #if CTEST_ABORT_ON_FAIL
     (void)exceptionJump;
+#if defined _MSC_VER && !defined(WINCE)
+    ctest_write_crash_minidump();
+#endif
     abort();
 #else
     longjmp(*exceptionJump, 0xca1e4);
