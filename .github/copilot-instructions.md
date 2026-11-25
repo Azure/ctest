@@ -68,6 +68,10 @@ MU_DEFINE_ENUM(MY_ENUM, MY_ENUM_VALUES)
 MU_DEFINE_ENUM_STRINGS(MY_ENUM, MY_ENUM_VALUES)
 CTEST_DEFINE_ENUM_TYPE(MY_ENUM, MY_ENUM_VALUES)
 
+// Define testing support for an existing C++ enum such as an SDK enum class (C++ only, bare enumerator names)
+using SDK_RESULT = sdk::Result;
+CTEST_DEFINE_ENUM_CLASS_TYPE(SDK_RESULT, kSuccess, kFailure)
+
 // Define custom type comparison
 CTEST_COMPARE(my_type, MY_STRUCT)
 {

@@ -29,10 +29,13 @@ endif()
 
 set(ctest_ut_cpp_files
     assertsuccesstestscpp.cpp
+    enum_class_define_other_tu_tests.cpp
+    enum_class_define_tests.cpp
     simpletestsuiteonetestcpp.cpp
 )
 
 set(ctest_ut_h_files
+    enum_class_define_tests.h
 )
 
 add_executable(ctest_ut ${ctest_ut_c_files} ${ctest_ut_cpp_files} ${ctest_ut_h_files})
