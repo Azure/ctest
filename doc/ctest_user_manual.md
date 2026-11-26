@@ -555,6 +555,26 @@ MU_DEFINE_ENUM_WITHOUT_INVALID(TEST_ENUM, TEST_ENUM_VALUES)
 CTEST_DEFINE_ENUM_TYPE(TEST_ENUM, TEST_ENUM_VALUES)
 ```
 
+### CTEST_DEFINE_ENUM_CLASS_TYPE
+
+`CTEST_DEFINE_ENUM_CLASS_TYPE` (C++ only) generates the needed `_ToString` and `_Compare` functions for an enum that already exists, typically an `enum class` from an external SDK. It uses the macro utils feature `MU_DEFINE_ENUM_CLASS_STRINGS`, so the first argument is a single identifier naming the enum type (declare an alias first for a type inside a namespace or a class) and the values are the bare enumerator names. Assertion failures print the enumerator names, or `"UNKNOWN"` for values that are not listed.
+
+Register the enum in each .cpp file that asserts on it; the generated functions are local to that file.
+
+Example:
+
+```cpp
+using SDK_RESULT = sdk::Result; /*enum class Result { kSuccess, kFailure };*/
+
+#define SDK_RESULT_VALUES \
+    kSuccess, \
+    kFailure
+
+CTEST_DEFINE_ENUM_CLASS_TYPE(SDK_RESULT, SDK_RESULT_VALUES)
+
+CTEST_ASSERT_ARE_EQUAL(SDK_RESULT, SDK_RESULT::kSuccess, result);
+```
+
 ## Macro hooks for metadata generation
 
 In order to allow generating test functions and fixtures metadata that can be used by other tools, `CTest` provides the following macros:

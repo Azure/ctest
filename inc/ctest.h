@@ -531,6 +531,16 @@ CTEST_DEFINE_EQUALITY_ASSERTION_FUNCTIONS_FOR_TYPE(enum_name, static)
     MU_DEFINE_ENUM_STRINGS_WITHOUT_INVALID(MU_C2(enum_name,_for_ctest), __VA_ARGS__); \
     CTEST_DEFINE_ENUM_TYPE_COMMON(enum_name, __VA_ARGS__)
 
+#ifdef __cplusplus
+// this macro expands to the needed _ToString and _Compare functions for an existing C++ enum (typically an SDK enum class),
+// while using the macro utils MU_DEFINE_ENUM_CLASS_STRINGS; enum_name is an identifier (e.g. a "using" alias) and the values are the bare enumerator names
+// the string function is placed in an unnamed namespace so that several .cpp files linked together can each define the same enum_name
+#define CTEST_DEFINE_ENUM_CLASS_TYPE(enum_name, ...) \
+    typedef enum_name MU_C2(enum_name,_for_ctest); \
+    namespace { MU_DEFINE_ENUM_CLASS_STRINGS(MU_C2(enum_name,_for_ctest), __VA_ARGS__) } \
+    CTEST_DEFINE_ENUM_TYPE_COMMON(enum_name, __VA_ARGS__)
+#endif
+
 extern C_LINKAGE size_t RunTests(const TEST_FUNCTION_DATA* testListHead, const char* testSuiteName, const char* testNameFilter);
 
 /* Special return code when zero tests were executed (all filtered out or no tests exist).

@@ -30,6 +30,16 @@ int main()
     CTEST_RUN_TEST_SUITE(SimpleTestSuiteOneTest, failedTests);
     CTEST_RUN_TEST_SUITE(SimpleTestSuiteTwoTests, failedTests);
     CTEST_RUN_TEST_SUITE(SimpleTestSuiteOneTestCpp, failedTests);
+    {
+        size_t temp_failed_tests = 0;
+        CTEST_RUN_TEST_SUITE(enum_class_define_tests, temp_failed_tests);
+        if (temp_failed_tests != 1) // 1 expected failing test
+        {
+            LogError("CTEST TEST FAILED !!! enum_class_define_tests");
+            failedTests++;
+        }
+    }
+    CTEST_RUN_TEST_SUITE(enum_class_define_other_tu_tests, failedTests);
     CTEST_RUN_TEST_SUITE(TestSuiteInitializeCleanupTests, failedTests);
     CTEST_RUN_TEST_SUITE(AssertSuccessTests, failedTests);
     CTEST_RUN_TEST_SUITE(AssertSuccessTestsCpp, failedTests);
